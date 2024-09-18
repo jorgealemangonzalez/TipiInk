@@ -1,0 +1,108 @@
+{
+  "hosting": [
+    {
+      "site": "tipi-ink",
+      "public": "frontend/dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "/api/facebookWebhook",
+          "function": "facebookWebhook"
+        },
+        {
+          "source": "/api/stripeWebhookEvents",
+          "function": "stripeWebhookEvents"
+        },
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            {
+              "key": "Document-Policy",
+              "value": "js-profiling"
+            }
+          ]
+        }
+      ],
+      "postdeploy": "pnpm run postDeployHook"
+    },
+    {
+      "site": "botwhirl-landing",
+      "public": "landing/dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  ],
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "functions": [
+    {
+      "source": "backend/functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    }
+  ],
+  "emulators": {
+    "hosting": {
+      "port": 5006,
+      "host": "0.0.0.0"
+    },
+    "auth": {
+      "port": 5004,
+      "host": "0.0.0.0"
+    },
+    "functions": {
+      "port": 5001,
+      "host": "0.0.0.0"
+    },
+    "firestore": {
+      "port": 5003,
+      "host": "0.0.0.0"
+    },
+    "storage": {
+      "port": 5005,
+      "host": "0.0.0.0"
+    },
+    "ui": {
+      "enabled": true,
+      "port": 5002
+    },
+    "singleProjectMode": true
+  },
+  "extensions": {
+    "firestore-stripe-payments": "invertase/firestore-stripe-payments@0.3.9"
+  }
+}

@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.firebase-emulator-warning {
+    display: none !important;
+}
+
+html, body, #root {
+    @apply h-full w-full bg-main-50;
+}
+
+@layer base {
+    h1:not(.chat-bubble h1) {
+        @apply text-2xl font-extrabold text-neutral;
+    }
+
+    h2:not(.chat-bubble h2) {
+        @apply text-xl font-bold text-neutral;
+    }
+
+    h3:not(.chat-bubble h3) {
+        @apply text-lg font-semibold text-neutral;
+    }
+
+    p:not(.chat-bubble p) {
+        @apply text-base text-neutral;
+    }
+}
+
+@layer components {
+    .section {
+        @apply rounded-2xl flex size-full shadow-main-200 border-2 border-main-200;
+    }
+
+
+    .publish-section {
+        @apply section p-4 flex-col space-y-2;
+    }
+
+    .page {
+        @apply w-full h-full lg:w-screen lg:h-screen pt-[5.5rem];
+    }
+
+    /* Custom CSS to hide scrollbar */
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none; /* for Chrome, Safari, and Opera */
+    }
+
+    .hide-scrollbar {
+        -ms-overflow-style: none; /* for IE and Edge */
+        scrollbar-width: none; /* for Firefox */
+    }
+
+    .multiline-ellipsis {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+}

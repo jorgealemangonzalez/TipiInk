@@ -1,0 +1,44 @@
+import {
+    collection, orderBy as fOrderBy,
+    where as fWhere,
+    query as fQuery,
+    limit as fLimit,
+    startAfter as fStartAfter,
+    onSnapshot,
+    Unsubscribe,
+} from 'firebase/firestore'
+import { Document } from './types'
+import {firestore} from './firebase.ts'
+
+
+export interface GetCollectionParams {
+    path: string
+    orderBy?: Parameters<typeof fOrderBy>
+    limit?: number
+    startAfter?: number
+    where?: Parameters<typeof fWhere>[]
+}
+
+export const getCollection = async <T extends Document>(
+    {
+        path,
+        orderBy,
+        limit,
+        startAfter,
+        where,
+    }: GetCollectionParams,
+    onCollectionChange: (docs: T[]) => void,
+): Promise<Unsubscribe> => {
+    const ref = collection(firestore, path)
+    const query = fQuery(ref, ...[
+        ...(where ? where.map(w => fWhere(...w)) : []),
+        ...(orderBy ? [fOrderBy(...orderBy)] : []),
+        ...(limit ? [fLimit(limit)] : []),
+        ...(startAfter ? [fStartAfter(startAfter)] : []),
+    ])
+
+    return onSnapshot(query, (snapshot) => {
+        const docs = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }) as T)
+        onCollectionChange(docs)
+    })
+}

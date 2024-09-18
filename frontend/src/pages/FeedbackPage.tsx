@@ -1,0 +1,1 @@
+export const FeedbackPage = () => null

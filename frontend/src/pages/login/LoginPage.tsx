@@ -18,7 +18,7 @@ function LoginButton(props: { onClick: () => Promise<void> }) {
 
     return <div className="flex h-full justify-center items-center bg-gray-100">
         <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full flex flex-col items-center">
-            <h1 className="text-3xl font-bold text-center text-primary mb-4">{t('welcome.to.botwhirl', 'Welcome to BotWhirl')}</h1>
+            <h1 className="text-3xl font-bold text-center text-primary mb-4">{t('welcome.to.tipi', 'Welcome to Tipi')}</h1>
             <p className="text-center text-gray-600 mb-6">{t('sign.in.with.google', 'Please sign in with your google account to start creating your chatbots')}</p>
 
             <iframe id="lottie-iframe" className="h-[15rem] mb-6 hidden"
@@ -46,13 +46,10 @@ export const LoginPage = () => {
     const handleLogin = async () => {
         try {
             mixpanel.track('Button Clicked', {button_id: 'google-login'}, {send_immediately: true})
-            await signInWithPopup(auth, new GoogleAuthProvider())
-            // if(!await hasActiveSubscription(user.uid)) {
-            //     setIsRedirectingToCheckout(true)
-            //     console.log('User does not have an active subscription')
-            //     mixpanel.track('User redirected to checkout', {price: selectedPrice}, {send_immediately: true})
-            //     await goCheckout(user.uid, selectedPrice)
-            // }
+            const googleAuthProvider = new GoogleAuthProvider()
+            googleAuthProvider.addScope('https://www.googleapis.com/auth/drive.file')
+            const credential = await signInWithPopup(auth, googleAuthProvider)
+            console.log('credential', {credential})
         } catch (error) {
             console.error('Error logging in:', error)
             setIsRedirectingToCheckout(false)

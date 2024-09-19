@@ -10,7 +10,7 @@ export function AssistantMessage({children}: MessageProps) {
             <div className="w-10 rounded-full">
                 <img
                     alt="Chat bubble"
-                    src="/botwhirl-logo.svg"/>
+                    src="/tipi-logo.svg"/>
             </div>
         </div>
         <div className="chat-bubble">

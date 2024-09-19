@@ -1,2 +1,2 @@
-export const isTestEnvironment = window.location.hostname !== 'app.botwhirl.com'
+export const isTestEnvironment = window.location.hostname !== 'app.tipi.ink'
 export const isLocalEnvironment = window.location.hostname === 'localhost'

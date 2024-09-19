@@ -97,8 +97,8 @@ const Footer = () => {
             <p>tasquitadeenfrente@gmail.com o llamándonos al +34 915 325 449</p>
             <p className="mt-4">
                     Creado por{' '}
-                <Link to="https://www.botwhirl.com" className="text-main-500 hover:underline">
-                        BotWhirl
+                <Link to="https://www.tipi.ink" className="text-main-500 hover:underline">
+                        Tipi
                 </Link>
             </p>
         </div>

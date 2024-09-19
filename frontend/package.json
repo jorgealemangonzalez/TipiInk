@@ -20,6 +20,7 @@
     "@sentry/vite-plugin": "^2.22.2",
     "@sentry/wizard": "3.26.0",
     "firebase": "^10.12.3",
+    "googleapis": "^144.0.0",
     "i18next": "^23.14.0",
     "i18next-browser-languagedetector": "^8.0.0",
     "i18next-http-backend": "^2.6.1",

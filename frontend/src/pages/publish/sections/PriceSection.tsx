@@ -61,7 +61,7 @@ function PriceInput({setPrice, price, enabled}: PriceInputProps) {
 }
 
 function PriceBreakdown({price}: { price: number }) {
-    const botWhirlFee = price * 0.1 < 5 ? 5 : price * 0.1
+    const tipiFee = price * 0.1 < 5 ? 5 : price * 0.1
     const {t} = useTranslation()
 
     return <div className="flex flex-col text-sm space-y-1">
@@ -77,13 +77,13 @@ function PriceBreakdown({price}: { price: number }) {
         </div>
         <div className="flex flex-row place-content-between border-b-[1px] border-neutral">
             <div>
-                <b>{t('botwhirl.fee', 'BotWhirl fee')}</b> (10% / 5€)
+                <b>{t('tipi.fee', 'Tipi fee')}</b> (10% / 5€)
             </div>
-            {botWhirlFee}€
+            {tipiFee}€
         </div>
         <div className="flex flex-row place-content-between">
             <b>{t('revenue.user.month', 'Revenue per user/month')}</b>
-            <b>{(price - price * 0.025 - 0.25 - botWhirlFee).toFixed(2)}€</b>
+            <b>{(price - price * 0.025 - 0.25 - tipiFee).toFixed(2)}€</b>
         </div>
     </div>
 }

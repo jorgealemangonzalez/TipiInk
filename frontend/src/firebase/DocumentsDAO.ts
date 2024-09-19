@@ -1,5 +1,5 @@
 import {doc, DocumentData, getDoc, getDocFromServer, onSnapshot, setDoc} from 'firebase/firestore'
-import {Document} from './types'
+import {Document} from './types.ts'
 import {firestore} from './firebase.ts'
 
 export interface GetDocumentParams<T> {
@@ -13,7 +13,7 @@ const mapNullToUndefined = <T extends DocumentData>(data: T) =>
         {...acc, [key]: data[key] === null ? undefined : data[key]})
     , {})
 
-export const getDocument = 
+export const getDocument =
     async <T extends Document>({ collectionName, id, onDocumentChange }: GetDocumentParams): Promise<T | undefined> => {
 
         console.log({collectionName, id})
@@ -48,7 +48,7 @@ export interface SetDocumentParams<T> {
     data: Partial<T>
 }
 
-const mapUndefinedToNull = <T extends DocumentData>(data: T) => 
+const mapUndefinedToNull = <T extends DocumentData>(data: T) =>
     Object.keys(data).reduce((acc, key) => (
         {...acc, [key]: data[key] === undefined ? null : data[key]})
     , {})

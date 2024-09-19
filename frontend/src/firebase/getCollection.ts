@@ -7,7 +7,7 @@ import {
     onSnapshot,
     Unsubscribe,
 } from 'firebase/firestore'
-import { Document } from './types'
+import { Document } from './types.ts'
 import {firestore} from './firebase.ts'
 
 

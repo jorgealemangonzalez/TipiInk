@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from 'react'
 import {getDocument, GetDocumentParams, setDocument as setDocumentInDb} from '../DocumentsDAO.ts'
 import {Document} from "../types.ts"
-import {debounce} from '../../react/debounce.ts'
+import {debounce} from '@/old/react/debounce.ts'
 
 interface UseDocumentResponseWithoutDefault<T> {
     document?: T

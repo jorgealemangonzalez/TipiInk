@@ -1,5 +1,35 @@
+let currentAccessToken: string | undefined
+const authenticate = async () => {
+
+    if(currentAccessToken) {
+        return // Already authenticated
+    }
+
+    return new Promise<void>((resolve, reject) => {
+        // @ts-expect-error google is available
+        const client = google.accounts.oauth2.initTokenClient({
+            client_id: '634165171036-g9267dd6aeonjg8k0di298iqt6dfn716.apps.googleusercontent.com',
+            scope: 'https://www.googleapis.com/auth/spreadsheets',
+            callback: (tokenResponse: any) => {
+                console.log('Token response:', {tokenResponse})
+                if (tokenResponse && tokenResponse.access_token) {
+                    currentAccessToken = tokenResponse.access_token
+                    gapi.client.setToken({access_token: tokenResponse.access_token})
+                    setTimeout(() => {currentAccessToken = undefined}, 3_500_000) // Life time of the token is 3566s
+                    resolve()
+                } else {
+                    reject('Error getting access token')
+                }
+            },
+        })
+        client.requestAccessToken()
+    })
+
+}
+
 const spreadsheetId = '1v0B6D3CQiXc7prY8aNDF7f1O_TajNMw6t-pqhqV90LA'
 export const getSpreadSheetData = async () => {
+    await authenticate()
     const range = '18-OCT!A1:D10'  // Define the range you want to fetch
 
     try {
@@ -18,6 +48,7 @@ export const getSpreadSheetData = async () => {
 
 
 export async function updateSpreadsheetData(range: string, value: string) {
+    await authenticate()
     try {
         const params = {
             spreadsheetId: spreadsheetId,

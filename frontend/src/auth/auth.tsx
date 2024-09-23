@@ -1,5 +1,5 @@
 import React, {createContext, useContext, useEffect, useState} from 'react'
-import {signInAnonymously, signInWithCustomToken, User as FUser} from 'firebase/auth'
+import {signInAnonymously, User as FUser} from 'firebase/auth'
 import {auth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup} from '@/firebase/firebase.ts'
 import mixpanel from 'mixpanel-browser'
 import {Sentry} from '../sentry.ts'
@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const useAuth = () => {
     const context = useContext(AuthContext)
-    if (context === undefined) {
+    if (context===undefined) {
         throw new Error('useAuth must be used within a UserProvider')
     }
     return context
@@ -28,7 +28,7 @@ export const useAuth = () => {
 
 export const useUser = () => {
     const context = useAuth()
-    if (context.user === undefined) {
+    if (context.user===undefined) {
         throw new Error('useUser must be used when authenticated')
     }
     return context.user
@@ -51,7 +51,7 @@ const waitForGoogleApiToBeReady = async () => {
 export const AuthProvider = ({children}: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User>()
     const [isLoading, setIsLoading] = useState<boolean>(true) // TODO MAYBE HAVING 2 SEPARATE STATES GENERATES RACE CONDITIONS
-    const isLoggedIn = user !== undefined
+    const isLoggedIn = user!==undefined
 
     console.log({user})
 
@@ -100,49 +100,25 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
             .finally(() => setIsLoading(false))
     }
 
-    const getNewAccessToken = (refreshToken: string) => {
-        // get new access token using refresh token
-        const payloadForAccessToken = {
-            grant_type: 'refresh_token',
-            refresh_token: refreshToken,
-            client_id: '634165171036-d9hur5nn98rdameral7fu5586g0p06d6.apps.googleusercontent.com',
-            client_secret: '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',
-        }
-
-        return axios
-            .post(`https://oauth2.googleapis.com/token`, payloadForAccessToken, {
-                headers: {
-                    'Content-Type': 'application/json;',
-                },
-            })
-            .then((res: any) => {
-                debugger
-                return res.data
-            })
-            .then((res: any) => {
-                console.log('new token response: ', {res})
-            })
-            .catch((err: any) => console.log('err: ', err))
-    }
-
     const googleSignIn = async () => {
         const googleAuthProvider = new GoogleAuthProvider()
         googleAuthProvider.addScope('https://www.googleapis.com/auth/spreadsheets')
-        const credential = await signInWithPopup(auth, googleAuthProvider)
-        console.log('credential', {credential})
-        const credentials = GoogleAuthProvider.credentialFromResult(credential)
-        console.log('credentials', {credentials})
-        await waitForGoogleApiToBeReady()
-        debugger
-        // @ts-expect-error refresh token is available
-        // const refreshToken = credential!._tokenResponse.refreshToken!
-        // const accessToken: string = (await getNewAccessToken(refreshToken)).access_token
-        const idToken = await credential.user.getIdToken(true)
-        gapi.auth.setToken({access_token: idToken})
-        gapi.client.setToken()
-        await getSpreadSheetData()
+        await signInWithPopup(auth, googleAuthProvider)
         console.log('Google sign in successful')
-        signInWithCustomToken()
+        // console.log('credential', {credential})
+        // const credentials = GoogleAuthProvider.credentialFromResult(credential)
+        // console.log('credentials', {credentials})
+        // await waitForGoogleApiToBeReady()
+        // debugger
+        // // @ts-expect-error refresh token is available
+        // // const refreshToken = credential!._tokenResponse.refreshToken!
+        // // const accessToken: string = (await getNewAccessToken(refreshToken)).access_token
+        // const idToken = await credential.user.getIdToken(true)
+        // gapi.auth.setToken({access_token: idToken})
+        // gapi.client.setToken()
+        // await getSpreadSheetData()
+        // console.log('Google sign in successful')
+        // signInWithCustomToken()
     }
 
     const value: AuthContextType = {

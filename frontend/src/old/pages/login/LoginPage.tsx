@@ -51,7 +51,7 @@ export const LoginPage = () => {
     }
 
     if (user && !user.isAnonymous) {
-        return <Navigate to="/create"/>
+        return <Navigate to="/"/>
     }
 
     return (

@@ -24,7 +24,7 @@ export const ImpersonatePage: React.FC = () => {
 
             console.log('Successfully impersonated user:', email)
             // Navigate to create
-            navigate('/create')
+            navigate('/')
 
         } catch (error: any) {
             console.error(error)

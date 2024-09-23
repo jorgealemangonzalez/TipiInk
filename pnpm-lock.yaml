@@ -105,6 +105,9 @@ importers:
       '@types/gapi.client.sheets-v4':
         specifier: ^0.0.4
         version: 0.0.4
+      axios:
+        specifier: ^1.7.2
+        version: 1.7.2
       firebase:
         specifier: ^10.12.3
         version: 10.12.3

@@ -1,6 +1,6 @@
 import mixpanel from 'mixpanel-browser'
 import Hotjar from '@hotjar/browser'
-import {isTestEnvironment} from '../../environment.ts'
+import {isTestEnvironment} from '../environment.ts'
 
 if ( !isTestEnvironment ) {
     Hotjar.init(5093383, 6)

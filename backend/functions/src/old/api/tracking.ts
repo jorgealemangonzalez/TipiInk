@@ -1,5 +1,5 @@
 import {PropertyDict, Mixpanel} from 'mixpanel'
-import {onFunctionsInit} from '../functions/OnFunctionsInit'
+import {onFunctionsInit} from '../../functions/OnFunctionsInit'
 import * as MixpanelInitializer from 'mixpanel'
 
 let mixpanel: Mixpanel

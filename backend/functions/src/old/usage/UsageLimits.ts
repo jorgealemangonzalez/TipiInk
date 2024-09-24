@@ -1,4 +1,4 @@
-import {firestore} from '../FirebaseInit'
+import {firestore} from '../../FirebaseInit'
 import {Timestamp} from 'firebase-admin/firestore'
 import {logger} from 'firebase-functions'
 import {InitTestAssistantRequest} from '../types/TestAssistant'

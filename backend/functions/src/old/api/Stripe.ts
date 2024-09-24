@@ -1,5 +1,5 @@
 import Stripe from 'stripe'
-import {onFunctionsInit} from '../functions/OnFunctionsInit'
+import {onFunctionsInit} from '../../functions/OnFunctionsInit'
 
 export let stripe: Stripe
 

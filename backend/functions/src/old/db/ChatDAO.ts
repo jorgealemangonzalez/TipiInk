@@ -1,5 +1,5 @@
 import {Timestamp} from 'firebase-admin/firestore'
-import {firestore} from '../FirebaseInit'
+import {firestore} from '../../FirebaseInit'
 import {Chat, ChatMessage, LiveChat, TestChat} from '../types/ChatBotConfig'
 import {AssistantInitialization} from '../api/openai'
 import {getDocumentData} from './GetDocumentData'

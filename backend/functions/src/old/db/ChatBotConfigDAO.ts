@@ -1,4 +1,4 @@
-import {firestore} from '../FirebaseInit'
+import {firestore} from '../../FirebaseInit'
 import {ChatBotConfig} from '../types/ChatBotConfig'
 import {getDocumentData} from './GetDocumentData'
 import {logger} from 'firebase-functions'

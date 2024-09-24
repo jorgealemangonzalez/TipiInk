@@ -1,4 +1,4 @@
-import {firestore} from '../FirebaseInit'
+import {firestore} from '../../FirebaseInit'
 import * as firebase from 'firebase-admin'
 import {StripeConnectAccount} from '../types/StripeConnect'
 import Stripe from 'stripe'

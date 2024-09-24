@@ -1,7 +1,7 @@
 import {logger} from 'firebase-functions'
 import OpenAI from 'openai'
 import {ChatCompletionMessageParam} from 'openai/src/resources/chat/completions'
-import {onFunctionsInit} from '../functions/OnFunctionsInit'
+import {onFunctionsInit} from '../../functions/OnFunctionsInit'
 
 let openai: OpenAI
 

@@ -1,4 +1,4 @@
-import {firestore} from '../FirebaseInit'
+import {firestore} from '../../FirebaseInit'
 import {Subscription} from '@invertase/firestore-stripe-payments'
 
 const CUSTOMERS_COLLECTION = 'stripe_customers'

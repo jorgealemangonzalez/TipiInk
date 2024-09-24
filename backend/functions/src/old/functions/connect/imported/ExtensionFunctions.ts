@@ -26,7 +26,7 @@ import {createConnectedPayment} from './ConnectedPayments'
 import {insertInvoiceRecord} from '../../../db/StripeConnectInvoices'
 import {deleteConnectedPrice} from '../../../db/StripeConnectPricesDAO'
 import {insertTaxRateRecord} from '../../../db/StripeConnectTaxRates'
-import {firestore} from '../../../FirebaseInit'
+import {firestore} from '../../../../FirebaseInit'
 
 export const handleWebhooksEventsHandler = async (req: functions.https.Request, resp: functions.Response) => {
     const relevantEvents = new Set([

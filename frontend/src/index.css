@@ -39,7 +39,7 @@ html, body, #root {
     }
 
     .page {
-        @apply w-full h-full lg:w-screen lg:h-screen pt-[5.5rem];
+        @apply w-full h-full lg:w-screen lg:h-screen;
     }
 
     /* Custom CSS to hide scrollbar */

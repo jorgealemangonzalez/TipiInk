@@ -4,6 +4,7 @@ import {useEffect} from 'react'
 import {ProtectedPage} from './ProtectedPage.tsx'
 import mixpanel from 'mixpanel-browser'
 import {MainComponent} from "@/pages/MainComponent.tsx"
+import {UploadFilePage} from "@/pages/UploadFile.tsx"
 
 export const RoutingComponent = () => {
     const location = useLocation()
@@ -19,7 +20,8 @@ export const RoutingComponent = () => {
         <Route path="*" element={
             <ProtectedPage>
                 <Routes>
-                    <Route path="/" element={<MainComponent/>}/>
+                    <Route path="/" element={<UploadFilePage/>}/>
+                    <Route path="/main" element={<MainComponent/>}/>
                 </Routes>
             </ProtectedPage>
         }/>

@@ -17,7 +17,6 @@ export const ProtectedPage = ({ children }: { children: ReactNode }) => {
 
 
     return <AuthenticatedProviders>
-        <NavigationBar/>
         <div className="page">
             {children}
         </div>

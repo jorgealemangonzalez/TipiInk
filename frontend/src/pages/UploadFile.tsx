@@ -176,7 +176,6 @@ export function UploadFilePage() {
                     handleFlagInvoice={handleFlagInvoice}
                     missingDeliveryNotes={missingDeliveryNotes}
                     unlistedDeliveryNotes={unlistedDeliveryNotes}
-                    uploadedImage={uploadedImage}
                 />
             )
         default:

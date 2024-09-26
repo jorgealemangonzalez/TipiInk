@@ -146,13 +146,47 @@ export function UploadFilePage() {
     const renderScreen = () => {
         switch (activeScreen) {
         case 'main':
-            return <MainScreen isHistorialExpanded={isHistorialExpanded} setIsHistorialExpanded={setIsHistorialExpanded} handleImageUpload={handleImageUpload} />
+            return (
+                <MainScreen
+                    isHistorialExpanded={isHistorialExpanded}
+                    setIsHistorialExpanded={setIsHistorialExpanded}
+                    handleImageUpload={handleImageUpload}
+                />
+            )
         case 'albaran':
-            return <AlbaranScreen setActiveScreen={setActiveScreen} invoiceData={invoiceData} handleInputChange={handleInvoiceInputChange} handleItemChange={handleInvoiceItemChange} setShowImagePopup={setShowImagePopup} uploadedImage={uploadedImage} />
+            return (
+                <AlbaranScreen
+                    setActiveScreen={setActiveScreen}
+                    invoiceData={invoiceData}
+                    handleInputChange={handleInvoiceInputChange}
+                    handleItemChange={handleInvoiceItemChange}
+                    setShowImagePopup={setShowImagePopup}
+                />
+            )
         case 'facturas':
-            return <FacturasScreen setActiveScreen={setActiveScreen} invoice={invoice} handleInputChange={handleInvoiceChange} totalDeliveryNotes={totalDeliveryNotes} totalsMatch={totalsMatch} deliveryNotesMatch={deliveryNotesMatch} handleValidateInvoice={handleValidateInvoice} handleFlagInvoice={handleFlagInvoice} missingDeliveryNotes={missingDeliveryNotes} unlistedDeliveryNotes={unlistedDeliveryNotes} uploadedImage={uploadedImage} />
+            return (
+                <FacturasScreen
+                    setActiveScreen={setActiveScreen}
+                    invoice={invoice}
+                    handleInputChange={handleInvoiceChange}
+                    totalDeliveryNotes={totalDeliveryNotes}
+                    totalsMatch={totalsMatch}
+                    deliveryNotesMatch={deliveryNotesMatch}
+                    handleValidateInvoice={handleValidateInvoice}
+                    handleFlagInvoice={handleFlagInvoice}
+                    missingDeliveryNotes={missingDeliveryNotes}
+                    unlistedDeliveryNotes={unlistedDeliveryNotes}
+                    uploadedImage={uploadedImage}
+                />
+            )
         default:
-            return <MainScreen isHistorialExpanded={isHistorialExpanded} setIsHistorialExpanded={setIsHistorialExpanded} handleImageUpload={handleImageUpload} />
+            return (
+                <MainScreen
+                    isHistorialExpanded={isHistorialExpanded}
+                    setIsHistorialExpanded={setIsHistorialExpanded}
+                    handleImageUpload={handleImageUpload}
+                />
+            )
         }
     }
 
@@ -180,15 +214,27 @@ export function UploadFilePage() {
                             style={{ transform: `scale(${zoomLevel})` }}
                         />
                         <div className="absolute top-2 right-2 flex space-x-2">
-                            <Button size="sm" variant="secondary" onClick={() => setZoomLevel(prev => Math.min(prev + 0.1, 3))}>
+                            <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => setZoomLevel(prev => Math.min(prev + 0.1, 3))}
+                            >
                                 <ZoomIn className="h-4 w-4" />
                             </Button>
-                            <Button size="sm" variant="secondary" onClick={() => setZoomLevel(prev => Math.max(prev - 0.1, 0.5))}>
+                            <Button
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => setZoomLevel(prev => Math.max(prev - 0.1, 0.5))}
+                            >
                                 <ZoomOut className="h-4 w-4" />
                             </Button>
                         </div>
                     </div>
-                    <Button onClick={() => setShowImagePopup(false)} className="absolute top-2 right-2" variant="ghost">
+                    <Button
+                        onClick={() => setShowImagePopup(false)}
+                        className="absolute top-2 right-2"
+                        variant="ghost"
+                    >
                         <X className="h-4 w-4" />
                     </Button>
                 </DialogContent>
@@ -197,7 +243,15 @@ export function UploadFilePage() {
     )
 }
 
-function MainScreen({ isHistorialExpanded, setIsHistorialExpanded, handleImageUpload }: { isHistorialExpanded: boolean, setIsHistorialExpanded: (expanded: boolean) => void, handleImageUpload: (screen: 'albaran' | 'facturas') => void }) {
+function MainScreen({
+    isHistorialExpanded,
+    setIsHistorialExpanded,
+    handleImageUpload
+}: {
+    isHistorialExpanded: boolean,
+    setIsHistorialExpanded: (expanded: boolean) => void,
+    handleImageUpload: (screen: 'albaran' | 'facturas') => void
+}) {
     return (
         <>
             <div className="flex justify-between items-start mb-8">
@@ -234,7 +288,7 @@ function MainScreen({ isHistorialExpanded, setIsHistorialExpanded, handleImageUp
                 <CardContent className="p-6">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-2xl font-semibold text-[#12323a] flex items-center">
-                        Historial
+                            Historial
                         </h2>
                         <Button
                             variant="ghost"
@@ -249,7 +303,6 @@ function MainScreen({ isHistorialExpanded, setIsHistorialExpanded, handleImageUp
                             )}
                         </Button>
                     </div>
-                    {/* Container for the collapsible content */}
                     <div
                         className={`transition-all duration-300 ease-in-out overflow-hidden ${
                             isHistorialExpanded ? 'max-h-64 opacity-100' : 'max-h-14'
@@ -280,12 +333,28 @@ function MainScreen({ isHistorialExpanded, setIsHistorialExpanded, handleImageUp
     )
 }
 
-function AlbaranScreen({ setActiveScreen, invoiceData, handleInputChange, handleItemChange, setShowImagePopup, uploadedImage }: { setActiveScreen: (screen: string) => void, invoiceData: InvoiceData, handleInputChange: (field: keyof InvoiceData, value: string) => void, handleItemChange: (index: number, field: keyof Item, value: string) => void, setShowImagePopup: (show: boolean) => void, uploadedImage: string | null }) {
+function AlbaranScreen({
+    setActiveScreen,
+    invoiceData,
+    handleInputChange,
+    handleItemChange,
+    setShowImagePopup,
+}: {
+    setActiveScreen: (screen: string) => void,
+    invoiceData: InvoiceData,
+    handleInputChange: (field: keyof InvoiceData, value: string) => void,
+    handleItemChange: (index: number, field: keyof Item, value: string) => void,
+    setShowImagePopup: (show: boolean) => void,
+}) {
     return (
         <div className="h-full flex flex-col">
-            <Button onClick={() => setActiveScreen('main')} variant="ghost" className="mb-4 text-[#12323a] self-start hover:bg-[#3fc1c9] hover:text-white transition-colors duration-200">
+            <Button
+                onClick={() => setActiveScreen('main')}
+                variant="ghost"
+                className="mb-4 text-[#12323a] self-start hover:bg-[#3fc1c9] hover:text-white transition-colors duration-200"
+            >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                    Volver
+                Volver
             </Button>
             <div className="bg-white p-6 rounded-lg shadow-lg">
                 <h2 className="text-3xl font-bold mb-6 text-[#12323a]">Datos del Albarán</h2>
@@ -383,18 +452,44 @@ function AlbaranScreen({ setActiveScreen, invoiceData, handleInputChange, handle
                 className="mt-6 bg-[#3fc1c9] hover:bg-[#3F7CC9] text-white self-center px-8 py-4 text-lg rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
             >
                 <Eye className="mr-2 h-6 w-6" />
-                    Ver Imagen del Albarán
+                Ver Imagen del Albarán
             </Button>
         </div>
     )
 }
 
-function FacturasScreen({ setActiveScreen, invoice, handleInputChange, totalDeliveryNotes, totalsMatch, deliveryNotesMatch, handleValidateInvoice, handleFlagInvoice, missingDeliveryNotes, unlistedDeliveryNotes, uploadedImage }: { setActiveScreen: (screen: string) => void, invoice: Invoice, handleInputChange: (field: keyof Invoice, value: string) => void, totalDeliveryNotes: number, totalsMatch: boolean, deliveryNotesMatch: boolean, handleValidateInvoice: () => void, handleFlagInvoice: () => void, missingDeliveryNotes: string[], unlistedDeliveryNotes: string[], uploadedImage: string | null }) {
+function FacturasScreen({
+    setActiveScreen,
+    invoice,
+    handleInputChange,
+    totalDeliveryNotes,
+    totalsMatch,
+    deliveryNotesMatch,
+    handleValidateInvoice,
+    handleFlagInvoice,
+    missingDeliveryNotes,
+    unlistedDeliveryNotes
+}: {
+    setActiveScreen: (screen: string) => void,
+    invoice: Invoice,
+    handleInputChange: (field: keyof Invoice, value: string) => void,
+    totalDeliveryNotes: number,
+    totalsMatch: boolean,
+    deliveryNotesMatch: boolean,
+    handleValidateInvoice: () => void,
+    handleFlagInvoice: () => void,
+    missingDeliveryNotes: string[],
+    unlistedDeliveryNotes: string[]
+}) {
     return (
         <div className="h-full flex flex-col">
-            <Button onClick={() => setActiveScreen('main')} variant="ghost" className="mb-4 text-[#12323a] self-start hover:bg-[#3fc1c9] hover:text-white transition-colors duration-200">
+            <Button
+                onClick={() => setActiveScreen('main')}
+                variant="ghost"
+                className="mb-4 text-[#12323a] self-start hover:bg-[#3fc1c9] hover:text-white transition-colors duration-200"
+            >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                    Volver
+                Volver
             </Button>
             <h2 className="text-3xl font-bold mb-6 text-[#12323a]">Verificación de Factura</h2>
             <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
@@ -462,8 +557,8 @@ function FacturasScreen({ setActiveScreen, invoice, handleInputChange, totalDeli
                 <Alert variant={totalsMatch ? "default" : "destructive"}>
                     <AlertTitle>Verificación de Totales</AlertTitle>
                     <AlertDescription>
-                            Total Factura: {invoice.total}€<br />
-                            Total Albaranes: {totalDeliveryNotes}€<br />
+                        Total Factura: {invoice.total}€<br />
+                        Total Albaranes: {totalDeliveryNotes}€<br />
                         {totalsMatch ? "Los totales coinciden" : "Hay una discrepancia en los totales"}
                     </AlertDescription>
                 </Alert>
@@ -494,14 +589,14 @@ function FacturasScreen({ setActiveScreen, invoice, handleInputChange, totalDeli
                     disabled={!totalsMatch || !deliveryNotesMatch}
                 >
                     <Check className="mr-2 h-4 w-4" />
-                        Validar Factura
+                    Validar Factura
                 </Button>
                 <Button
                     onClick={handleFlagInvoice}
                     className="bg-yellow-500 hover:bg-yellow-600 text-white"
                 >
                     <AlertTriangle className="mr-2 h-4 w-4" />
-                        Marcar para Verificación Manual
+                    Marcar para Verificación Manual
                 </Button>
             </div>
         </div>

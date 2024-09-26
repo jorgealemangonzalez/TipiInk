@@ -1,14 +1,26 @@
-import { useState, useEffect } from 'react'
-import { Camera, FileText, ChevronDown, ChevronUp, ArrowLeft, Eye, X, ZoomIn, ZoomOut, Check, AlertTriangle } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {useEffect, useState} from 'react'
+import {
+    AlertTriangle,
+    ArrowLeft,
+    Camera,
+    Check,
+    ChevronDown,
+    ChevronUp,
+    Eye,
+    FileText,
+    X,
+    ZoomIn,
+    ZoomOut
+} from 'lucide-react'
+import {Button} from "@/components/ui/button"
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
+import {ScrollArea} from "@/components/ui/scroll-area"
+import {Input} from "@/components/ui/input"
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table"
+import {Dialog, DialogContent} from "@/components/ui/dialog"
+import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert"
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
+import {useUser} from "@/auth/auth.tsx"
 
 interface Item {
     item: string
@@ -251,17 +263,16 @@ function MainScreen({
     setIsHistorialExpanded: (expanded: boolean) => void,
     handleImageUpload: (screen: 'albaran' | 'facturas') => void
 }) {
+    const { displayName } = useUser()
+
     return (
         <>
             <div className="flex justify-between items-start mb-8">
                 <div className="flex items-center space-x-4">
-                    <Avatar className="h-16 w-16 ring-2 ring-[#3fc1c9] ring-offset-2">
-                        <AvatarImage src="/placeholder.svg?height=64&width=64" />
-                        <AvatarFallback>US</AvatarFallback>
-                    </Avatar>
                     <div>
-                        <h2 className="text-2xl font-semibold text-[#3F7CC9]">Bienvenido,</h2>
-                        <h1 className="text-3xl font-bold text-[#12323a]">Usuario TIPI</h1>
+                        <h2 className="text-3xl font-semibold text-[#3F7CC9]">
+                            Bienvenido {displayName}
+                        </h2>
                     </div>
                 </div>
             </div>

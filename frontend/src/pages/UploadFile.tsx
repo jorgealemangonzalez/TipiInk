@@ -11,34 +11,34 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface Item {
-    articulo: string
-    cantidad: number
-    precio: number
-    tipoIVA: number
+    item: string
+    quantity: number
+    price: number
+    vat_type: number
     total: number
 }
 
-interface AlbaranData {
-    proveedor: string
-    serie: string
+interface InvoiceData {
+    provider: string
+    serial_number: string
     items: Item[]
     subtotal: number
-    totalIVA: number
+    total_vat: number
     total: number
 }
 
-interface Albaran {
-    numero: string
+interface DeliveryNote {
+    number: string
     total: number
 }
 
-interface FacturaData {
-    numero: string
-    proveedor: string
-    fecha: string
+interface Invoice {
+    number: string
+    provider: string
+    date: string
     total: number
-    albaranes: Albaran[]
-    albaranesListados: string[]
+    delivery_notes: DeliveryNote[]
+    listed_delivery_notes: string[]
 }
 
 export function UploadFilePage() {
@@ -48,88 +48,88 @@ export function UploadFilePage() {
     const [zoomLevel, setZoomLevel] = useState(1)
     const [uploadedImage, setUploadedImage] = useState<string | null>(null)
 
-    const [albaranData, setAlbaranData] = useState<AlbaranData>({
-        proveedor: 'Julian',
-        serie: '123-1245',
+    const [invoiceData, setInvoiceData] = useState<InvoiceData>({
+        provider: 'Julian',
+        serial_number: '123-1245',
         items: [
-            { articulo: 'Anchoas', cantidad: 2, precio: 10, tipoIVA: 10, total: 20 },
-            { articulo: 'Queso', cantidad: 4, precio: 5, tipoIVA: 5, total: 20 },
-            { articulo: 'Atun', cantidad: 2, precio: 5, tipoIVA: 21, total: 10 },
+            { item: 'Anchoas', quantity: 2, price: 10, vat_type: 10, total: 20 },
+            { item: 'Queso', quantity: 4, price: 5, vat_type: 5, total: 20 },
+            { item: 'Atun', quantity: 2, price: 5, vat_type: 21, total: 10 },
         ],
         subtotal: 50,
-        totalIVA: 6.5,
+        total_vat: 6.5,
         total: 56.5,
     })
 
-    const [facturaData, setFacturaData] = useState<FacturaData>({
-        numero: 'FAC-001',
-        proveedor: 'Proveedor A',
-        fecha: '2023-05-25',
+    const [invoice, setInvoice] = useState<Invoice>({
+        number: 'FAC-001',
+        provider: 'Proveedor A',
+        date: '2023-05-25',
         total: 200,
-        albaranes: [
-            { numero: 'ALB-001', total: 95 },
-            { numero: 'ALB-002', total: 105 },
+        delivery_notes: [
+            { number: 'ALB-001', total: 95 },
+            { number: 'ALB-002', total: 105 },
         ],
-        albaranesListados: ['ALB-001', 'ALB-002', 'ALB-003']
+        listed_delivery_notes: ['ALB-001', 'ALB-002', 'ALB-003']
     })
 
-    const [totalAlbaranes, setTotalAlbaranes] = useState(0)
-    const [totalesCoinciden, setTotalesCoinciden] = useState(false)
-    const [albaranesCoinciden, setAlbaranesCoinciden] = useState(false)
-    const [albaranesFaltantes, setAlbaranesFaltantes] = useState<string[]>([])
-    const [albaranesNoListados, setAlbaranesNoListados] = useState<string[]>([])
+    const [totalDeliveryNotes, setTotalDeliveryNotes] = useState(0)
+    const [totalsMatch, setTotalsMatch] = useState(false)
+    const [deliveryNotesMatch, setDeliveryNotesMatch] = useState(false)
+    const [missingDeliveryNotes, setMissingDeliveryNotes] = useState<string[]>([])
+    const [unlistedDeliveryNotes, setUnlistedDeliveryNotes] = useState<string[]>([])
 
     useEffect(() => {
-        const nuevoTotal = facturaData.albaranes.reduce((sum, albaran) => sum + albaran.total, 0)
-        setTotalAlbaranes(nuevoTotal)
-        setTotalesCoinciden(nuevoTotal === facturaData.total)
+        const newTotal = invoice.delivery_notes.reduce((sum, note) => sum + note.total, 0)
+        setTotalDeliveryNotes(newTotal)
+        setTotalsMatch(newTotal === invoice.total)
 
-        const albaranesRegistrados = new Set(facturaData.albaranes.map(a => a.numero))
-        const albaranesListados = new Set(facturaData.albaranesListados)
+        const registeredNotes = new Set(invoice.delivery_notes.map(a => a.number))
+        const listedNotes = new Set(invoice.listed_delivery_notes)
 
-        const faltantes = [...albaranesListados].filter(x => !albaranesRegistrados.has(x))
-        const noListados = [...albaranesRegistrados].filter(x => !albaranesListados.has(x))
+        const missing = [...listedNotes].filter(x => !registeredNotes.has(x))
+        const unlisted = [...registeredNotes].filter(x => !listedNotes.has(x))
 
-        setAlbaranesFaltantes(faltantes)
-        setAlbaranesNoListados(noListados)
-        setAlbaranesCoinciden(faltantes.length === 0 && noListados.length === 0)
-    }, [facturaData])
+        setMissingDeliveryNotes(missing)
+        setUnlistedDeliveryNotes(unlisted)
+        setDeliveryNotesMatch(missing.length === 0 && unlisted.length === 0)
+    }, [invoice])
 
-    const handleAlbaranInputChange = (field: keyof AlbaranData, value: string) => {
-        setAlbaranData(prev => ({ ...prev, [field]: value }))
+    const handleInvoiceInputChange = (field: keyof InvoiceData, value: string) => {
+        setInvoiceData(prev => ({ ...prev, [field]: value }))
     }
 
-    const handleAlbaranItemChange = (index: number, field: keyof Item, value: string) => {
-        const newItems = [...albaranData.items]
+    const handleInvoiceItemChange = (index: number, field: keyof Item, value: string) => {
+        const newItems = [...invoiceData.items]
         newItems[index] = {
             ...newItems[index],
-            [field]: field === 'articulo' ? value : parseFloat(value) || 0
+            [field]: field === 'item' ? value : parseFloat(value) || 0
         }
-        newItems[index].total = newItems[index].cantidad * newItems[index].precio * (1 + newItems[index].tipoIVA / 100)
+        newItems[index].total = newItems[index].quantity * newItems[index].price * (1 + newItems[index].vat_type / 100)
 
-        const subtotal = newItems.reduce((sum, item) => sum + (item.cantidad * item.precio), 0)
-        const totalIVA = newItems.reduce((sum, item) => sum + (item.cantidad * item.precio * item.tipoIVA / 100), 0)
-        const total = subtotal + totalIVA
+        const subtotal = newItems.reduce((sum, item) => sum + (item.quantity * item.price), 0)
+        const total_vat = newItems.reduce((sum, item) => sum + (item.quantity * item.price * item.vat_type / 100), 0)
+        const total = subtotal + total_vat
 
-        setAlbaranData(prev => ({
+        setInvoiceData(prev => ({
             ...prev,
             items: newItems,
             subtotal,
-            totalIVA,
+            total_vat,
             total,
         }))
     }
 
-    const handleFacturaInputChange = (field: keyof FacturaData, value: string) => {
-        setFacturaData(prev => ({ ...prev, [field]: field === 'total' ? parseFloat(value) : value }))
+    const handleInvoiceChange = (field: keyof Invoice, value: string) => {
+        setInvoice(prev => ({ ...prev, [field]: field === 'total' ? parseFloat(value) : value }))
     }
 
-    const handleValidarFactura = () => {
+    const handleValidateInvoice = () => {
         console.log('Factura validada')
         // Aquí iría la lógica para validar la factura
     }
 
-    const handleFlagFactura = () => {
+    const handleFlagInvoice = () => {
         console.log('Factura marcada para verificación manual')
         // Aquí iría la lógica para marcar la factura para verificación manual
     }
@@ -146,13 +146,13 @@ export function UploadFilePage() {
     const renderScreen = () => {
         switch (activeScreen) {
         case 'main':
-            return <MainScreen setActiveScreen={setActiveScreen} isHistorialExpanded={isHistorialExpanded} setIsHistorialExpanded={setIsHistorialExpanded} handleImageUpload={handleImageUpload} />
+            return <MainScreen isHistorialExpanded={isHistorialExpanded} setIsHistorialExpanded={setIsHistorialExpanded} handleImageUpload={handleImageUpload} />
         case 'albaran':
-            return <AlbaranScreen setActiveScreen={setActiveScreen} albaranData={albaranData} handleInputChange={handleAlbaranInputChange} handleItemChange={handleAlbaranItemChange} setShowImagePopup={setShowImagePopup} uploadedImage={uploadedImage} />
+            return <AlbaranScreen setActiveScreen={setActiveScreen} invoiceData={invoiceData} handleInputChange={handleInvoiceInputChange} handleItemChange={handleInvoiceItemChange} setShowImagePopup={setShowImagePopup} uploadedImage={uploadedImage} />
         case 'facturas':
-            return <FacturasScreen setActiveScreen={setActiveScreen} facturaData={facturaData} handleInputChange={handleFacturaInputChange} totalAlbaranes={totalAlbaranes} totalesCoinciden={totalesCoinciden} albaranesCoinciden={albaranesCoinciden} handleValidarFactura={handleValidarFactura} handleFlagFactura={handleFlagFactura} albaranesFaltantes={albaranesFaltantes} albaranesNoListados={albaranesNoListados} uploadedImage={uploadedImage} />
+            return <FacturasScreen setActiveScreen={setActiveScreen} invoice={invoice} handleInputChange={handleInvoiceChange} totalDeliveryNotes={totalDeliveryNotes} totalsMatch={totalsMatch} deliveryNotesMatch={deliveryNotesMatch} handleValidateInvoice={handleValidateInvoice} handleFlagInvoice={handleFlagInvoice} missingDeliveryNotes={missingDeliveryNotes} unlistedDeliveryNotes={unlistedDeliveryNotes} uploadedImage={uploadedImage} />
         default:
-            return <MainScreen setActiveScreen={setActiveScreen} isHistorialExpanded={isHistorialExpanded} setIsHistorialExpanded={setIsHistorialExpanded} handleImageUpload={handleImageUpload} />
+            return <MainScreen isHistorialExpanded={isHistorialExpanded} setIsHistorialExpanded={setIsHistorialExpanded} handleImageUpload={handleImageUpload} />
         }
     }
 
@@ -197,7 +197,7 @@ export function UploadFilePage() {
     )
 }
 
-function MainScreen({ setActiveScreen, isHistorialExpanded, setIsHistorialExpanded, handleImageUpload }: { setActiveScreen: (screen: string) => void, isHistorialExpanded: boolean, setIsHistorialExpanded: (expanded: boolean) => void, handleImageUpload: (screen: 'albaran' | 'facturas') => void }) {
+function MainScreen({ isHistorialExpanded, setIsHistorialExpanded, handleImageUpload }: { isHistorialExpanded: boolean, setIsHistorialExpanded: (expanded: boolean) => void, handleImageUpload: (screen: 'albaran' | 'facturas') => void }) {
     return (
         <>
             <div className="flex justify-between items-start mb-8">
@@ -219,7 +219,7 @@ function MainScreen({ setActiveScreen, isHistorialExpanded, setIsHistorialExpand
                         className="flex-1 h-fit p-8 text-xl bg-gradient-to-br from-[#3FC98C] to-[#3F7CC9] hover:from-[#3F7CC9] hover:to-[#3FC98C] text-white rounded-3xl shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-1 flex flex-col items-center justify-center space-y-4"
                     >
                         <FileText className="size-16" />
-                        <span className="font-semibold">Facturas</span>
+                        <span className="font-semibold">Factura</span>
                     </Button>
                     <Button
                         onClick={() => handleImageUpload('albaran')}
@@ -234,7 +234,7 @@ function MainScreen({ setActiveScreen, isHistorialExpanded, setIsHistorialExpand
                 <CardContent className="p-6">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-2xl font-semibold text-[#12323a] flex items-center">
-                                Historial
+                        Historial
                         </h2>
                         <Button
                             variant="ghost"
@@ -242,17 +242,29 @@ function MainScreen({ setActiveScreen, isHistorialExpanded, setIsHistorialExpand
                             onClick={() => setIsHistorialExpanded(!isHistorialExpanded)}
                             className="text-[#12323a] hover:bg-[#3fc1c9] hover:text-white transition-colors duration-200"
                         >
-                            {isHistorialExpanded ? <ChevronDown className="h-6 w-6" /> : <ChevronUp className="h-6 w-6" />}
+                            {isHistorialExpanded ? (
+                                <ChevronDown className="h-6 w-6" />
+                            ) : (
+                                <ChevronUp className="h-6 w-6" />
+                            )}
                         </Button>
                     </div>
-                    {isHistorialExpanded ? (
+                    {/* Container for the collapsible content */}
+                    <div
+                        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                            isHistorialExpanded ? 'max-h-64 opacity-100' : 'max-h-14'
+                        }`}
+                    >
                         <ScrollArea className="h-64">
                             {[...Array(10)].map((_, i) => (
-                                <div key={i} className="mb-4 p-4 bg-gradient-to-r from-[#b7f0fe] to-[#d8f8ff] rounded-lg shadow transition-all duration-200 hover:shadow-md">
+                                <div
+                                    key={i}
+                                    className="mb-4 p-4 bg-gradient-to-r from-[#b7f0fe] to-[#d8f8ff] rounded-lg shadow transition-all duration-200 hover:shadow-md"
+                                >
                                     <div className="flex justify-between items-center">
                                         <p className="font-medium text-[#12323a] flex items-center">
                                             <FileText className="mr-2 h-4 w-4 text-[#3F7CC9]" />
-                                                        Factura #{1000 + i}
+                                            Factura #{1000 + i}
                                         </p>
                                         <p className="text-sm text-[#3F7CC9]">
                                             {new Date().toLocaleDateString()}
@@ -261,26 +273,14 @@ function MainScreen({ setActiveScreen, isHistorialExpanded, setIsHistorialExpand
                                 </div>
                             ))}
                         </ScrollArea>
-                    ) : (
-                        <div className="p-4 bg-gradient-to-r from-[#b7f0fe] to-[#d8f8ff] rounded-lg shadow transition-all duration-200 hover:shadow-md">
-                            <div className="flex justify-between items-center">
-                                <p className="font-medium text-[#12323a] flex items-center">
-                                    <FileText className="mr-2 h-4 w-4 text-[#3F7CC9]" />
-                                            Factura #1000
-                                </p>
-                                <p className="text-sm text-[#3F7CC9]">
-                                    {new Date().toLocaleDateString()}
-                                </p>
-                            </div>
-                        </div>
-                    )}
+                    </div>
                 </CardContent>
             </Card>
         </>
     )
 }
 
-function AlbaranScreen({ setActiveScreen, albaranData, handleInputChange, handleItemChange, setShowImagePopup, uploadedImage }: { setActiveScreen: (screen: string) => void, albaranData: AlbaranData, handleInputChange: (field: keyof AlbaranData, value: string) => void, handleItemChange: (index: number, field: keyof Item, value: string) => void, setShowImagePopup: (show: boolean) => void, uploadedImage: string | null }) {
+function AlbaranScreen({ setActiveScreen, invoiceData, handleInputChange, handleItemChange, setShowImagePopup, uploadedImage }: { setActiveScreen: (screen: string) => void, invoiceData: InvoiceData, handleInputChange: (field: keyof InvoiceData, value: string) => void, handleItemChange: (index: number, field: keyof Item, value: string) => void, setShowImagePopup: (show: boolean) => void, uploadedImage: string | null }) {
     return (
         <div className="h-full flex flex-col">
             <Button onClick={() => setActiveScreen('main')} variant="ghost" className="mb-4 text-[#12323a] self-start hover:bg-[#3fc1c9] hover:text-white transition-colors duration-200">
@@ -293,16 +293,16 @@ function AlbaranScreen({ setActiveScreen, albaranData, handleInputChange, handle
                     <div>
                         <label className="text-sm font-medium text-[#12323a]">Proveedor</label>
                         <Input
-                            value={albaranData.proveedor}
-                            onChange={(e) => handleInputChange('proveedor', e.target.value)}
+                            value={invoiceData.provider}
+                            onChange={(e) => handleInputChange('provider', e.target.value)}
                             className="mt-1"
                         />
                     </div>
                     <div>
                         <label className="text-sm font-medium text-[#12323a]">Nº Serie</label>
                         <Input
-                            value={albaranData.serie}
-                            onChange={(e) => handleInputChange('serie', e.target.value)}
+                            value={invoiceData.serial_number}
+                            onChange={(e) => handleInputChange('serial_number', e.target.value)}
                             className="mt-1"
                         />
                     </div>
@@ -319,32 +319,32 @@ function AlbaranScreen({ setActiveScreen, albaranData, handleInputChange, handle
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {albaranData.items.map((item, index) => (
+                            {invoiceData.items.map((item, index) => (
                                 <TableRow key={index}>
                                     <TableCell>
                                         <Input
-                                            value={item.articulo}
-                                            onChange={(e) => handleItemChange(index, 'articulo', e.target.value)}
+                                            value={item.item}
+                                            onChange={(e) => handleItemChange(index, 'item', e.target.value)}
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <Input
                                             type="number"
-                                            value={item.cantidad}
-                                            onChange={(e) => handleItemChange(index, 'cantidad', e.target.value)}
+                                            value={item.quantity}
+                                            onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <Input
                                             type="number"
-                                            value={item.precio}
-                                            onChange={(e) => handleItemChange(index, 'precio', e.target.value)}
+                                            value={item.price}
+                                            onChange={(e) => handleItemChange(index, 'price', e.target.value)}
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <Select
-                                            value={item.tipoIVA.toString()}
-                                            onValueChange={(value) => handleItemChange(index, 'tipoIVA', value)}
+                                            value={item.vat_type.toString()}
+                                            onValueChange={(value) => handleItemChange(index, 'vat_type', value)}
                                         >
                                             <SelectTrigger className="w-[180px]">
                                                 <SelectValue placeholder="Seleccionar IVA" />
@@ -366,15 +366,15 @@ function AlbaranScreen({ setActiveScreen, albaranData, handleInputChange, handle
                 <div className="mt-4 space-y-2">
                     <div className="flex justify-end">
                         <span className="font-medium mr-4">Subtotal:</span>
-                        <span>{albaranData.subtotal.toFixed(2)}€</span>
+                        <span>{invoiceData.subtotal.toFixed(2)}€</span>
                     </div>
                     <div className="flex justify-end">
                         <span className="font-medium mr-4">Total IVA:</span>
-                        <span>{albaranData.totalIVA.toFixed(2)}€</span>
+                        <span>{invoiceData.total_vat.toFixed(2)}€</span>
                     </div>
                     <div className="flex justify-end text-lg font-bold">
                         <span className="mr-4">Total:</span>
-                        <span>{albaranData.total.toFixed(2)}€</span>
+                        <span>{invoiceData.total.toFixed(2)}€</span>
                     </div>
                 </div>
             </div>
@@ -389,7 +389,7 @@ function AlbaranScreen({ setActiveScreen, albaranData, handleInputChange, handle
     )
 }
 
-function FacturasScreen({ setActiveScreen, facturaData, handleInputChange, totalAlbaranes, totalesCoinciden, albaranesCoinciden, handleValidarFactura, handleFlagFactura, albaranesFaltantes, albaranesNoListados, uploadedImage }: { setActiveScreen: (screen: string) => void, facturaData: FacturaData, handleInputChange: (field: keyof FacturaData, value: string) => void, totalAlbaranes: number, totalesCoinciden: boolean, albaranesCoinciden: boolean, handleValidarFactura: () => void, handleFlagFactura: () => void, albaranesFaltantes: string[], albaranesNoListados: string[], uploadedImage: string | null }) {
+function FacturasScreen({ setActiveScreen, invoice, handleInputChange, totalDeliveryNotes, totalsMatch, deliveryNotesMatch, handleValidateInvoice, handleFlagInvoice, missingDeliveryNotes, unlistedDeliveryNotes, uploadedImage }: { setActiveScreen: (screen: string) => void, invoice: Invoice, handleInputChange: (field: keyof Invoice, value: string) => void, totalDeliveryNotes: number, totalsMatch: boolean, deliveryNotesMatch: boolean, handleValidateInvoice: () => void, handleFlagInvoice: () => void, missingDeliveryNotes: string[], unlistedDeliveryNotes: string[], uploadedImage: string | null }) {
     return (
         <div className="h-full flex flex-col">
             <Button onClick={() => setActiveScreen('main')} variant="ghost" className="mb-4 text-[#12323a] self-start hover:bg-[#3fc1c9] hover:text-white transition-colors duration-200">
@@ -402,16 +402,16 @@ function FacturasScreen({ setActiveScreen, facturaData, handleInputChange, total
                     <div>
                         <label className="text-sm font-medium text-[#12323a]">Número de Factura</label>
                         <Input
-                            value={facturaData.numero}
-                            onChange={(e) => handleInputChange('numero', e.target.value)}
+                            value={invoice.number}
+                            onChange={(e) => handleInputChange('number', e.target.value)}
                             className="mt-1"
                         />
                     </div>
                     <div>
                         <label className="text-sm font-medium text-[#12323a]">Proveedor</label>
                         <Input
-                            value={facturaData.proveedor}
-                            onChange={(e) => handleInputChange('proveedor', e.target.value)}
+                            value={invoice.provider}
+                            onChange={(e) => handleInputChange('provider', e.target.value)}
                             className="mt-1"
                         />
                     </div>
@@ -419,8 +419,8 @@ function FacturasScreen({ setActiveScreen, facturaData, handleInputChange, total
                         <label className="text-sm font-medium text-[#12323a]">Fecha</label>
                         <Input
                             type="date"
-                            value={facturaData.fecha}
-                            onChange={(e) => handleInputChange('fecha', e.target.value)}
+                            value={invoice.date}
+                            onChange={(e) => handleInputChange('date', e.target.value)}
                             className="mt-1"
                         />
                     </div>
@@ -428,7 +428,7 @@ function FacturasScreen({ setActiveScreen, facturaData, handleInputChange, total
                         <label className="text-sm font-medium text-[#12323a]">Total Factura</label>
                         <Input
                             type="number"
-                            value={facturaData.total}
+                            value={invoice.total}
                             onChange={(e) => handleInputChange('total', e.target.value)}
                             className="mt-1"
                         />
@@ -447,10 +447,10 @@ function FacturasScreen({ setActiveScreen, facturaData, handleInputChange, total
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {facturaData.albaranes.map((albaran, index) => (
+                                {invoice.delivery_notes.map((note, index) => (
                                     <TableRow key={index}>
-                                        <TableCell>{albaran.numero}</TableCell>
-                                        <TableCell>{albaran.total}€</TableCell>
+                                        <TableCell>{note.number}</TableCell>
+                                        <TableCell>{note.total}€</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -459,27 +459,27 @@ function FacturasScreen({ setActiveScreen, facturaData, handleInputChange, total
                 </Card>
             </div>
             <div className="space-y-4">
-                <Alert variant={totalesCoinciden ? "default" : "destructive"}>
+                <Alert variant={totalsMatch ? "default" : "destructive"}>
                     <AlertTitle>Verificación de Totales</AlertTitle>
                     <AlertDescription>
-                            Total Factura: {facturaData.total}€<br />
-                            Total Albaranes: {totalAlbaranes}€<br />
-                        {totalesCoinciden ? "Los totales coinciden" : "Hay una discrepancia en los totales"}
+                            Total Factura: {invoice.total}€<br />
+                            Total Albaranes: {totalDeliveryNotes}€<br />
+                        {totalsMatch ? "Los totales coinciden" : "Hay una discrepancia en los totales"}
                     </AlertDescription>
                 </Alert>
-                <Alert variant={albaranesCoinciden ? "default" : "destructive"}>
+                <Alert variant={deliveryNotesMatch ? "default" : "destructive"}>
                     <AlertTitle>Verificación de Albaranes</AlertTitle>
                     <AlertDescription>
-                        {albaranesCoinciden
+                        {deliveryNotesMatch
                             ? "Todos los albaranes listados están registrados y coinciden"
                             : (
                                 <>
                                     <p>Hay discrepancias entre los albaranes listados y los registrados:</p>
-                                    {albaranesFaltantes.length > 0 && (
-                                        <p>Albaranes faltantes: {albaranesFaltantes.join(', ')}</p>
+                                    {missingDeliveryNotes.length > 0 && (
+                                        <p>Albaranes faltantes: {missingDeliveryNotes.join(', ')}</p>
                                     )}
-                                    {albaranesNoListados.length > 0 && (
-                                        <p className="text-red-500">Albaranes no listados en la factura: {albaranesNoListados.join(', ')}</p>
+                                    {unlistedDeliveryNotes.length > 0 && (
+                                        <p className="text-red-500">Albaranes no listados en la factura: {unlistedDeliveryNotes.join(', ')}</p>
                                     )}
                                 </>
                             )
@@ -489,15 +489,15 @@ function FacturasScreen({ setActiveScreen, facturaData, handleInputChange, total
             </div>
             <div className="mt-6 flex justify-end space-x-4">
                 <Button
-                    onClick={handleValidarFactura}
+                    onClick={handleValidateInvoice}
                     className="bg-green-500 hover:bg-green-600 text-white"
-                    disabled={!totalesCoinciden || !albaranesCoinciden}
+                    disabled={!totalsMatch || !deliveryNotesMatch}
                 >
                     <Check className="mr-2 h-4 w-4" />
                         Validar Factura
                 </Button>
                 <Button
-                    onClick={handleFlagFactura}
+                    onClick={handleFlagInvoice}
                     className="bg-yellow-500 hover:bg-yellow-600 text-white"
                 >
                     <AlertTriangle className="mr-2 h-4 w-4" />

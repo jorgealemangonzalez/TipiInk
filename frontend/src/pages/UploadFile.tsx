@@ -21,6 +21,7 @@ import {Dialog, DialogContent} from "@/components/ui/dialog"
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
 import {useUser} from "@/auth/auth.tsx"
+import {uploadFileToStorage} from "@/firebase/fileStorage.ts"
 
 interface Item {
     item: string
@@ -59,6 +60,7 @@ export function UploadFilePage() {
     const [showImagePopup, setShowImagePopup] = useState(false)
     const [zoomLevel, setZoomLevel] = useState(1)
     const [uploadedImage, setUploadedImage] = useState<string | null>(null)
+    const user = useUser()
 
     const [invoiceData, setInvoiceData] = useState<InvoiceData>({
         provider: 'Julian',
@@ -146,13 +148,17 @@ export function UploadFilePage() {
         // Aquí iría la lógica para marcar la factura para verificación manual
     }
 
-    const handleImageUpload = (screen: 'albaran' | 'facturas') => {
-        // Simulating image upload
-        console.log(`Uploading image for ${screen}`)
-        setUploadedImage('/placeholder.svg?height=600&width=800')
-        // Here you would typically handle the actual image upload and OCR processing
-        // For now, we'll just set the active screen
-        setActiveScreen(screen)
+    const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>, screen: 'albaran' | 'facturas') => {
+        const target = event.target as HTMLInputElement
+        if (target.files && target.files[0]) {
+            const file = target.files[0]
+            const filePath = `users/${user.uid}/${screen}/${file.name}`
+            await uploadFileToStorage(filePath, file, (totalUploaded) => {
+                console.log(`Uploaded ${totalUploaded} bytes`)
+            })
+            setUploadedImage(URL.createObjectURL(file))
+            setActiveScreen(screen)
+        }
     }
 
     const renderScreen = () => {
@@ -261,7 +267,7 @@ function MainScreen({
 }: {
     isHistorialExpanded: boolean,
     setIsHistorialExpanded: (expanded: boolean) => void,
-    handleImageUpload: (screen: 'albaran' | 'facturas') => void
+    handleImageUpload: (event: React.ChangeEvent<HTMLInputElement>, screen: 'albaran' | 'facturas') => void
 }) {
     const { displayName } = useUser()
 
@@ -278,20 +284,26 @@ function MainScreen({
             </div>
             <div className="flex-grow flex flex-col justify-center">
                 <div className="flex w-full gap-8">
-                    <Button
-                        onClick={() => handleImageUpload('facturas')}
-                        className="flex-1 h-fit p-8 text-xl bg-gradient-to-br from-[#3FC98C] to-[#3F7CC9] hover:from-[#3F7CC9] hover:to-[#3FC98C] text-white rounded-3xl shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-1 flex flex-col items-center justify-center space-y-4"
-                    >
+                    <label className="flex-1 h-fit p-8 text-xl bg-gradient-to-br from-[#3FC98C] to-[#3F7CC9] hover:from-[#3F7CC9] hover:to-[#3FC98C] text-white rounded-3xl shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-1 flex flex-col items-center justify-center space-y-4 cursor-pointer">
                         <FileText className="size-16" />
                         <span className="font-semibold">Factura</span>
-                    </Button>
-                    <Button
-                        onClick={() => handleImageUpload('albaran')}
-                        className="flex-1 h-fit p-8 text-xl bg-gradient-to-br from-[#3fc1c9] to-[#3F7CC9] hover:from-[#3F7CC9] hover:to-[#3fc1c9] text-white rounded-3xl shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-1 flex flex-col items-center justify-center space-y-4"
-                    >
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => handleImageUpload(e, 'facturas')}
+                        />
+                    </label>
+                    <label className="flex-1 h-fit p-8 text-xl bg-gradient-to-br from-[#3fc1c9] to-[#3F7CC9] hover:from-[#3F7CC9] hover:to-[#3fc1c9] text-white rounded-3xl shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-1 flex flex-col items-center justify-center space-y-4 cursor-pointer">
                         <Camera className="size-16" />
                         <span className="font-semibold">Albarán</span>
-                    </Button>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => handleImageUpload(e, 'albaran')}
+                        />
+                    </label>
                 </div>
             </div>
             <Card className="bg-white bg-opacity-90 mt-auto shadow-xl">

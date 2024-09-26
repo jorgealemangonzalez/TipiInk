@@ -3,7 +3,7 @@ rules_version = '2';
 
 service firebase.storage {
     match /b/tipi-ink.appspot.com/o {
-        match /customers/{uid}/{allPaths=**} {
+        match /users/{uid}/{allPaths=**} {
             allow read, write: if request.resource.size < 200 * 1024 * 1024 && request.auth.uid == uid;
         }
     }

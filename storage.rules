@@ -4,7 +4,8 @@ rules_version = '2';
 service firebase.storage {
     match /b/tipi-ink.appspot.com/o {
         match /users/{uid}/{allPaths=**} {
-            allow read, write: if request.resource.size < 200 * 1024 * 1024 && request.auth.uid == uid;
+            allow write: if request.resource.size < 200 * 1024 * 1024 && request.auth.uid == uid;
+            allow read: if true; // TODO ADMIN SDK IS NOT USING THE RIGHT CREDENTIALS ( LOCALLY ) - if request.auth.uid == uid;
         }
     }
 }

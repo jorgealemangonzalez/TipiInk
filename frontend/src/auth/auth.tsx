@@ -3,8 +3,7 @@ import {signInAnonymously, User as FUser} from 'firebase/auth'
 import {auth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup} from '@/firebase/firebase.ts'
 import mixpanel from 'mixpanel-browser'
 import {Sentry} from '../sentry.ts'
-import axios from "axios"
-import {getSpreadSheetData} from "@/drive/sheets.ts"
+import {isLocalEnvironment} from "@/environment.ts"
 
 type User = FUser & { isAdmin: boolean };
 
@@ -102,7 +101,8 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
 
     const googleSignIn = async () => {
         const googleAuthProvider = new GoogleAuthProvider()
-        googleAuthProvider.addScope('https://www.googleapis.com/auth/spreadsheets')
+        if (!isLocalEnvironment)
+            googleAuthProvider.addScope('https://www.googleapis.com/auth/spreadsheets')
         await signInWithPopup(auth, googleAuthProvider)
         console.log('Google sign in successful')
         // console.log('credential', {credential})

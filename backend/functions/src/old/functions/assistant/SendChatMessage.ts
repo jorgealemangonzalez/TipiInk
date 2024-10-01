@@ -1,5 +1,5 @@
 import {https, logger} from 'firebase-functions/v2'
-import {throwIfUnauthenticatedRequest} from '../../auth/throwIfUnauthenticated'
+import {throwIfUnauthenticatedRequest} from '../../../auth/throwIfUnauthenticated'
 import {SendChatMessageRequest} from '../../types/TestAssistant'
 import {addMessage, getOrThrowChat} from '../../db/ChatDAO'
 import {getOrThrowChatbotConfig} from '../../db/ChatBotConfigDAO'

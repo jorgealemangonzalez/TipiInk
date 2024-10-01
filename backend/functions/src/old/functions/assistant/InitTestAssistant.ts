@@ -1,6 +1,6 @@
 // Cloud function to send completions to openAI
 import {logger, runWith} from 'firebase-functions'
-import {throwIfUnauthenticated} from '../../auth/throwIfUnauthenticated'
+import {throwIfUnauthenticated} from '../../../auth/throwIfUnauthenticated'
 import {addTestAssistantChat} from '../../db/ChatDAO'
 import {getInitialMessage} from '../../api/openai'
 import {InitTestAssistantRequest, InitTestAssistantResponse} from '../../types/TestAssistant'

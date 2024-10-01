@@ -4,7 +4,7 @@ import {
     StripeConnectAccountRequest,
     StripeConnectAccountResponse,
 } from '../../types/StripeConnect'
-import {throwIfUnauthenticated} from '../../auth/throwIfUnauthenticated'
+import {throwIfUnauthenticated} from '../../../auth/throwIfUnauthenticated'
 import {stripe} from '../../api/Stripe'
 import {AuthData} from 'firebase-functions/lib/common/providers/https'
 import {getStripeAccountByUserId} from '../../db/StripeAccountsDAO'

@@ -1,6 +1,6 @@
 import {https, logger} from 'firebase-functions'
 import {DeployRequest, DeployResponse} from '../types/Deploy'
-import {throwIfUnauthenticated} from '../auth/throwIfUnauthenticated'
+import {throwIfUnauthenticated} from '../../auth/throwIfUnauthenticated'
 import {getOrThrowChatbotConfig, updateChatbotConfig} from '../db/ChatBotConfigDAO'
 import {getInitialAssistantMessage, getOrThrowChat} from '../db/ChatDAO'
 import {stripe} from '../api/Stripe'

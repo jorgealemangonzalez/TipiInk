@@ -19,26 +19,11 @@ import {Input} from "@/components/ui/input"
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table"
 import {Dialog, DialogContent} from "@/components/ui/dialog"
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert"
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
 import {useUser} from "@/auth/auth.tsx"
 import {uploadFileToStorage} from "@/firebase/fileStorage.ts"
-
-interface Item {
-    item: string
-    quantity: number
-    price: number
-    vat_type: number
-    total: number
-}
-
-interface InvoiceData {
-    provider: string
-    serial_number: string
-    items: Item[]
-    subtotal: number
-    total_vat: number
-    total: number
-}
+import {extractInvoice} from "@/api/clients"
+import {Invoice as InvoiceData, Item} from "@monorepo/functions/src/types/ExtractInvoice"
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx"
 
 interface DeliveryNote {
     number: string
@@ -46,8 +31,8 @@ interface DeliveryNote {
 }
 
 interface Invoice {
-    number: string
     provider: string
+    serial_number: string
     date: string
     total: number
     delivery_notes: DeliveryNote[]
@@ -66,9 +51,9 @@ export function UploadFilePage() {
         provider: 'Julian',
         serial_number: '123-1245',
         items: [
-            { item: 'Anchoas', quantity: 2, price: 10, vat_type: 10, total: 20 },
-            { item: 'Queso', quantity: 4, price: 5, vat_type: 5, total: 20 },
-            { item: 'Atun', quantity: 2, price: 5, vat_type: 21, total: 10 },
+            {item: 'Anchoas', quantity: 2, price: 10, vat_type: 10, total: 20},
+            {item: 'Queso', quantity: 4, price: 5, vat_type: 5, total: 20},
+            {item: 'Atun', quantity: 2, price: 5, vat_type: 20, total: 10},
         ],
         subtotal: 50,
         total_vat: 6.5,
@@ -76,13 +61,13 @@ export function UploadFilePage() {
     })
 
     const [invoice, setInvoice] = useState<Invoice>({
-        number: 'FAC-001',
+        serial_number: 'FAC-001',
         provider: 'Proveedor A',
         date: '2023-05-25',
         total: 200,
         delivery_notes: [
-            { number: 'ALB-001', total: 95 },
-            { number: 'ALB-002', total: 105 },
+            {number: 'ALB-001', total: 95},
+            {number: 'ALB-002', total: 105},
         ],
         listed_delivery_notes: ['ALB-001', 'ALB-002', 'ALB-003']
     })
@@ -96,7 +81,7 @@ export function UploadFilePage() {
     useEffect(() => {
         const newTotal = invoice.delivery_notes.reduce((sum, note) => sum + note.total, 0)
         setTotalDeliveryNotes(newTotal)
-        setTotalsMatch(newTotal === invoice.total)
+        setTotalsMatch(newTotal===invoice.total)
 
         const registeredNotes = new Set(invoice.delivery_notes.map(a => a.number))
         const listedNotes = new Set(invoice.listed_delivery_notes)
@@ -106,23 +91,26 @@ export function UploadFilePage() {
 
         setMissingDeliveryNotes(missing)
         setUnlistedDeliveryNotes(unlisted)
-        setDeliveryNotesMatch(missing.length === 0 && unlisted.length === 0)
+        setDeliveryNotesMatch(missing.length===0 && unlisted.length===0)
     }, [invoice])
 
     const handleInvoiceInputChange = (field: keyof InvoiceData, value: string) => {
-        setInvoiceData(prev => ({ ...prev, [field]: value }))
+        setInvoiceData(prev => ({...prev, [field]: value}))
     }
 
     const handleInvoiceItemChange = (index: number, field: keyof Item, value: string) => {
-        const newItems = [...invoiceData.items]
+        const newItems = invoiceData.items ? [...invoiceData.items]:[]
         newItems[index] = {
             ...newItems[index],
-            [field]: field === 'item' ? value : parseFloat(value) || 0
+            [field]: field==='item' ? value:parseFloat(value) || 0
         }
-        newItems[index].total = newItems[index].quantity * newItems[index].price * (1 + newItems[index].vat_type / 100)
+        newItems[index].total =
+                (newItems[index].quantity ?? 0) *
+                (newItems[index].price ?? 0) *
+                (1 + (newItems[index].vat_type ?? 0) / 100)
 
-        const subtotal = newItems.reduce((sum, item) => sum + (item.quantity * item.price), 0)
-        const total_vat = newItems.reduce((sum, item) => sum + (item.quantity * item.price * item.vat_type / 100), 0)
+        const subtotal = newItems.reduce((sum, item) => sum + ((item.quantity ?? 0) * (item.price ?? 0)), 0)
+        const total_vat = newItems.reduce((sum, item) => sum + ((item.quantity ?? 0) * (item.price ?? 0) * (item.vat_type ?? 0) / 100), 0)
         const total = subtotal + total_vat
 
         setInvoiceData(prev => ({
@@ -135,7 +123,7 @@ export function UploadFilePage() {
     }
 
     const handleInvoiceChange = (field: keyof Invoice, value: string) => {
-        setInvoice(prev => ({ ...prev, [field]: field === 'total' ? parseFloat(value) : value }))
+        setInvoice(prev => ({...prev, [field]: field==='total' ? parseFloat(value):value}))
     }
 
     const handleValidateInvoice = () => {
@@ -157,6 +145,12 @@ export function UploadFilePage() {
                 console.log(`Uploaded ${totalUploaded} bytes`)
             })
             setUploadedImage(URL.createObjectURL(file))
+
+            // Call extractInvoice with the image path
+            const extractedInvoice = await extractInvoice({imagePath: filePath})
+            console.log('Extracted Invoice:', extractedInvoice)
+            // Update state with extracted invoice data if needed
+            setInvoiceData(extractedInvoice.invoice)
             setActiveScreen(screen)
         }
     }
@@ -228,7 +222,7 @@ export function UploadFilePage() {
                             src={uploadedImage || "/placeholder.svg?height=600&width=800"}
                             alt="Documento"
                             className="w-full h-auto"
-                            style={{ transform: `scale(${zoomLevel})` }}
+                            style={{transform: `scale(${zoomLevel})`}}
                         />
                         <div className="absolute top-2 right-2 flex space-x-2">
                             <Button
@@ -236,14 +230,14 @@ export function UploadFilePage() {
                                 variant="secondary"
                                 onClick={() => setZoomLevel(prev => Math.min(prev + 0.1, 3))}
                             >
-                                <ZoomIn className="h-4 w-4" />
+                                <ZoomIn className="h-4 w-4"/>
                             </Button>
                             <Button
                                 size="sm"
                                 variant="secondary"
                                 onClick={() => setZoomLevel(prev => Math.max(prev - 0.1, 0.5))}
                             >
-                                <ZoomOut className="h-4 w-4" />
+                                <ZoomOut className="h-4 w-4"/>
                             </Button>
                         </div>
                     </div>
@@ -252,7 +246,7 @@ export function UploadFilePage() {
                         className="absolute top-2 right-2"
                         variant="ghost"
                     >
-                        <X className="h-4 w-4" />
+                        <X className="h-4 w-4"/>
                     </Button>
                 </DialogContent>
             </Dialog>
@@ -269,7 +263,7 @@ function MainScreen({
     setIsHistorialExpanded: (expanded: boolean) => void,
     handleImageUpload: (event: React.ChangeEvent<HTMLInputElement>, screen: 'albaran' | 'facturas') => void
 }) {
-    const { displayName } = useUser()
+    const {displayName} = useUser()
 
     return (
         <>
@@ -277,7 +271,7 @@ function MainScreen({
                 <div className="flex items-center space-x-4">
                     <div>
                         <h2 className="text-3xl font-semibold text-[#3F7CC9]">
-                            Bienvenido {displayName}
+                                Bienvenido {displayName}
                         </h2>
                     </div>
                 </div>
@@ -285,7 +279,7 @@ function MainScreen({
             <div className="flex-grow flex flex-col justify-center">
                 <div className="flex w-full gap-8">
                     <label className="flex-1 h-fit p-8 text-xl bg-gradient-to-br from-[#3FC98C] to-[#3F7CC9] hover:from-[#3F7CC9] hover:to-[#3FC98C] text-white rounded-3xl shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-1 flex flex-col items-center justify-center space-y-4 cursor-pointer">
-                        <FileText className="size-16" />
+                        <FileText className="size-16"/>
                         <span className="font-semibold">Factura</span>
                         <input
                             type="file"
@@ -295,7 +289,7 @@ function MainScreen({
                         />
                     </label>
                     <label className="flex-1 h-fit p-8 text-xl bg-gradient-to-br from-[#3fc1c9] to-[#3F7CC9] hover:from-[#3F7CC9] hover:to-[#3fc1c9] text-white rounded-3xl shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:-translate-y-1 flex flex-col items-center justify-center space-y-4 cursor-pointer">
-                        <Camera className="size-16" />
+                        <Camera className="size-16"/>
                         <span className="font-semibold">Albarán</span>
                         <input
                             type="file"
@@ -310,7 +304,7 @@ function MainScreen({
                 <CardContent className="p-6">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-2xl font-semibold text-[#12323a] flex items-center">
-                            Historial
+                                Historial
                         </h2>
                         <Button
                             variant="ghost"
@@ -319,15 +313,15 @@ function MainScreen({
                             className="text-[#12323a] hover:bg-[#3fc1c9] hover:text-white transition-colors duration-200"
                         >
                             {isHistorialExpanded ? (
-                                <ChevronDown className="h-6 w-6" />
-                            ) : (
-                                <ChevronUp className="h-6 w-6" />
+                                <ChevronDown className="h-6 w-6"/>
+                            ):(
+                                <ChevronUp className="h-6 w-6"/>
                             )}
                         </Button>
                     </div>
                     <div
                         className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                            isHistorialExpanded ? 'max-h-64 opacity-100' : 'max-h-14'
+                            isHistorialExpanded ? 'max-h-64 opacity-100':'max-h-14'
                         }`}
                     >
                         <ScrollArea className="h-64">
@@ -338,8 +332,8 @@ function MainScreen({
                                 >
                                     <div className="flex justify-between items-center">
                                         <p className="font-medium text-[#12323a] flex items-center">
-                                            <FileText className="mr-2 h-4 w-4 text-[#3F7CC9]" />
-                                            Factura #{1000 + i}
+                                            <FileText className="mr-2 h-4 w-4 text-[#3F7CC9]"/>
+                                                    Factura #{1000 + i}
                                         </p>
                                         <p className="text-sm text-[#3F7CC9]">
                                             {new Date().toLocaleDateString()}
@@ -375,8 +369,8 @@ function AlbaranScreen({
                 variant="ghost"
                 className="mb-4 text-[#12323a] self-start hover:bg-[#3fc1c9] hover:text-white transition-colors duration-200"
             >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Volver
+                <ArrowLeft className="mr-2 h-4 w-4"/>
+                    Volver
             </Button>
             <div className="bg-white p-6 rounded-lg shadow-lg">
                 <h2 className="text-3xl font-bold mb-6 text-[#12323a]">Datos del Albarán</h2>
@@ -384,7 +378,7 @@ function AlbaranScreen({
                     <div>
                         <label className="text-sm font-medium text-[#12323a]">Proveedor</label>
                         <Input
-                            value={invoiceData.provider}
+                            value={invoiceData.provider ?? ''}
                             onChange={(e) => handleInputChange('provider', e.target.value)}
                             className="mt-1"
                         />
@@ -392,7 +386,7 @@ function AlbaranScreen({
                     <div>
                         <label className="text-sm font-medium text-[#12323a]">Nº Serie</label>
                         <Input
-                            value={invoiceData.serial_number}
+                            value={invoiceData.serial_number ?? ''}
                             onChange={(e) => handleInputChange('serial_number', e.target.value)}
                             className="mt-1"
                         />
@@ -410,31 +404,32 @@ function AlbaranScreen({
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {invoiceData.items.map((item, index) => (
+                            {invoiceData.items?.map((item, index) => (
                                 <TableRow key={index}>
                                     <TableCell>
                                         <Input
-                                            value={item.item}
+                                            value={item.item ?? ''}
                                             onChange={(e) => handleItemChange(index, 'item', e.target.value)}
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <Input
                                             type="number"
-                                            value={item.quantity}
+                                            value={item.quantity ?? ''}
                                             onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <Input
                                             type="number"
-                                            value={item.price}
+                                            value={item.price ?? ''}
                                             onChange={(e) => handleItemChange(index, 'price', e.target.value)}
                                         />
                                     </TableCell>
+
                                     <TableCell>
                                         <Select
-                                            value={item.vat_type.toString()}
+                                            value={item.vat_type?.toString() ?? '0'}
                                             onValueChange={(value) => handleItemChange(index, 'vat_type', value)}
                                         >
                                             <SelectTrigger className="w-[180px]">
@@ -448,7 +443,7 @@ function AlbaranScreen({
                                             </SelectContent>
                                         </Select>
                                     </TableCell>
-                                    <TableCell>{item.total.toFixed(2)}€</TableCell>
+                                    <TableCell>{item.total?.toFixed(2) ?? ''}€</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -457,15 +452,15 @@ function AlbaranScreen({
                 <div className="mt-4 space-y-2">
                     <div className="flex justify-end">
                         <span className="font-medium mr-4">Subtotal:</span>
-                        <span>{invoiceData.subtotal.toFixed(2)}€</span>
+                        <span>{invoiceData.subtotal?.toFixed(2) ?? ''}€</span>
                     </div>
                     <div className="flex justify-end">
                         <span className="font-medium mr-4">Total IVA:</span>
-                        <span>{invoiceData.total_vat.toFixed(2)}€</span>
+                        <span>{invoiceData.total_vat?.toFixed(2) ?? ''}€</span>
                     </div>
                     <div className="flex justify-end text-lg font-bold">
                         <span className="mr-4">Total:</span>
-                        <span>{invoiceData.total.toFixed(2)}€</span>
+                        <span>{invoiceData.total?.toFixed(2) ?? ''}€</span>
                     </div>
                 </div>
             </div>
@@ -473,8 +468,8 @@ function AlbaranScreen({
                 onClick={() => setShowImagePopup(true)}
                 className="mt-6 bg-[#3fc1c9] hover:bg-[#3F7CC9] text-white self-center px-8 py-4 text-lg rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
             >
-                <Eye className="mr-2 h-6 w-6" />
-                Ver Imagen del Albarán
+                <Eye className="mr-2 h-6 w-6"/>
+                    Ver Imagen del Albarán
             </Button>
         </div>
     )
@@ -510,8 +505,8 @@ function FacturasScreen({
                 variant="ghost"
                 className="mb-4 text-[#12323a] self-start hover:bg-[#3fc1c9] hover:text-white transition-colors duration-200"
             >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Volver
+                <ArrowLeft className="mr-2 h-4 w-4"/>
+                    Volver
             </Button>
             <h2 className="text-3xl font-bold mb-6 text-[#12323a]">Verificación de Factura</h2>
             <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
@@ -519,8 +514,8 @@ function FacturasScreen({
                     <div>
                         <label className="text-sm font-medium text-[#12323a]">Número de Factura</label>
                         <Input
-                            value={invoice.number}
-                            onChange={(e) => handleInputChange('number', e.target.value)}
+                            value={invoice.serial_number}
+                            onChange={(e) => handleInputChange('serial_number', e.target.value)}
                             className="mt-1"
                         />
                     </div>
@@ -576,27 +571,28 @@ function FacturasScreen({
                 </Card>
             </div>
             <div className="space-y-4">
-                <Alert variant={totalsMatch ? "default" : "destructive"}>
+                <Alert variant={totalsMatch ? "default":"destructive"}>
                     <AlertTitle>Verificación de Totales</AlertTitle>
                     <AlertDescription>
-                        Total Factura: {invoice.total}€<br />
-                        Total Albaranes: {totalDeliveryNotes}€<br />
-                        {totalsMatch ? "Los totales coinciden" : "Hay una discrepancia en los totales"}
+                            Total Factura: {invoice.total}€<br/>
+                            Total Albaranes: {totalDeliveryNotes}€<br/>
+                        {totalsMatch ? "Los totales coinciden":"Hay una discrepancia en los totales"}
                     </AlertDescription>
                 </Alert>
-                <Alert variant={deliveryNotesMatch ? "default" : "destructive"}>
+                <Alert variant={deliveryNotesMatch ? "default":"destructive"}>
                     <AlertTitle>Verificación de Albaranes</AlertTitle>
                     <AlertDescription>
                         {deliveryNotesMatch
                             ? "Todos los albaranes listados están registrados y coinciden"
-                            : (
+                            :(
                                 <>
                                     <p>Hay discrepancias entre los albaranes listados y los registrados:</p>
                                     {missingDeliveryNotes.length > 0 && (
                                         <p>Albaranes faltantes: {missingDeliveryNotes.join(', ')}</p>
                                     )}
                                     {unlistedDeliveryNotes.length > 0 && (
-                                        <p className="text-red-500">Albaranes no listados en la factura: {unlistedDeliveryNotes.join(', ')}</p>
+                                        <p className="text-red-500">Albaranes no listados en la
+                                                            factura: {unlistedDeliveryNotes.join(', ')}</p>
                                     )}
                                 </>
                             )
@@ -610,15 +606,15 @@ function FacturasScreen({
                     className="bg-green-500 hover:bg-green-600 text-white"
                     disabled={!totalsMatch || !deliveryNotesMatch}
                 >
-                    <Check className="mr-2 h-4 w-4" />
-                    Validar Factura
+                    <Check className="mr-2 h-4 w-4"/>
+                        Validar Factura
                 </Button>
                 <Button
                     onClick={handleFlagInvoice}
                     className="bg-yellow-500 hover:bg-yellow-600 text-white"
                 >
-                    <AlertTriangle className="mr-2 h-4 w-4" />
-                    Marcar para Verificación Manual
+                    <AlertTriangle className="mr-2 h-4 w-4"/>
+                        Marcar para Verificación Manual
                 </Button>
             </div>
         </div>

@@ -1,6 +1,6 @@
 import {https} from 'firebase-functions'
 import {StartEndUserChatRequest, StartEndUserChatResponse} from '../../types/Chat'
-import {throwIfUnauthenticated} from '../../auth/throwIfUnauthenticated'
+import {throwIfUnauthenticated} from '../../../auth/throwIfUnauthenticated'
 import {getOrThrowChatbotConfig} from '../../db/ChatBotConfigDAO'
 import {addMessageToThread, createThread} from '../../api/openai'
 import {addEndUserChat, addMessage, existsLiveChatForUser} from '../../db/ChatDAO'

@@ -28,6 +28,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@google-cloud/storage": "^7.13.0",
     "@invertase/firestore-stripe-payments": "0.0.7",
     "@types/cors": "^2.8.17",
     "@typescript-eslint/eslint-plugin": "^5.12.0",

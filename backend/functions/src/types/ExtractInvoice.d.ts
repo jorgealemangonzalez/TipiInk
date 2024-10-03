@@ -13,6 +13,7 @@ export interface Item {
 
 // Raw TypeScript definitions for invoiceSchema
 export interface Invoice {
+    id: string
     provider?: string | null;
     serial_number?: string | null;
     items?: Item[] | null;
@@ -23,5 +24,5 @@ export interface Invoice {
 }
 
 export type ExtractInvoiceResponse = {
-    invoice: Invoice
+    invoiceId: string
 }

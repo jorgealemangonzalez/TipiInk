@@ -24,6 +24,7 @@ import {uploadFileToStorage} from "@/firebase/fileStorage.ts"
 import {extractInvoice} from "@/api/clients"
 import {Invoice as InvoiceData, Item} from "@monorepo/functions/src/types/ExtractInvoice"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx"
+import {useDocument} from "@/firebase/hooks/useDocument.ts"
 
 interface DeliveryNote {
     number: string
@@ -46,19 +47,7 @@ export function UploadFilePage() {
     const [zoomLevel, setZoomLevel] = useState(1)
     const [uploadedImage, setUploadedImage] = useState<string | null>(null)
     const user = useUser()
-
-    const [invoiceData, setInvoiceData] = useState<InvoiceData>({
-        provider: 'Julian',
-        serial_number: '123-1245',
-        items: [
-            {item: 'Anchoas', quantity: 2, price: 10, vat_type: 10, total: 20},
-            {item: 'Queso', quantity: 4, price: 5, vat_type: 5, total: 20},
-            {item: 'Atun', quantity: 2, price: 5, vat_type: 20, total: 10},
-        ],
-        subtotal: 50,
-        total_vat: 6.5,
-        total: 56.5,
-    })
+    const [invoiceId, setInvoiceId] = useState<string>()
 
     const [invoice, setInvoice] = useState<Invoice>({
         serial_number: 'FAC-001',
@@ -94,34 +83,6 @@ export function UploadFilePage() {
         setDeliveryNotesMatch(missing.length===0 && unlisted.length===0)
     }, [invoice])
 
-    const handleInvoiceInputChange = (field: keyof InvoiceData, value: string) => {
-        setInvoiceData(prev => ({...prev, [field]: value}))
-    }
-
-    const handleInvoiceItemChange = (index: number, field: keyof Item, value: string) => {
-        const newItems = invoiceData.items ? [...invoiceData.items]:[]
-        newItems[index] = {
-            ...newItems[index],
-            [field]: field==='item' ? value:parseFloat(value) || 0
-        }
-        newItems[index].total =
-                (newItems[index].quantity ?? 0) *
-                (newItems[index].price ?? 0) *
-                (1 + (newItems[index].vat_type ?? 0) / 100)
-
-        const subtotal = newItems.reduce((sum, item) => sum + ((item.quantity ?? 0) * (item.price ?? 0)), 0)
-        const total_vat = newItems.reduce((sum, item) => sum + ((item.quantity ?? 0) * (item.price ?? 0) * (item.vat_type ?? 0) / 100), 0)
-        const total = subtotal + total_vat
-
-        setInvoiceData(prev => ({
-            ...prev,
-            items: newItems,
-            subtotal,
-            total_vat,
-            total,
-        }))
-    }
-
     const handleInvoiceChange = (field: keyof Invoice, value: string) => {
         setInvoice(prev => ({...prev, [field]: field==='total' ? parseFloat(value):value}))
     }
@@ -149,8 +110,8 @@ export function UploadFilePage() {
             // Call extractInvoice with the image path
             const extractedInvoice = await extractInvoice({imagePath: filePath})
             console.log('Extracted Invoice:', extractedInvoice)
+            setInvoiceId(extractedInvoice.invoiceId)
             // Update state with extracted invoice data if needed
-            setInvoiceData(extractedInvoice.invoice)
             setActiveScreen(screen)
         }
     }
@@ -169,9 +130,7 @@ export function UploadFilePage() {
             return (
                 <AlbaranScreen
                     setActiveScreen={setActiveScreen}
-                    invoiceData={invoiceData}
-                    handleInputChange={handleInvoiceInputChange}
-                    handleItemChange={handleInvoiceItemChange}
+                    invoiceId={invoiceId!}
                     setShowImagePopup={setShowImagePopup}
                 />
             )
@@ -351,17 +310,52 @@ function MainScreen({
 
 function AlbaranScreen({
     setActiveScreen,
-    invoiceData,
-    handleInputChange,
-    handleItemChange,
+    invoiceId,
     setShowImagePopup,
 }: {
     setActiveScreen: (screen: string) => void,
-    invoiceData: InvoiceData,
-    handleInputChange: (field: keyof InvoiceData, value: string) => void,
-    handleItemChange: (index: number, field: keyof Item, value: string) => void,
+    invoiceId: string,
     setShowImagePopup: (show: boolean) => void,
 }) {
+    const user = useUser()
+    const {document: invoiceData, setDocument: setInvoiceData} = useDocument<InvoiceData>({
+        collectionName: `companies/${user.companyId}/invoices`,
+        id: invoiceId
+    })
+
+    const handleInputChange = (field: keyof InvoiceData, value: string) => {
+        if(!invoiceData) return
+        setInvoiceData({
+            [field]: value
+        })
+    }
+
+    const handleItemChange = (index: number, field: keyof Item, value: string) => {
+        if(!invoiceData) return
+        const newItems = invoiceData.items ? [...invoiceData.items]:[]
+        newItems[index] = {
+            ...newItems[index],
+            [field]: field==='item' ? value:parseFloat(value) || 0
+        }
+        newItems[index].total =
+                (newItems[index].quantity ?? 0) *
+                (newItems[index].price ?? 0) *
+                (1 + (newItems[index].vat_type ?? 0) / 100)
+
+        const subtotal = newItems.reduce((sum, item) => sum + ((item.quantity ?? 0) * (item.price ?? 0)), 0)
+        const total_vat = newItems.reduce((sum, item) => sum + ((item.quantity ?? 0) * (item.price ?? 0) * (item.vat_type ?? 0) / 100), 0)
+        const total = subtotal + total_vat
+
+        setInvoiceData({
+            items: newItems,
+            subtotal,
+            total_vat,
+            total,
+        })
+    }
+
+    if(!invoiceData) return null
+
     return (
         <div className="h-full flex flex-col">
             <Button

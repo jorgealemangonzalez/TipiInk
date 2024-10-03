@@ -1,11 +1,13 @@
 import React, {createContext, useContext, useEffect, useState} from 'react'
 import {signInAnonymously, User as FUser} from 'firebase/auth'
-import {auth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup} from '@/firebase/firebase.ts'
+import {auth, firestore, GoogleAuthProvider, onAuthStateChanged, signInWithPopup} from '@/firebase/firebase.ts'
 import mixpanel from 'mixpanel-browser'
 import {Sentry} from '../sentry.ts'
 import {isLocalEnvironment} from "@/environment.ts"
+import {User as UserDbModel} from '@monorepo/functions/src/types/User'
+import {doc, getDoc} from "firebase/firestore"
 
-type User = FUser & { isAdmin: boolean };
+type User = FUser & { isAdmin: boolean } & UserDbModel;
 
 interface AuthContextType {
     user?: User
@@ -33,19 +35,19 @@ export const useUser = () => {
     return context.user
 }
 
-const waitForGoogleApiToBeReady = async () => {
-    return new Promise((resolve) => {
-        const checkGapi = () => {
-            if (window.gapi) {
-                resolve(window.gapi)  // gapi is available, resolve the promise
-            } else {
-                console.log('Waiting for gapi to be ready...')
-                setTimeout(checkGapi, 100)  // Poll every 100ms
-            }
-        }
-        checkGapi() // Start checking for gapi
-    })
-}
+// const waitForGoogleApiToBeReady = async () => {
+//     return new Promise((resolve) => {
+//         const checkGapi = () => {
+//             if (window.gapi) {
+//                 resolve(window.gapi)  // gapi is available, resolve the promise
+//             } else {
+//                 console.log('Waiting for gapi to be ready...')
+//                 setTimeout(checkGapi, 100)  // Poll every 100ms
+//             }
+//         }
+//         checkGapi() // Start checking for gapi
+//     })
+// }
 
 export const AuthProvider = ({children}: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User>()
@@ -61,6 +63,11 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
             // @ts-expect-error adding custom property to user.
             //  Using it this way to avoid losing the methods of the user object
             newUser.isAdmin = !!token.claims.admin
+
+            const userSnapshot = await getDoc(doc(firestore, 'users', newUser.uid))
+            // @ts-expect-error adding custom property to user.
+            //  Using it this way to avoid losing the methods of the user object
+            newUser.companyId = userSnapshot.exists() ? userSnapshot.data()!.companyId : 'default'
 
             // await waitForGoogleApiToBeReady()
             // @ts-expect-error access token is available
@@ -94,7 +101,8 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
         return await signInAnonymously(auth)
             .then((credentials): User => ({
                 ...credentials.user,
-                isAdmin: false
+                isAdmin: false,
+                companyId: 'default'
             }))
             .finally(() => setIsLoading(false))
     }

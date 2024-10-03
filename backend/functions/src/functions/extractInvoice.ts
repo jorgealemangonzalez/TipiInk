@@ -1,14 +1,15 @@
-import {https} from 'firebase-functions'
+import {https, logger} from 'firebase-functions'
 import OpenAI from 'openai'
 import {onFunctionsInit} from './OnFunctionsInit'
 import {zodResponseFormat} from 'openai/helpers/zod'
 import {z} from 'zod'
-import {isLocalEnvironment, storage} from '../FirebaseInit'
-import {ExtractInvoiceRequest, ExtractInvoiceResponse} from '../types/ExtractInvoice'
+import {firestore, isLocalEnvironment, storage} from '../FirebaseInit'
+import {ExtractInvoiceRequest, ExtractInvoiceResponse, Invoice} from '../types/ExtractInvoice'
 import {getDownloadURL} from 'firebase-admin/storage'
 import {extractInvoicePrompt} from './prompts'
 import {throwIfUnauthenticated} from '../auth/throwIfUnauthenticated'
 import axios from 'axios'
+import {User} from '../types/User'
 
 let openai: OpenAI
 
@@ -36,7 +37,7 @@ const invoiceSchema = z.object({
 }).strict()
 
 
-async function getInvoice(data: ExtractInvoiceRequest) {
+async function getInvoice(data: ExtractInvoiceRequest): Promise<Omit<Invoice, 'id'>> {
     const fileRef = storage.bucket().file(data.imagePath)
 
     let invoiceImageUrl = await getDownloadURL(fileRef)
@@ -72,8 +73,7 @@ async function getInvoice(data: ExtractInvoiceRequest) {
         temperature: 0.5,
     })
 
-    const invoice: z.infer<typeof invoiceSchema> = (completion.choices[0].message.parsed)!
-    return invoice
+    return (completion.choices[0].message.parsed)!
 }
 
 export const extractInvoice = https.onCall(async (
@@ -86,8 +86,16 @@ export const extractInvoice = https.onCall(async (
         throw new https.HttpsError('invalid-argument', 'Invalid imagePath')
     }
 
+    const collectionReference = firestore.collection('users')
+    const user = (await collectionReference.doc(uid).get()).data() as User
+    const col = await collectionReference.get()
+    logger.info('User', {user, size: col.size})
+    col.forEach((doc: any) => {
+        logger.info(`${doc.id} =>`, {data: doc.data(), uid})
+    })
     const invoice = await getInvoice(data)
+    const storedInvoiceRef = await firestore.collection(`companies/${user.companyId}/invoices`).add(invoice)
 
     console.log('Invoice:', {invoice})
-    return {invoice}
+    return {invoiceId: storedInvoiceRef.id}
 })

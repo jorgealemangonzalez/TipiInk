@@ -10,6 +10,7 @@ import {extractInvoicePrompt} from './prompts'
 import {throwIfUnauthenticated} from '../auth/throwIfUnauthenticated'
 import axios from 'axios'
 import {User} from '../types/User'
+import {Timestamp} from 'firebase-admin/firestore'
 
 let openai: OpenAI
 
@@ -94,7 +95,10 @@ export const extractInvoice = https.onCall(async (
         logger.info(`${doc.id} =>`, {data: doc.data(), uid})
     })
     const invoice = await getInvoice(data)
-    const storedInvoiceRef = await firestore.collection(`companies/${user.companyId}/invoices`).add(invoice)
+    const storedInvoiceRef = await firestore.collection(`companies/${user.companyId}/invoices`).add({
+        ...invoice,
+        createdAt: Timestamp.now(),
+    })
 
     console.log('Invoice:', {invoice})
     return {invoiceId: storedInvoiceRef.id}

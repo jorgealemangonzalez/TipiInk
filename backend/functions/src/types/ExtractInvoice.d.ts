@@ -1,3 +1,5 @@
+import {Timestamp} from 'firebase-admin/lib/firestore'
+
 export type ExtractInvoiceRequest = {
     imagePath: string // inside cloud storage
 }
@@ -21,6 +23,7 @@ export interface Invoice {
     total_vat_type?: number | null;
     total_vat?: number | null;
     total?: number | null;
+    createdAt: Timestamp
 }
 
 export type ExtractInvoiceResponse = {

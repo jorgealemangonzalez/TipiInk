@@ -1,5 +1,4 @@
-import { WithAnonymousUser } from "@/old/auth/WithAnonymousUser.tsx";
-import { LoginPage } from "@/old/pages/login/LoginPage.tsx";
+import { WithAnonymousUser } from "@/navigation/WithAnonymousUser";
 import { MainComponent } from "@/pages/MainComponent.tsx";
 import { UploadFilePage } from "@/pages/UploadFile.tsx";
 import mixpanel from "mixpanel-browser";
@@ -15,7 +14,7 @@ export const RoutingComponent = () => {
 
     return (
         <Routes>
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/login" element={<div>Login</div>} />
 
             {/** PRIVATE **/}
             <Route

@@ -17,7 +17,7 @@
     "backend:emulate": "pnpm firebase emulators:start --import=backend/emulator-data --export-on-exit=backend/emulator-data --inspect-functions",
     "frontend:dev": "cd frontend && pnpm run dev",
     "stripe:listen": "stripe listen  --forward-to http://localhost:5001/tipi-ink/us-central1/ext-firestore-stripe-payments-handleWebhookEvents --forward-connect-to http://localhost:5001/tipi-ink/us-central1/stripeWebhookEvents",
-    "start": "concurrently \"pnpm backend:watch\" \"pnpm backend:emulate\" \"pnpm frontend:dev\" \"pnpm stripe:listen\""
+    "start": "concurrently \"pnpm backend:watch\" \"pnpm backend:emulate\" \"pnpm frontend:dev\""
   },
   "keywords": [],
   "author": "",

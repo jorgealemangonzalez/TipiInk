@@ -4,7 +4,7 @@ import { ActiveOrders } from '@/widgets/active-orders/ui/ActiveOrders'
 
 export const Home: FC = () => {
   return (
-    <div className="min-h-screen bg-main-950">
+    <div className="min-h-screen bg-dark-bg">
       <Header onAssistantClick={() => {}} />
       <ActiveOrders />
     </div>

@@ -11,41 +11,30 @@ export default {
         extend: {},
         colors: {
             ...colors,
-            'main': {
-                '50': '#effcfc',
-                '100': '#d7f5f6',
-                '200': '#b4ebed',
-                '300': '#80dce0',
-                '400': '#3fc1c9',
-                '500': '#2aa7b0',
-                '600': '#258795',
-                '700': '#246d7a',
-                '800': '#265a64',
-                '900': '#234c56',
-                '950': '#12323a',
-            },
+            // Fondo principal (muy oscuro)
+        'dark-bg': '#121212',
+        
+        // Fondo de tarjetas / secciones
+        'dark-card-bg': '#1E1E1E',
+        
+        // Texto principal y secundario
+        'primary': '#FFFFFF',
+        'secondary': '#B3B3B3',
+        
+        // Colores acento (naranjas)
+        'accent': '#FF5C35',
+        'accent-light': '#FB6D3A',
+        
+        // Para algún estado de entrega (puedes ajustar)
+        'delivered': '#FF6D4E',
+
+        // Grises de apoyo (opcional)
+        'gray-700': '#2C2C2C',
+        'gray-500': '#4C4C4C',
 
         }
     },
-    daisyui: {
-        themes: [
-            {
-                mytheme: {
-                    "primary": "#3fc1c9",
-                    "secondary": "#3F7CC9",
-                    "accent": "#3FC98C",
-                    "neutral": "#12323a",
-                    "base-100": "#effcfc",
-                    "info": "#b7f0fe",
-                    "success": "#00aa6f",
-                    "warning": "#ffc000",
-                    "error": "#FECACA",
-                },
-            },
-        ], // TODO add dark theme
-    },
     plugins: [
-        daisyui
     ],
 }
 

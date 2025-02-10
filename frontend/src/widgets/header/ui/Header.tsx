@@ -1,40 +1,49 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
 import { Book, Package, AlertTriangle, FileText } from 'react-feather'
 
 interface HeaderProps {
   onAssistantClick: () => void
 }
 
-const NavigationButton: FC<{ icon: React.ReactNode; label: string }> = ({ icon, label }) => (
-  <button className="bg-main-900 rounded-2xl p-3 flex flex-col items-center gap-1 hover:bg-main-800 transition-colors">
-    <div className="w-12 h-12 rounded-full bg-main-800 flex items-center justify-center text-main-400">
-      {icon}
+const NavigationCard: FC<{ 
+  icon: React.ReactNode
+  label: string
+}> = ({ icon, label }) => (
+  <div className="bg-dark-card-bg rounded-full pl-1 pr-7 flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer h-[69px] shadow-[0_4px_12px_rgba(0,0,0,0.25)]">
+    <div className="w-[60px] h-[60px] rounded-full bg-gray-700 flex items-center justify-center">
+      {React.cloneElement(icon as React.ReactElement, {
+        className: "w-7 h-7 text-primary"
+      })}
     </div>
-    <span className="text-sm text-white">{label}</span>
-  </button>
+    <div className="flex-1">
+      <p className="text-primary text-[16px] font-medium leading-tight">{label}</p>
+    </div>
+  </div>
 )
 
 export const Header: FC<HeaderProps> = () => {
   return (
-    <header className="fixed top-0 left-0 right-0 bg-main-950 px-4 py-6">
-      <div className="grid grid-cols-4 gap-3">
-        <NavigationButton
-          icon={<Book className="w-6 h-6" />}
-          label="Recetario"
-        />
-        <NavigationButton
-          icon={<Package className="w-6 h-6" />}
-          label="Productos"
-        />
-        <NavigationButton
-          icon={<AlertTriangle className="w-6 h-6" />}
-          label="Incidencias"
-        />
-        <NavigationButton
-          icon={<FileText className="w-6 h-6" />}
-          label="Facturas"
-        />
+    <div className="fixed top-0 left-0 right-0 bg-dark-bg pt-4">
+      <div className="px-4">
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <NavigationCard
+            icon={<Book />}
+            label="Recetario"
+          />
+          <NavigationCard
+            icon={<Package />}
+            label="Productos"
+          />
+          <NavigationCard
+            icon={<AlertTriangle />}
+            label="Incidencias"
+          />
+          <NavigationCard
+            icon={<FileText />}
+            label="Facturas"
+          />
+        </div>
       </div>
-    </header>
+    </div>
   )
 } 

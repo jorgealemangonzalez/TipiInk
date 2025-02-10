@@ -8,6 +8,7 @@ When creating a data model, review the existing ones and try to reuse the same s
 When you modify a type, check if you need to update the existing examples of objects of that type.
 If a function can be read better by inlining it, do it.
 When creating UI do not connect to backend functions, use mock data.
+When creating a basic component first search in shadcn/ui if it exists, if it does not exist, create it in the components folder.
 
 
 In the frontend project you must take into account our code structure rules

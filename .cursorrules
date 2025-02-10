@@ -7,6 +7,8 @@ When you change the signature of a function or a type, look for all the usages a
 When creating a data model, review the existing ones and try to reuse the same structure if possible.
 When you modify a type, check if you need to update the existing examples of objects of that type.
 If a function can be read better by inlining it, do it.
+When creating UI do not connect to backend functions, use mock data.
+
 
 In the frontend project you must take into account our code structure rules
 

@@ -1,6 +1,7 @@
 import { WithAnonymousUser } from "@/navigation/WithAnonymousUser";
 import { MainComponent } from "@/pages/MainComponent.tsx";
 import { UploadFilePage } from "@/pages/UploadFile.tsx";
+import { Home } from "@/pages/Home.tsx";
 import { AssistantPage } from "@/pages/AssistantPage";
 import mixpanel from "mixpanel-browser";
 import { useEffect } from "react";
@@ -23,7 +24,8 @@ export const RoutingComponent = () => {
                 element={
                     <WithAnonymousUser userType="anonymous">
                         <Routes>
-                            <Route path="/" element={<UploadFilePage />} />
+                            <Route path="/" element={<Home />} />
+                            <Route path="/upload" element={<UploadFilePage />} />
                             <Route path="/main" element={<MainComponent />} />
                             <Route path="/assistant" element={<AssistantPage />} />
                         </Routes>

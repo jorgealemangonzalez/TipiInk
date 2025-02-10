@@ -27,6 +27,7 @@
     "@sentry/wizard": "3.26.0",
     "@types/gapi": "^0.0.47",
     "@types/gapi.client.sheets-v4": "^0.0.4",
+    "@vapi-ai/web": "^2.2.2",
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

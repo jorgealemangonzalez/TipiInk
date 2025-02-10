@@ -1,4 +1,4 @@
-// BotWhirl/tsconfig.base.json
+// boothbits/tsconfig.base.json
 {
   "compilerOptions": {
     "target": "ES2020",

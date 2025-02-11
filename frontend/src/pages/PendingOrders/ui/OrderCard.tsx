@@ -11,9 +11,10 @@ import { OrderItemRow } from './OrderItemRow'
 interface OrderCardProps {
   order: PendingOrder
   disableDrag?: boolean
+  className?: string // Added className prop
 }
 
-export const OrderCard: FC<OrderCardProps> = ({ order, disableDrag }) => {
+export const OrderCard: FC<OrderCardProps> = ({ order, disableDrag, className, collapsed }) => {
   const [isDragging, setIsDragging] = useState(false)
   const x = useMotionValue(0)
 
@@ -38,7 +39,7 @@ export const OrderCard: FC<OrderCardProps> = ({ order, disableDrag }) => {
   }
 
   return (
-    <div className="relative touch-none">
+    <div className={cn("relative touch-none", className)}> {/* Added className to the div */}
       {!disableDrag && (
         <>
           <motion.div 
@@ -87,7 +88,7 @@ export const OrderCard: FC<OrderCardProps> = ({ order, disableDrag }) => {
           <div className="p-5 space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-xl font-bold text-white">{order.supplierName}</span>
-              <span className="px-3 py-1.5 rounded-full font-medium bg-white text-black">
+              <span className="px-3 py-1 rounded-full font-small bg-white text-black">
                 {formatDeliveryDate(order.requestedDeliveryTime)}
               </span>
             </div>

@@ -5,12 +5,16 @@ import { PendingOrders } from '@/widgets/pending-orders'
 
 export const Home: FC = () => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="h-screen flex flex-col">
       <Header onAssistantClick={() => {}} />
-        <div className="relative">
-          <PendingOrders className='absolute top-[50%]' />
-          <ActiveOrders className='absolute top-[50%]' />
+      <div className="h-full overflow-hidden">
+        <div className='relative w-full h-1/2 z-1'>
+          <PendingOrders collapsed />
         </div>
+        <div className='relative w-full h-1/2 z-60'>
+          <PendingOrders collapsed />
+        </div>
+      </div>
     </div>
   )
 } 

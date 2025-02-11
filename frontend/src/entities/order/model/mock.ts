@@ -4,7 +4,7 @@ export const MOCK_ORDERS: PendingOrder[] = [
   {
     supplierName: "Prodesco",
     category: 'carne',
-    requestedDeliveryTime: new Date(2024, 2, 14, 10, 0),
+    requestedDeliveryTime: new Date(2024, 2, 13, 10, 0),
     items: [
       { name: "Solomillo de cerdo", quantity: 5, unitPrice: 12.50, unitFormat: 'kg', observations: "Limpio y cortado" },
       { name: "Pechuga de pollo", quantity: 10, unitPrice: 8.75, unitFormat: 'kg', observations: "Fileteada" },
@@ -26,7 +26,18 @@ export const MOCK_ORDERS: PendingOrder[] = [
   {
     supplierName: "Frutas el Huertano",
     category: 'frutaVerdura',
-    requestedDeliveryTime: new Date(2024, 2, 14, 9, 0),
+    requestedDeliveryTime: new Date(2024, 2, 15, 9, 0),
+    items: [
+      { name: "Manzanas Golden", quantity: 15, unitPrice: 2.50, unitFormat: 'kg', observations: "Calibre medio" },
+      { name: "Plátanos", quantity: 20, unitPrice: 1.75, unitFormat: 'kg', observations: "De Canarias" },
+      { name: "Naranjas", quantity: 25, unitPrice: 1.50, unitFormat: 'Cajas', observations: "Para zumo" }
+    ],
+    estimatedPrice: 675.25
+  },
+  {
+    supplierName: "Frutas el Huertano",
+    category: 'frutaVerdura',
+    requestedDeliveryTime: new Date(2024, 2, 16, 9, 0),
     items: [
       { name: "Manzanas Golden", quantity: 15, unitPrice: 2.50, unitFormat: 'kg', observations: "Calibre medio" },
       { name: "Plátanos", quantity: 20, unitPrice: 1.75, unitFormat: 'kg', observations: "De Canarias" },

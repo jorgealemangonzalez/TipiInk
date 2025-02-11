@@ -32,6 +32,9 @@ export default {
         'gray-700': '#2C2C2C',
         'gray-500': '#4C4C4C',
 
+        'green-vegetables': '#243729',
+        'red-meat': '#331B1A',
+        'blue-fish': '#192234',
         }
     },
     plugins: [

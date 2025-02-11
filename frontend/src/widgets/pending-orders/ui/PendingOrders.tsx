@@ -6,17 +6,18 @@ import { cn } from '@/lib/utils'
 
 interface PendingOrdersProps {
   className?: string
+  collapsed?: boolean
 }
 
-export const PendingOrders: FC<PendingOrdersProps> = ({ className }) => {
+export const PendingOrders: FC<PendingOrdersProps> = ({ className, collapsed = false }) => {
   const navigate = useNavigate()
   const sortedOrders = [...MOCK_ORDERS].sort((a, b) => 
     a.requestedDeliveryTime.getTime() - b.requestedDeliveryTime.getTime()
-  ).slice(0, 2) // Only show first 2 orders in the widget
+  )
 
   return (
-    <div className={cn("", className)}>
-      <div className="bg-dark-card-bg rounded-t-[35px] shadow-[0_-1px_20px_rgba(0,0,0,0.25)]">
+    <div className={cn("h-screen", className)}>
+      <div className="h-full bg-dark-card-bg rounded-t-[35px] shadow-[0_-1px_20px_rgba(0,0,0,0.25)]">
         {/* Header */}
         <div className="px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -31,12 +32,17 @@ export const PendingOrders: FC<PendingOrdersProps> = ({ className }) => {
         </div>
 
         {/* Orders List */}
-        <div className="pt-4 pb-8">
-          <div className="relative px-4">
+        <div className="flex flex-col gap-4 h-full">
+          <div className="px-4 h-full overflow-hidden">
             {sortedOrders.map((order, index) => (
-              <div
-                key={order.supplierName}
-                className=''
+              <div 
+                key={order.supplierName+order.requestedDeliveryTime}
+                className={cn(
+                  'transition-all duration-300',
+                  collapsed && 'relative w-full h-[4.5rem]',
+                  collapsed && index > 0 && `top-[${index * 30}px]`,
+                  collapsed && `z-[${index*10}]`
+                )}
               >
                 <OrderCard 
                   order={order}

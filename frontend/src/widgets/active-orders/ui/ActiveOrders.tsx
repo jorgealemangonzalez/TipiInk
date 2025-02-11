@@ -118,7 +118,7 @@ export const ActiveOrders: FC<ActiveOrdersProps> = ({ className }) => {
   return (
     <div 
       ref={containerRef}
-      className={cn("fixed bottom-0 left-0 right-0", className)}
+      className={cn("", className)}
     >
       <div className="bg-dark-card-bg rounded-t-[35px] shadow-[0_-1px_20px_rgba(0,0,0,0.25)]">
         {/* Header */}

@@ -5,7 +5,7 @@ import { ShippingTracker } from '@/widgets/shipping-tracker'
 
 export const Home: FC = () => {
   return (
-    <div className="min-h-screen bg-dark-bg flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <Header onAssistantClick={() => {}} />
       <div className="flex-1 px-4 pt-6 mt-[173px]">
         <div className="space-y-8">

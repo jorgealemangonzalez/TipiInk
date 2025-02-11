@@ -3,6 +3,8 @@ import { MainComponent } from "@/pages/MainComponent.tsx";
 import { UploadFilePage } from "@/pages/UploadFile.tsx";
 import { Home } from "@/pages/Home.tsx";
 import { AssistantPage } from "@/pages/AssistantPage";
+import { RecipeReviewPage } from "@/pages/RecipeReview";
+import { RecipeDetailsPage } from "@/pages/RecipeDetails/ui/RecipeDetailsPage";
 import mixpanel from "mixpanel-browser";
 import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
@@ -30,6 +32,8 @@ export const RoutingComponent = () => {
                             <Route path="/main" element={<MainComponent />} />
                             <Route path="/assistant" element={<AssistantPage />} />
                             <Route path="/pending-orders" element={<PendingOrdersPage />} />
+                            <Route path="/recipe-review" element={<RecipeReviewPage />} />
+                            <Route path="/recipe/:id" element={<RecipeDetailsPage />} />
                         </Routes>
                     </WithAnonymousUser>
                 }

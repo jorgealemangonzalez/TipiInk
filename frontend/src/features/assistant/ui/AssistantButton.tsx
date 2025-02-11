@@ -1,9 +1,10 @@
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { Mic } from "lucide-react"
 import { cn } from "@/lib/utils"
 import VapiWebClient from "@vapi-ai/web"
 
 const vapi = new VapiWebClient("27ed500b-e974-4805-89a5-76a7f7d70044")
+const INACTIVITY_TIMEOUT = 10000
 
 export function AssistantButton() {
     const [isLoading, setIsLoading] = useState(false)
@@ -12,20 +13,34 @@ export function AssistantButton() {
     const [error, setError] = useState<string | null>(null)
     const [transcript, setTranscript] = useState("")
     const [assistantResponse, setAssistantResponse] = useState("")
+    const inactivityTimer = useRef<NodeJS.Timeout>()
+
+    const resetInactivityTimer = () => {
+        if (inactivityTimer.current) {
+            clearTimeout(inactivityTimer.current)
+        }
+        inactivityTimer.current = setTimeout(() => {
+            console.log("Stopping due to inactivity")
+            stopListening()
+        }, INACTIVITY_TIMEOUT)
+    }
 
     useEffect(() => {
         // Set up event listeners
         vapi.on("message", (message) => {
             console.log("Message:", message)
+            resetInactivityTimer()
         })
 
         vapi.on("speech-start", () => {
             console.log("Speech started")
+            resetInactivityTimer()
         })
 
         vapi.on("speech-end", () => {
             console.log("Speech ended")
             setIsListening(false)
+            resetInactivityTimer()
         })
 
         vapi.on("call-start", () => {
@@ -33,12 +48,16 @@ export function AssistantButton() {
             setIsListening(true)
             setIsLoading(false)
             setCallInProgress(true)
+            resetInactivityTimer()
         })
 
         vapi.on("call-end", () => {
             console.log("Call ended")
             setIsListening(false)
             setCallInProgress(false)
+            if (inactivityTimer.current) {
+                clearTimeout(inactivityTimer.current)
+            }
         })
 
         vapi.on("error", (error) => {
@@ -47,21 +66,27 @@ export function AssistantButton() {
             stopListening()
         })
 
-        // Cleanup event listeners
+        // Cleanup event listeners and timer
         return () => {
             vapi.stop()
             vapi.removeAllListeners()
+            if (inactivityTimer.current) {
+                clearTimeout(inactivityTimer.current)
+            }
         }
     }, [])
 
     const stopListening = () => {
-        console.log("Clicked to stop listening")
+        console.log("Stopping assistant")
         vapi.stop()
         setIsListening(false)
         setIsLoading(false)
         setTranscript("")
         setAssistantResponse("")
         setCallInProgress(false)
+        if (inactivityTimer.current) {
+            clearTimeout(inactivityTimer.current)
+        }
     }
 
     const handleClick = async () => {

@@ -47,6 +47,7 @@ export const Header: FC<HeaderProps> = () => {
       <NavigationCard
         icon={<FileText />}
         label="Facturas"
+        onClick={() => navigate('/invoice')}
       />
     </div>
   )

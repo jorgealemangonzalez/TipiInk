@@ -20,7 +20,7 @@ export const PendingOrdersPage: FC = () => {
           >
             <ArrowLeft className="w-6 h-6 text-white" />
           </button>
-          <h1 className="text-xl font-bold text-white">Pedidos Pendientes</h1>
+          <h1 className="text-xl font-bold text-white">Pedidos a Enviar</h1>
           <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
             <Send className="w-6 h-6 text-white" />
           </button>

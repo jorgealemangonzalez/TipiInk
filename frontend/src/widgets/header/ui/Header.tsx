@@ -12,10 +12,10 @@ const NavigationCard: FC<{
   onClick?: () => void
 }> = ({ icon, label, onClick }) => (
   <div 
-    className="bg-dark-card-bg rounded-full pl-1 pr-7 flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer h-[69px] shadow-[0_4px_12px_rgba(0,0,0,0.25)]"
+    className="bg-dark-card-bg rounded-full pl-1 pr-7 flex items-center gap-1 hover:opacity-80 transition-opacity cursor-pointer h-[69px] shadow-[0_4px_12px_rgba(0,0,0,0.25)]"
     onClick={onClick}
   >
-    <div className="w-[60px] h-[60px] rounded-full bg-gray-700 flex items-center justify-center">
+    <div className="min-w-[63px] h-[63px] rounded-full bg-gray-700 flex items-center justify-center">
       {React.cloneElement(icon as React.ReactElement, {
         className: "w-7 h-7 text-primary"
       })}

@@ -17,24 +17,17 @@ interface OrderListItemProps {
 }
 
 const Header: FC = () => {
-  const navigate = useNavigate()
-
   return (
-    <div className="px-6 py-5 flex items-center justify-between">
+    <div className="px-6 py-5">
       <div className="flex items-center gap-3">
         <h2 className="text-2xl font-bold text-primary">Pedidos Pendientes</h2>
       </div>
-      <button 
-        onClick={() => navigate('/pending-orders')}
-        className="text-primary text-sm font-medium hover:opacity-90 transition-opacity"
-      >
-        Ver Todos
-      </button>
     </div>
   )
 }
 
 const OrderListItem: FC<OrderListItemProps> = ({ order, index, collapsed }) => {
+  const navigate = useNavigate()
   const collapsedClasses = collapsed ? {
     base: 'relative w-full h-[4.5rem]',
     top: `top-[${index * 30}px]`,
@@ -45,11 +38,12 @@ const OrderListItem: FC<OrderListItemProps> = ({ order, index, collapsed }) => {
     <div 
       key={`${order.supplierName}-${order.requestedDeliveryTime}`}
       className={cn(
-        'transition-all duration-300',
+        'transition-all duration-300 cursor-pointer',
         collapsedClasses.base,
         collapsedClasses.top,
         collapsedClasses.zIndex
       )}
+      onClick={() => navigate('/pending-orders')}
     >
       <OrderCard 
         order={order}

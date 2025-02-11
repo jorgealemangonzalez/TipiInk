@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // Mock data - This should come from your data layer later
 const mockRecipeDetails: RecipeDetails = {
@@ -184,30 +185,22 @@ export const RecipeDetailsPage: FC = () => {
           {/* Encabezado con título e interruptor */}
           <div className="flex justify-between items-center">
             <h3 className="text-xl font-bold text-primary">Ingredientes</h3>
-            <div className="flex rounded-full bg-gray-800 p-1">
-              <button
-                onClick={() => setShowPerServing(false)}
-                className={cn(
-                  "px-4 py-1 rounded-full text-sm transition-colors",
-                  !showPerServing
-                    ? "bg-primary text-primary-foreground"
-                    : "text-primary/80 hover:text-primary"
-                )}
-              >
-                Por producción
-              </button>
-              <button
-                onClick={() => setShowPerServing(true)}
-                className={cn(
-                  "px-4 py-1 rounded-full text-sm transition-colors",
-                  showPerServing
-                    ? "bg-primary text-primary-foreground"
-                    : "text-primary/80 hover:text-primary"
-                )}
-              >
-                Por ración
-              </button>
-            </div>
+            <Tabs defaultValue="production" onValueChange={(value) => setShowPerServing(value === "serving")}>
+              <TabsList className="bg-gray-800">
+                <TabsTrigger 
+                  value="production" 
+                  className="data-[state=active]:bg-primary data-[state=active]:text-black text-primary/80"
+                >
+                  Por producción
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="serving"
+                  className="data-[state=active]:bg-primary data-[state=active]:text-black text-primary/80"
+                >
+                  Por ración
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
 
           {/* Tabla de ingredientes */}

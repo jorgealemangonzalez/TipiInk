@@ -1,5 +1,6 @@
 import React, { FC, useState, useRef } from 'react'
 import { ChevronDown, ChevronUp } from 'react-feather'
+import { cn } from '@/lib/utils'
 
 interface Order {
   id: string
@@ -7,6 +8,10 @@ interface Order {
   orderDate: string
   status: 'confirmed' | 'with_delivery_time' | 'delivered'
   deliveryTime?: string
+}
+
+interface ActiveOrdersProps {
+  className?: string
 }
 
 const mockOrders: Order[] = [
@@ -106,14 +111,14 @@ const OrderCard: FC<{ order: Order; index: number; total: number }> = ({ order, 
   )
 }
 
-export const ActiveOrders: FC = () => {
+export const ActiveOrders: FC<ActiveOrdersProps> = ({ className }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
   return (
     <div 
       ref={containerRef}
-      className="fixed bottom-0 left-0 right-0"
+      className={cn("fixed bottom-0 left-0 right-0", className)}
     >
       <div className="bg-dark-card-bg rounded-t-[35px] shadow-[0_-1px_20px_rgba(0,0,0,0.25)]">
         {/* Header */}

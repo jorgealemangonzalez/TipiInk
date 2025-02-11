@@ -23,9 +23,7 @@ const NavigationCard: FC<{
 
 export const Header: FC<HeaderProps> = () => {
   return (
-    <div className="pt-4">
-      <div className="px-4">
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-2 gap-4 p-4">
           <NavigationCard
             icon={<Book />}
             label="Recetario"
@@ -42,8 +40,6 @@ export const Header: FC<HeaderProps> = () => {
             icon={<FileText />}
             label="Facturas"
           />
-        </div>
-      </div>
     </div>
   )
 } 

@@ -1,8 +1,10 @@
 import { FC, useState, useMemo } from 'react'
-import { ChevronLeft, Euro, TrendingUp, TrendingDown } from 'lucide-react'
+import { ChevronLeft, Euro, TrendingUp, TrendingDown, BookOpen } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { SearchBar } from './SearchBar'
 import { cn } from '../../../lib/utils'
+import { useRecipes } from '@/entities/recipe/model/hooks'
+import { Separator } from "@/components/ui/separator"
 
 const getPercentageColor = (percentage: number): string => {
   if (percentage < 20) return 'text-emerald-500'
@@ -12,55 +14,29 @@ const getPercentageColor = (percentage: number): string => {
   return 'text-red-500'
 }
 
-// Mock data - This should come from your data layer later
-const mockRecipes = [
-  { 
-    id: 1, 
-    name: 'Paella Valenciana', 
-    costPercentage: 32,
-    priceVariation: 2.5,
-    ingredients: ['arroz', 'azafrán', 'pollo', 'conejo', 'judías verdes']
-  },
-  { 
-    id: 2, 
-    name: 'Gazpacho', 
-    costPercentage: 25,
-    priceVariation: -1.2,
-    ingredients: ['tomate', 'pepino', 'pimiento', 'ajo', 'aceite de oliva']
-  },
-  { 
-    id: 3, 
-    name: 'Tortilla Española', 
-    costPercentage: 28,
-    priceVariation: 0.8,
-    ingredients: ['patata', 'huevo', 'cebolla', 'aceite de oliva']
-  },
-  { 
-    id: 4, 
-    name: 'Patatas Bravas', 
-    costPercentage: 18,
-    priceVariation: -0.5,
-    ingredients: ['patata', 'salsa brava', 'alioli']
-  },
-]
-
 export const RecipeReviewPage: FC = () => {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
+  const [showOnlyMenu, setShowOnlyMenu] = useState(false)
+  const { getAllRecipes } = useRecipes()
+  const recipes = getAllRecipes()
 
   const filteredRecipes = useMemo(() => {
     const query = searchQuery.toLowerCase()
-    return mockRecipes
+    return recipes
       .filter(recipe => 
-        recipe.name.toLowerCase().includes(query) ||
-        recipe.ingredients.some(ingredient => ingredient.toLowerCase().includes(query))
+        (showOnlyMenu ? recipe.inMenu : true) &&
+        (recipe.name.toLowerCase().includes(query) ||
+        recipe.ingredients.some(ingredient => ingredient.name.toLowerCase().includes(query)))
       )
       .sort((a, b) => b.costPercentage - a.costPercentage)
-  }, [searchQuery])
+  }, [searchQuery, recipes, showOnlyMenu])
 
-  const totalAverageCost = Math.round(
-    mockRecipes.reduce((acc, recipe) => acc + recipe.costPercentage, 0) / mockRecipes.length
-  )
+  const totalAverageCost = useMemo(() => {
+    if (filteredRecipes.length === 0) return 0
+    const total = filteredRecipes.reduce((acc, recipe) => acc + recipe.costPercentage, 0)
+    return Math.round(total / filteredRecipes.length)
+  }, [filteredRecipes, recipes])
 
   const handleRecipeClick = (recipeId: number) => {
     navigate(`/recipe/${recipeId}`)
@@ -72,16 +48,28 @@ export const RecipeReviewPage: FC = () => {
         <div className="flex items-center gap-4">
           <div 
             onClick={() => navigate(-1)}
-            className="w-[60px] h-[60px] rounded-full bg-gray-700 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+            className="w-[60px] h-[60px] rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
           >
             <ChevronLeft className="h-7 w-7 text-primary" />
           </div>
           <h1 className="absolute left-1/2 -translate-x-1/2 text-2xl font-bold text-primary">Recetario</h1>
+          <div 
+            onClick={() => setShowOnlyMenu(!showOnlyMenu)}
+            className={cn(
+              "w-[60px] h-[60px] rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity ml-auto",
+              showOnlyMenu ? "bg-primary" : ""
+            )}
+          >
+            <BookOpen className={cn(
+              "h-7 w-7",
+              showOnlyMenu ? "text-primary-foreground" : "text-primary"
+            )} />
+          </div>
         </div>
 
         <div className="flex items-center justify-between">
-          <div className="rounded-full pl-1 pr-7 flex items-center gap-3 h-[60px] bg-gray-700">
-            <div className="w-[44px] h-[44px] rounded-full bg-dark-card-bg flex items-center justify-center">
+          <div className="rounded-full pl-1 pr-7 flex items-center gap-3 h-[60px] border border-gray-700">
+            <div className="w-[44px] h-[44px] rounded-full flex items-center justify-center border-r border-gray-700">
               <Euro className="h-6 w-6 text-primary" />
             </div>
             <div className="flex flex-col">
@@ -93,32 +81,36 @@ export const RecipeReviewPage: FC = () => {
           <SearchBar onSearch={setSearchQuery} />
         </div>
 
-        <div className="space-y-4 mt-4">
-          {filteredRecipes.map((recipe) => (
-            <div
-              key={recipe.id}
-              onClick={() => handleRecipeClick(recipe.id)}
-              className="bg-gray-700 rounded-full pl-6 pr-7 flex items-center justify-between h-[69px] shadow-[0_4px_12px_rgba(0,0,0,0.25)] hover:opacity-90 transition-opacity cursor-pointer"
-            >
-              <h3 className="text-xl font-semibold text-primary">{recipe.name}</h3>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1">
-                  {recipe.priceVariation > 0 ? (
-                    <TrendingUp className="h-5 w-5 text-red-500" />
-                  ) : (
-                    <TrendingDown className="h-5 w-5 text-emerald-500" />
-                  )}
-                  <span className={cn(
-                    "text-sm font-medium",
-                    recipe.priceVariation > 0 ? "text-red-500" : "text-emerald-500"
-                  )}>
-                    {Math.abs(recipe.priceVariation)}%
+        <div className="mt-4">
+          {filteredRecipes.map((recipe, index) => (
+            <div key={recipe.id}>
+              <div
+                onClick={() => handleRecipeClick(recipe.id)}
+                className="py-4 px-2 flex items-center justify-between hover:bg-gray-700/30 transition-colors cursor-pointer"
+              >
+                <h3 className="text-xl font-semibold text-primary">{recipe.name}</h3>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1">
+                    {recipe.priceVariation > 0 ? (
+                      <TrendingUp className="h-5 w-5 text-red-500" />
+                    ) : (
+                      <TrendingDown className="h-5 w-5 text-emerald-500" />
+                    )}
+                    <span className={cn(
+                      "text-sm font-medium",
+                      recipe.priceVariation > 0 ? "text-red-500" : "text-emerald-500"
+                    )}>
+                      {Math.abs(recipe.priceVariation)}%
+                    </span>
+                  </div>
+                  <span className={cn("text-2xl font-bold", getPercentageColor(recipe.costPercentage))}>
+                    {recipe.costPercentage}%
                   </span>
                 </div>
-                <span className={cn("text-2xl font-bold", getPercentageColor(recipe.costPercentage))}>
-                  {recipe.costPercentage}%
-                </span>
               </div>
+              {index < filteredRecipes.length - 1 && (
+                <Separator className="bg-gray-700/50" />
+              )}
             </div>
           ))}
         </div>

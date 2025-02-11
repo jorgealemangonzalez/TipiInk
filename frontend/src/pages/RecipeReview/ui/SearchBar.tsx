@@ -21,7 +21,7 @@ export const SearchBar: FC<SearchBarProps> = ({ onSearch, placeholder = 'Por pla
         {isExpanded && (
           <input
             type="text"
-            className="w-full h-[60px] pl-4 pr-[60px] rounded-full bg-gray-700 text-primary placeholder-gray-400 focus:outline-none"
+            className="w-full h-[60px] pl-4 pr-[60px] rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none border border-gray-700"
             placeholder={placeholder}
             onChange={(e) => onSearch(e.target.value)}
             autoFocus
@@ -37,11 +37,11 @@ export const SearchBar: FC<SearchBarProps> = ({ onSearch, placeholder = 'Por pla
             }
           }}
           className={cn(
-            "flex items-center justify-center w-[60px] h-[60px] rounded-full bg-gray-700",
-            isExpanded ? "absolute right-0" : ""
+            "flex items-center justify-center w-[60px] h-[60px] rounded-full",
+            isExpanded ? "absolute right-0 border-l border-gray-700 bg-gray-700" : ""
           )}
         >
-          <Search className="h-7 w-7 text-primary" />
+          <Search className="h-7 w-7 text-white" />
         </button>
       </div>
     </div>

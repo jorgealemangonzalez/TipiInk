@@ -19,6 +19,9 @@ export interface RecipeDetails {
   costPerServing: number
   servingsPerProduction: number
   productionCost: number
+  costPercentage: number
+  priceVariation: number
+  inMenu: boolean
   ingredients: RecipeIngredient[]
   preparation: {
     prePreparation: string[]
@@ -26,6 +29,4 @@ export interface RecipeDetails {
     conservation: string[]
   }
   image: string
-  costPercentage: number
-  priceVariation: number
 } 

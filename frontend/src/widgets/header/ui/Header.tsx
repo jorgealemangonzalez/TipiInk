@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Book, Package, AlertTriangle, FileText } from 'react-feather'
+import { Book, FileText } from 'react-feather'
 import { useNavigate } from 'react-router-dom'
 
 interface HeaderProps {
@@ -35,14 +35,6 @@ export const Header: FC<HeaderProps> = () => {
         icon={<Book />}
         label="Recetario"
         onClick={() => navigate('/recipe-review')}
-      />
-      <NavigationCard
-        icon={<Package />}
-        label="Productos"
-      />
-      <NavigationCard
-        icon={<AlertTriangle />}
-        label="Incidencias"
       />
       <NavigationCard
         icon={<FileText />}

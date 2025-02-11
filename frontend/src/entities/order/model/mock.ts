@@ -1,9 +1,10 @@
-import { PendingOrder } from './types'
+import { PendingOrder, OrderStatus } from './types'
 
-export const MOCK_ORDERS: PendingOrder[] = [
+export const MOCK_ORDERS: (PendingOrder & { status: OrderStatus })[] = [
   {
     supplierName: "Prodesco",
     category: 'carne',
+    status: 'confirmed',
     requestedDeliveryTime: new Date(2024, 2, 13, 10, 0),
     items: [
       { name: "Solomillo de cerdo", quantity: 5, unitPrice: 12.50, unitFormat: 'kg', observations: "Limpio y cortado" },
@@ -15,6 +16,7 @@ export const MOCK_ORDERS: PendingOrder[] = [
   {
     supplierName: "Pescadería La Central",
     category: 'pescado',
+    status: 'with_delivery_time',
     requestedDeliveryTime: new Date(2024, 2, 14, 11, 30),
     items: [
       { name: "Lubina fresca", quantity: 8, unitPrice: 22.50, unitFormat: 'kg', observations: "Limpia y sin espinas" },
@@ -26,6 +28,7 @@ export const MOCK_ORDERS: PendingOrder[] = [
   {
     supplierName: "Frutas el Huertano",
     category: 'frutaVerdura',
+    status: 'unconfirmed',
     requestedDeliveryTime: new Date(2024, 2, 15, 9, 0),
     items: [
       { name: "Manzanas Golden", quantity: 15, unitPrice: 2.50, unitFormat: 'kg', observations: "Calibre medio" },
@@ -37,6 +40,7 @@ export const MOCK_ORDERS: PendingOrder[] = [
   {
     supplierName: "Frutas el Huertano",
     category: 'frutaVerdura',
+    status: 'unconfirmed',
     requestedDeliveryTime: new Date(2024, 2, 16, 9, 0),
     items: [
       { name: "Manzanas Golden", quantity: 15, unitPrice: 2.50, unitFormat: 'kg', observations: "Calibre medio" },

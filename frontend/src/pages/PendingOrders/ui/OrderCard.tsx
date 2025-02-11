@@ -11,10 +11,10 @@ import { OrderItemRow } from './OrderItemRow'
 interface OrderCardProps {
   order: PendingOrder
   disableDrag?: boolean
-  className?: string // Added className prop
+  className?: string
 }
 
-export const OrderCard: FC<OrderCardProps> = ({ order, disableDrag, className, collapsed }) => {
+export const OrderCard: FC<OrderCardProps> = ({ order, disableDrag, className }) => {
   const [isDragging, setIsDragging] = useState(false)
   const x = useMotionValue(0)
 
@@ -32,18 +32,18 @@ export const OrderCard: FC<OrderCardProps> = ({ order, disableDrag, className, c
     const xValue = x.get()
     
     if (xValue > DRAG_THRESHOLDS.actionTrigger) {
-      console.log('Sending order:', order)
+      console.log('Send order:', order)
     } else if (xValue < -DRAG_THRESHOLDS.actionTrigger) {
-      console.log('Editing order:', order)
+      console.log('Edit order:', order)
     }
   }
 
   return (
-    <div className={cn("relative touch-none", className)}> {/* Added className to the div */}
+    <div className={cn("relative touch-none", className)}>
       {!disableDrag && (
         <>
           <motion.div 
-            className="absolute inset-0 bg-green-500 rounded-[35px] flex items-center justify-center px-8 pointer-events-none"
+            className="absolute inset-0 bg-green-500 rounded-[35px] flex items-center justify-start px-8 pointer-events-none"
             style={{ opacity: rightBgOpacity }}
           >
             <motion.div style={{ scale: rightIconScale, rotate: rightIconRotate }} className="flex flex-col items-center gap-1">
@@ -53,7 +53,7 @@ export const OrderCard: FC<OrderCardProps> = ({ order, disableDrag, className, c
           </motion.div>
           
           <motion.div 
-            className="absolute inset-0 bg-blue-500 rounded-[35px] flex items-center justify-center px-8 pointer-events-none"
+            className="absolute inset-0 bg-blue-500 rounded-[35px] flex items-center justify-end px-8 pointer-events-none"
             style={{ opacity: leftBgOpacity }}
           >
             <motion.div style={{ scale: leftIconScale, rotate: leftIconRotate }} className="flex flex-col items-center gap-1">
@@ -87,10 +87,20 @@ export const OrderCard: FC<OrderCardProps> = ({ order, disableDrag, className, c
         )}>
           <div className="p-5 space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-xl font-bold text-white">{order.supplierName}</span>
-              <span className="px-3 py-1 rounded-full font-small bg-white text-black">
-                {formatDeliveryDate(order.requestedDeliveryTime)}
+              <span className={cn(
+                "font-bold text-white truncate mr-3",
+                disableDrag ? "text-lg" : "text-xl"
+              )}>
+                {order.supplierName}
               </span>
+              <div className="flex-shrink-0 whitespace-nowrap">
+                <span className={cn(
+                  "rounded-full font-medium bg-white text-black",
+                  disableDrag ? "px-3 py-1 text-xs" : "px-4 py-1.5 text-sm"
+                )}>
+                  {formatDeliveryDate(order.requestedDeliveryTime)}
+                </span>
+              </div>
             </div>
 
             <div className="space-y-3">

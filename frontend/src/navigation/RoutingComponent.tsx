@@ -6,7 +6,7 @@ import { AssistantPage } from "@/pages/AssistantPage";
 import mixpanel from "mixpanel-browser";
 import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
-import { PendingOrders } from '@/pages/PendingOrders'
+import { PendingOrdersPage } from "@/pages/PendingOrders";
 
 export const RoutingComponent = () => {
     const location = useLocation();
@@ -29,7 +29,7 @@ export const RoutingComponent = () => {
                             <Route path="/upload" element={<UploadFilePage />} />
                             <Route path="/main" element={<MainComponent />} />
                             <Route path="/assistant" element={<AssistantPage />} />
-                            <Route path="/pending-orders" element={<PendingOrders />} />
+                            <Route path="/pending-orders" element={<PendingOrdersPage />} />
                         </Routes>
                     </WithAnonymousUser>
                 }

@@ -28,12 +28,12 @@ interface PendingOrder {
 
 const getCategoryConfig = (category: SupplierCategory) => {
   const configs = {
-    pescado: { bg: 'bg-blue-500', text: 'text-black' },
-    carne: { bg: 'bg-red-500', text: 'text-black' },
-    frutaVerdura: { bg: 'bg-green-500', text: 'text-black' },
-    seco: { bg: 'bg-amber-500', text: 'text-black' },
-    congelado: { bg: 'bg-slate-300', text: 'text-black' },
-    limpieza: { bg: 'bg-pink-500', text: 'text-black' }
+    pescado: { bg: 'bg-blue-500/30', text: 'text-white' },
+    carne: { bg: 'bg-red-500/30', text: 'text-white' },
+    frutaVerdura: { bg: 'bg-green-500/30', text: 'text-white' },
+    seco: { bg: 'bg-amber-500/30', text: 'text-white' },
+    congelado: { bg: 'bg-slate-300/30', text: 'text-white' },
+    limpieza: { bg: 'bg-pink-500/30', text: 'text-white' }
   }
   return configs[category]
 }
@@ -87,12 +87,12 @@ const OrderCard: FC<{ order: PendingOrder }> = ({ order }) => {
   const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1)
 
   return (
-    <Card className="bg-[#1C1C1E] border-none rounded-[35px] shadow-[0_4px_20px_rgba(0,0,0,0.25)]">
+    <Card className={cn("border-none rounded-[35px] shadow-[0_4px_20px_rgba(0,0,0,0.25)]", categoryConfig.bg)}>
       <div className="p-5 space-y-4">
         {/* Header */}
         <div className="flex justify-between items-center">
           <span className="text-xl font-bold text-white">{order.supplierName}</span>
-          <span className={cn("px-3 py-1.5 rounded-full font-medium", categoryConfig.bg, categoryConfig.text)}>
+          <span className="px-3 py-1.5 rounded-full font-medium bg-white text-black">
             {capitalizedDate}
           </span>
         </div>
@@ -100,7 +100,7 @@ const OrderCard: FC<{ order: PendingOrder }> = ({ order }) => {
         {/* Items List */}
         <div className="space-y-3">
           {/* List Header */}
-          <div className="flex justify-between items-center text-sm text-gray-400 px-2">
+          <div className="flex justify-between items-center text-sm text-white/70 px-2">
             <span className="flex-[2]">Artículo</span>
             <span className="flex-1 text-center">Cantidad</span>
             <span className="flex-1 text-right">Precio/ud.</span>
@@ -113,13 +113,13 @@ const OrderCard: FC<{ order: PendingOrder }> = ({ order }) => {
                 <div className="flex-[2]">
                   <span className="font-medium text-white">{item.name}</span>
                   {item.observations && (
-                    <div className="text-sm text-gray-400 mt-0.5">
+                    <div className="text-sm text-white/70 mt-0.5">
                       ({item.observations})
                     </div>
                   )}
                 </div>
                 <span className="flex-1 text-center text-white">
-                  {item.quantity} <span className="text-gray-400">({item.unitFormat})</span>
+                  {item.quantity} <span className="text-white/70">({item.unitFormat})</span>
                 </span>
                 <span className="flex-1 text-right text-white">{item.unitPrice.toFixed(2)}€</span>
               </div>
@@ -128,7 +128,7 @@ const OrderCard: FC<{ order: PendingOrder }> = ({ order }) => {
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end items-center mr-2 pt-2 border-t border-gray-800">
+        <div className="flex justify-end items-center mr-2 pt-2 border-t border-white/20">
           <span className="text-lg font-medium text-white">{order.estimatedPrice}€</span>
         </div>
       </div>
@@ -138,6 +138,10 @@ const OrderCard: FC<{ order: PendingOrder }> = ({ order }) => {
 
 export const PendingOrders: FC = () => {
   const navigate = useNavigate()
+
+  const sortedOrders = [...mockPendingOrders].sort((a, b) => 
+    a.requestedDeliveryTime.getTime() - b.requestedDeliveryTime.getTime()
+  )
 
   return (
     <div className="min-h-screen bg-dark-bg flex flex-col">
@@ -160,7 +164,7 @@ export const PendingOrders: FC = () => {
       {/* Orders List */}
       <div className="flex-1 px-4 pt-6 mt-[88px] pb-8">
         <div className="space-y-4">
-          {mockPendingOrders.map((order, index) => (
+          {sortedOrders.map((order, index) => (
             <OrderCard key={index} order={order} />
           ))}
         </div>

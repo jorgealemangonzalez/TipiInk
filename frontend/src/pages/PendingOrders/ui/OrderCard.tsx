@@ -10,9 +10,10 @@ import { OrderItemRow } from './OrderItemRow'
 
 interface OrderCardProps {
   order: PendingOrder
+  disableDrag?: boolean
 }
 
-export const OrderCard: FC<OrderCardProps> = ({ order }) => {
+export const OrderCard: FC<OrderCardProps> = ({ order, disableDrag }) => {
   const [isDragging, setIsDragging] = useState(false)
   const x = useMotionValue(0)
 
@@ -38,42 +39,50 @@ export const OrderCard: FC<OrderCardProps> = ({ order }) => {
 
   return (
     <div className="relative touch-none">
-      <motion.div 
-        className="absolute inset-0 bg-green-500 rounded-[35px] flex items-center justify-center px-8 pointer-events-none"
-        style={{ opacity: rightBgOpacity }}
-      >
-        <motion.div style={{ scale: rightIconScale, rotate: rightIconRotate }} className="flex flex-col items-center gap-1">
-          <Send className="w-8 h-8 text-white" />
-          <span className="text-sm text-white font-medium">Enviar</span>
-        </motion.div>
-      </motion.div>
-      
-      <motion.div 
-        className="absolute inset-0 bg-blue-500 rounded-[35px] flex items-center justify-center px-8 pointer-events-none"
-        style={{ opacity: leftBgOpacity }}
-      >
-        <motion.div style={{ scale: leftIconScale, rotate: leftIconRotate }} className="flex flex-col items-center gap-1">
-          <Mic className="w-8 h-8 text-white" />
-          <span className="text-sm text-white font-medium">Editar</span>
-        </motion.div>
-      </motion.div>
+      {!disableDrag && (
+        <>
+          <motion.div 
+            className="absolute inset-0 bg-green-500 rounded-[35px] flex items-center justify-center px-8 pointer-events-none"
+            style={{ opacity: rightBgOpacity }}
+          >
+            <motion.div style={{ scale: rightIconScale, rotate: rightIconRotate }} className="flex flex-col items-center gap-1">
+              <Send className="w-8 h-8 text-white" />
+              <span className="text-sm text-white font-medium">Enviar</span>
+            </motion.div>
+          </motion.div>
+          
+          <motion.div 
+            className="absolute inset-0 bg-blue-500 rounded-[35px] flex items-center justify-center px-8 pointer-events-none"
+            style={{ opacity: leftBgOpacity }}
+          >
+            <motion.div style={{ scale: leftIconScale, rotate: leftIconRotate }} className="flex flex-col items-center gap-1">
+              <Mic className="w-8 h-8 text-white" />
+              <span className="text-sm text-white font-medium">Editar</span>
+            </motion.div>
+          </motion.div>
+        </>
+      )}
 
       <motion.div
-        drag="x"
-        dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.7}
+        drag={disableDrag ? false : "x"}
+        dragConstraints={disableDrag ? undefined : { left: 0, right: 0 }}
+        dragElastic={disableDrag ? undefined : 0.7}
         dragMomentum={false}
-        onDragStart={() => setIsDragging(true)}
+        onDragStart={() => !disableDrag && setIsDragging(true)}
         onDragEnd={handleDragEnd}
-        style={{ x, scale: cardScale, rotate: cardRotate }}
-        whileTap={{ cursor: 'grabbing' }}
+        style={{ 
+          x, 
+          scale: disableDrag ? 1 : cardScale, 
+          rotate: disableDrag ? 0 : cardRotate 
+        }}
+        whileTap={disableDrag ? undefined : { cursor: 'grabbing' }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className="touch-none"
       >
         <Card className={cn(
           "border-none rounded-[35px] shadow-[0_4px_20px_rgba(0,0,0,0.25)] select-none",
           CATEGORY_STYLES[order.category].bg,
-          isDragging ? "cursor-grabbing" : "cursor-grab"
+          !disableDrag && isDragging ? "cursor-grabbing" : !disableDrag ? "cursor-grab" : "cursor-pointer"
         )}>
           <div className="p-5 space-y-4">
             <div className="flex justify-between items-center">

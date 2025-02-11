@@ -23,7 +23,7 @@ const NavigationCard: FC<{
 
 export const Header: FC<HeaderProps> = () => {
   return (
-    <div className="fixed top-0 left-0 right-0 pt-4">
+    <div className="pt-4">
       <div className="px-4">
         <div className="grid grid-cols-2 gap-4 mb-6">
           <NavigationCard

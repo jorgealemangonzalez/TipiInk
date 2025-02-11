@@ -7,10 +7,10 @@ export const Home: FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header onAssistantClick={() => {}} />
-        <div className="relative">
-          <PendingOrders className='absolute top-[50%]' />
-          <ActiveOrders className='absolute top-[50%]' />
-        </div>
+      <div className="relative">
+        <PendingOrders className='absolute top-[50%]' />
+        <ActiveOrders className='absolute top-[50%]' />
+      </div>
     </div>
   )
 } 

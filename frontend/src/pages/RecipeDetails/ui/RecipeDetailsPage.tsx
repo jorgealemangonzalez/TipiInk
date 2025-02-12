@@ -101,7 +101,7 @@ export const RecipeDetailsPage: FC = () => {
           >
             <BookOpen className={cn(
               "h-7 w-7",
-              recipe.inMenu ? "text-primary-foreground" : "text-primary"
+              recipe.inMenu ? "text-black" : "text-primary"
             )} />
           </div>
         </div>

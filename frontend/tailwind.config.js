@@ -13,6 +13,8 @@ export default {
             ...colors,
             // Fondo principal (muy oscuro)
         'dark-bg': '#121212',
+        'background': '#ffffff',
+        'foreground': '#0a0a0b',
         
         // Fondo de tarjetas / secciones
         'dark-card-bg': '#1E1E1E',

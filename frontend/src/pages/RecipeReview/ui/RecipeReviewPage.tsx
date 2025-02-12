@@ -58,7 +58,7 @@ export const RecipeReviewPage: FC = () => {
           >
             <BookOpen className={cn(
               "h-7 w-7",
-              showOnlyMenu ? "text-primary-foreground" : "text-primary"
+              showOnlyMenu ?"text-black" : "text-primary" 
             )} />
           </div>
         </div>

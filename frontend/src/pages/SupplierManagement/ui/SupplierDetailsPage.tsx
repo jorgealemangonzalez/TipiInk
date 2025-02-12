@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { 
   FileText, 
@@ -21,6 +22,8 @@ import {
 import { SUPPLIERS } from "@/shared/api/mocks/suppliers"
 import { Supplier, Invoice, DeliveryNote } from "@/entities/supplier/model/types"
 import { FloatingContactButtons } from "../features/contact-buttons"
+import { Separator } from "@/components/ui/separator"
+import { Label } from "@/components/ui/label"
 
 // Mock data - Replace with real data later
 const mockSupplierData: Supplier = {
@@ -40,10 +43,294 @@ const mockSupplierData: Supplier = {
     { id: "INV-003", date: "2024-02-15", total: 2800, status: "paid", pdfUrl: "#" }
   ],
   deliveryNotes: [
-    { id: "ALB-001", date: "2024-03-20", total: 850, hasIncidents: true },
+    { 
+      id: "ALB-001", 
+      date: "2024-03-20", 
+      total: 850, 
+      hasIncidents: true,
+      incidentDetails: {
+        description: "Producto en mal estado",
+        affectedItems: ["Lubina - 2kg", "Mejillones - 1kg"],
+        reportDate: "2024-03-20",
+        status: "pending"
+      }
+    },
     { id: "ALB-002", date: "2024-03-18", total: 1200, hasIncidents: false },
     { id: "ALB-003", date: "2024-03-15", total: 950, hasIncidents: false, invoiceId: "INV-001" }
   ]
+}
+
+type DeliveryInfoProps = {
+  deliveryDays: string[]
+  orderAdvanceHours: number
+}
+
+function DeliveryInfo({ deliveryDays, orderAdvanceHours }: DeliveryInfoProps) {
+  return (
+    <div className="space-y-4">
+      <div>
+        <h4 className="text-sm font-medium text-gray-400 mb-1">Días de Reparto</h4>
+        <div className="flex gap-2 flex-wrap">
+          {deliveryDays.map(day => (
+            <span 
+              key={day}
+              className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+            >
+              {day}
+            </span>
+          ))}
+        </div>
+      </div>
+      <div>
+        <h4 className="text-sm font-medium text-gray-400 mb-1">Antelación Necesaria</h4>
+        <p className="flex items-center gap-2">
+          <Clock className="w-4 h-4" />
+          {orderAdvanceHours} horas
+        </p>
+      </div>
+    </div>
+  )
+}
+
+type IncidentDialogProps = {
+  incidentDetails: {
+    description: string
+    affectedItems: string[]
+    reportDate: string
+    status: string
+  }
+  noteId: string
+}
+
+function IncidentDialog({ incidentDetails, noteId }: IncidentDialogProps) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button 
+          variant="ghost" 
+          className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+        >
+          <AlertTriangle className="w-4 h-4 mr-2" />
+          Incidencia
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-destructive">
+            <AlertTriangle className="w-5 h-5" />
+            Detalles de la Incidencia
+          </DialogTitle>
+          <DialogDescription>
+            Información sobre la incidencia reportada en el albarán {noteId}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right text-gray-400">
+              Fecha
+            </Label>
+            <div className="col-span-3">
+              {new Date(incidentDetails.reportDate).toLocaleDateString()}
+            </div>
+          </div>
+          <div className="grid grid-cols-4 items-start gap-4">
+            <Label className="text-right text-gray-400">
+              Descripción
+            </Label>
+            <div className="col-span-3">
+              {incidentDetails.description}
+            </div>
+          </div>
+          <div className="grid grid-cols-4 items-start gap-4">
+            <Label className="text-right text-gray-400">
+              Productos
+            </Label>
+            <div className="col-span-3">
+              <ul className="list-disc pl-4 space-y-1">
+                {incidentDetails.affectedItems.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right text-gray-400">
+              Estado
+            </Label>
+            <div className="col-span-3">
+              <span className="px-2 py-1 rounded-full text-xs bg-yellow-500/20 text-yellow-500">
+                Pendiente de resolución
+              </span>
+            </div>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button type="button" variant="outline">Marcar como resuelto</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+type PendingDeliveryNotesTableProps = {
+  deliveryNotes: Supplier['deliveryNotes']
+}
+
+function PendingDeliveryNotesTable({ deliveryNotes }: PendingDeliveryNotesTableProps) {
+  const pendingDeliveryNotes = deliveryNotes.filter(note => !note.invoiceId)
+
+  if (pendingDeliveryNotes.length === 0) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        No hay albaranes pendientes
+      </div>
+    )
+  }
+
+  return (
+    <ScrollArea className="h-[300px]">
+      <div className="space-y-1">
+        {pendingDeliveryNotes.map((note, index) => (
+          <div key={note.id}>
+            <div className="py-4 px-2 flex items-center justify-between hover:bg-gray-700/30 transition-colors">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">{note.id}</span>
+                  <span className="text-sm text-gray-400">
+                    {new Date(note.date).toLocaleDateString()}
+                  </span>
+                </div>
+                <p className="text-lg font-semibold">{note.total.toLocaleString()}€</p>
+              </div>
+              {note.hasIncidents && note.incidentDetails && (
+                <IncidentDialog 
+                  incidentDetails={note.incidentDetails}
+                  noteId={note.id}
+                />
+              )}
+            </div>
+            {index < pendingDeliveryNotes.length - 1 && (
+              <Separator className="bg-gray-700/50" />
+            )}
+          </div>
+        ))}
+      </div>
+    </ScrollArea>
+  )
+}
+
+type InvoicesTableProps = {
+  invoices: Supplier['invoices']
+}
+
+function InvoicesTable({ invoices }: InvoicesTableProps) {
+  if (invoices.length === 0) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">
+        No hay facturas disponibles
+      </div>
+    )
+  }
+
+  return (
+    <ScrollArea className="h-[300px]">
+      <div className="space-y-1">
+        {invoices.map((invoice, index) => (
+          <div key={invoice.id}>
+            <div className="py-4 px-2 flex items-center justify-between hover:bg-gray-700/30 transition-colors">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">{invoice.id}</span>
+                  <span className="text-sm text-gray-400">
+                    {new Date(invoice.date).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg font-semibold">{invoice.total.toLocaleString()}€</p>
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    invoice.status === 'paid' 
+                      ? 'bg-green-500/20 text-green-500' 
+                      : 'bg-yellow-500/20 text-yellow-500'
+                  }`}>
+                    {invoice.status === 'paid' ? 'Pagada' : 'Pendiente'}
+                  </span>
+                </div>
+              </div>
+              {invoice.pdfUrl && (
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => window.open(invoice.pdfUrl, '_blank')}
+                >
+                  <Download className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+            {index < invoices.length - 1 && (
+              <Separator className="bg-gray-700/50" />
+            )}
+          </div>
+        ))}
+      </div>
+    </ScrollArea>
+  )
+}
+
+type DocumentsTabsProps = {
+  deliveryNotes: Supplier['deliveryNotes']
+  invoices: Supplier['invoices']
+}
+
+function DocumentsTabs({ deliveryNotes, invoices }: DocumentsTabsProps) {
+  return (
+    <Tabs defaultValue="pending" className="w-full">
+      <TabsList className="w-full grid grid-cols-2 mb-4">
+        <TabsTrigger value="pending" className="data-[state=active]:bg-primary data-[state=active]:text-black">
+          Albaranes Pendientes
+        </TabsTrigger>
+        <TabsTrigger value="invoices" className="data-[state=active]:bg-primary data-[state=active]:text-black">
+          Histórico Facturas
+        </TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="pending">
+        <div className="p-2">
+          <PendingDeliveryNotesTable deliveryNotes={deliveryNotes} />
+        </div>
+      </TabsContent>
+
+      <TabsContent value="invoices" className="mt-0">
+        <div className="">
+          <InvoicesTable invoices={invoices} />
+        </div>
+      </TabsContent>
+    </Tabs>
+  )
+}
+
+function ActionButtons() {
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      <Button 
+        variant="outline"
+        className="w-full bg-primary hover:bg-primary/90 text-black"
+        size="lg"
+      >
+        <FileText className="w-4 h-4 mr-2" />
+        Nueva Factura
+      </Button>
+
+      <Button 
+        variant="outline"
+        className="w-full bg-primary hover:bg-primary/90 text-black"
+        size="lg"
+      >
+        <Package className="w-4 h-4 mr-2" />
+        Nuevo Pedido
+      </Button>
+    </div>
+  )
 }
 
 export function SupplierDetailsPage() {
@@ -51,171 +338,33 @@ export function SupplierDetailsPage() {
   // In a real app, we would fetch the supplier data here
   const supplier = mockSupplierData
 
-  const pendingDeliveryNotes = supplier.deliveryNotes.filter(note => !note.invoiceId)
-
   return (
-    <div className="min-h-screen pb-8">
+    <div className="min-h-screen pb-32">
       <div className="p-4 flex items-center relative mb-4">
         <BackButton className="absolute left-4" />
         <h1 className="text-xl font-bold text-white w-full text-center">{supplier.name}</h1>
       </div>
       
       <div className="px-6 space-y-6">
-        {/* Delivery Information */}
-        <Card className="bg-dark-card-bg border-border/40">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
-              Información de Reparto
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <h4 className="text-sm font-medium text-gray-400 mb-1">Días de Reparto</h4>
-              <div className="flex gap-2 flex-wrap">
-                {supplier.deliveryDays.map(day => (
-                  <span 
-                    key={day}
-                    className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
-                  >
-                    {day}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h4 className="text-sm font-medium text-gray-400 mb-1">Antelación Necesaria</h4>
-              <p className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                {supplier.orderAdvanceHours} horas
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Tabs for Invoices and Delivery Notes */}
-        <Tabs defaultValue="pending" className="w-full">
-          <TabsList className="w-full">
-            <TabsTrigger value="pending" className="flex-1">Albaranes Pendientes</TabsTrigger>
-            <TabsTrigger value="invoices" className="flex-1">Histórico Facturas</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="pending">
-            <Card className="bg-dark-card-bg border-border/40">
-              <CardHeader>
-                <CardTitle>Albaranes sin Factura ({pendingDeliveryNotes.length})</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[300px] rounded-md">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Número</TableHead>
-                        <TableHead>Fecha</TableHead>
-                        <TableHead>Total</TableHead>
-                        <TableHead>Estado</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {pendingDeliveryNotes.map((note) => (
-                        <TableRow key={note.id}>
-                          <TableCell>{note.id}</TableCell>
-                          <TableCell>{new Date(note.date).toLocaleDateString()}</TableCell>
-                          <TableCell>{note.total.toLocaleString()}€</TableCell>
-                          <TableCell>
-                            {note.hasIncidents && (
-                              <span className="flex items-center gap-1 text-destructive">
-                                <AlertTriangle className="w-4 h-4" />
-                                Incidencia
-                              </span>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="invoices">
-            <Card className="bg-dark-card-bg border-border/40">
-              <CardHeader>
-                <CardTitle>Histórico de Facturas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[300px] rounded-md">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Número</TableHead>
-                        <TableHead>Fecha</TableHead>
-                        <TableHead>Total</TableHead>
-                        <TableHead>Estado</TableHead>
-                        <TableHead></TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {supplier.invoices.map((invoice) => (
-                        <TableRow key={invoice.id}>
-                          <TableCell>{invoice.id}</TableCell>
-                          <TableCell>{new Date(invoice.date).toLocaleDateString()}</TableCell>
-                          <TableCell>{invoice.total.toLocaleString()}€</TableCell>
-                          <TableCell>
-                            <span className={`px-2 py-1 rounded-full text-xs ${
-                              invoice.status === 'paid' 
-                                ? 'bg-green-500/20 text-green-500' 
-                                : 'bg-yellow-500/20 text-yellow-500'
-                            }`}>
-                              {invoice.status === 'paid' ? 'Pagada' : 'Pendiente'}
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            {invoice.pdfUrl && (
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                className="h-8 w-8"
-                                onClick={() => window.open(invoice.pdfUrl, '_blank')}
-                              >
-                                <Download className="h-4 w-4" />
-                              </Button>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-
-        {/* Actions */}
-        <div className="grid grid-cols-2 gap-4">
-          <Button 
-            variant="outline"
-            className="w-full bg-primary hover:bg-primary/90 text-black"
-            size="lg"
-          >
-            <FileText className="w-4 h-4 mr-2" />
-            Nueva Factura
-          </Button>
-
-          <Button 
-            variant="outline"
-            className="w-full bg-primary hover:bg-primary/90 text-black"
-            size="lg"
-          >
-            <Package className="w-4 h-4 mr-2" />
-            Nuevo Pedido
-          </Button>
+        <div className="bg-dark-card-bg border-border/40 rounded-lg p-6">
+          <h2 className="flex items-center gap-2 text-lg font-semibold mb-4">
+            <Calendar className="w-5 h-5" />
+            Información de Reparto
+          </h2>
+          <DeliveryInfo 
+            deliveryDays={supplier.deliveryDays}
+            orderAdvanceHours={supplier.orderAdvanceHours}
+          />
         </div>
+
+        <DocumentsTabs 
+          deliveryNotes={supplier.deliveryNotes}
+          invoices={supplier.invoices}
+        />
+
+        <ActionButtons />
       </div>
 
-      {/* Floating Contact Buttons */}
       <FloatingContactButtons
         commercialPhone={supplier.commercialPhone}
         deliveryPhone={supplier.deliveryPhone}

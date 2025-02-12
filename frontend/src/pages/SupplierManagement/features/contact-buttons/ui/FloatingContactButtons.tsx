@@ -87,7 +87,8 @@ export function FloatingContactButtons({ commercialPhone, deliveryPhone, central
       {/* Main Button */}
       <Button
         size="icon"
-        className="w-14 h-14 rounded-full bg-primary hover:bg-primary/90 text-black shadow-lg"
+        variant="default"
+        className="size-14 rounded-full text-black shadow-lg opacity-60"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <X className="w-6 h-6" /> : <ChatBubbleLeftRightIcon className="w-6 h-6" />}

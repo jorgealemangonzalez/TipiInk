@@ -28,6 +28,12 @@ export interface DeliveryNote {
   total: number
   hasIncidents: boolean
   invoiceId?: string
+  incidentDetails?: {
+    description: string
+    affectedItems: string[]
+    reportDate: string
+    status: 'pending' | 'resolved'
+  }
 }
 
 export interface SupplierIncident {

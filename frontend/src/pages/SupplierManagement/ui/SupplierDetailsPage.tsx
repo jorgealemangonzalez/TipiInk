@@ -40,7 +40,12 @@ const mockSupplierData: Supplier = {
   invoices: [
     { id: "INV-001", date: "2024-03-15", total: 2500, status: "paid", pdfUrl: "#" },
     { id: "INV-002", date: "2024-03-01", total: 3200, status: "paid", pdfUrl: "#" },
-    { id: "INV-003", date: "2024-02-15", total: 2800, status: "paid", pdfUrl: "#" }
+    { id: "INV-003", date: "2024-02-15", total: 2800, status: "paid", pdfUrl: "#" },
+    { id: "INV-004", date: "2024-02-15", total: 2800, status: "paid", pdfUrl: "#" },
+    { id: "INV-005", date: "2024-02-15", total: 2800, status: "paid", pdfUrl: "#" },
+    { id: "INV-006", date: "2024-02-15", total: 2800, status: "paid", pdfUrl: "#" },
+    { id: "INV-007", date: "2024-02-15", total: 2800, status: "paid", pdfUrl: "#" },
+    { id: "INV-008", date: "2024-02-15", total: 2800, status: "paid", pdfUrl: "#" }
   ],
   deliveryNotes: [
     { 
@@ -56,7 +61,12 @@ const mockSupplierData: Supplier = {
       }
     },
     { id: "ALB-002", date: "2024-03-18", total: 1200, hasIncidents: false },
-    { id: "ALB-003", date: "2024-03-15", total: 950, hasIncidents: false, invoiceId: "INV-001" }
+    { id: "ALB-003", date: "2024-03-15", total: 950, hasIncidents: false, invoiceId: "INV-001" },
+    { id: "ALB-004", date: "2024-03-15", total: 950, hasIncidents: false},
+    { id: "ALB-005", date: "2024-03-15", total: 950, hasIncidents: false},
+    { id: "ALB-006", date: "2024-03-15", total: 950, hasIncidents: false },
+    { id: "ALB-007", date: "2024-03-15", total: 950, hasIncidents: false, invoiceId: "INV-007" },
+    { id: "ALB-008", date: "2024-03-15", total: 950, hasIncidents: false, invoiceId: "INV-008" }
   ]
 }
 
@@ -295,15 +305,11 @@ function DocumentsTabs({ deliveryNotes, invoices }: DocumentsTabsProps) {
       </TabsList>
 
       <TabsContent value="pending">
-        <div className="p-2">
-          <PendingDeliveryNotesTable deliveryNotes={deliveryNotes} />
-        </div>
+        <PendingDeliveryNotesTable deliveryNotes={deliveryNotes} />
       </TabsContent>
 
-      <TabsContent value="invoices" className="mt-0">
-        <div className="">
-          <InvoicesTable invoices={invoices} />
-        </div>
+      <TabsContent value="invoices">
+        <InvoicesTable invoices={invoices} />
       </TabsContent>
     </Tabs>
   )
@@ -313,21 +319,18 @@ function ActionButtons() {
   return (
     <div className="grid grid-cols-2 gap-4">
       <Button 
-        variant="outline"
-        className="w-full bg-primary hover:bg-primary/90 text-black"
+        variant="secondary"
         size="lg"
       >
         <FileText className="w-4 h-4 mr-2" />
-        Nueva Factura
+        Factura
       </Button>
 
       <Button 
-        variant="outline"
-        className="w-full bg-primary hover:bg-primary/90 text-black"
         size="lg"
       >
         <Package className="w-4 h-4 mr-2" />
-        Nuevo Pedido
+        Pedido
       </Button>
     </div>
   )
@@ -340,7 +343,7 @@ export function SupplierDetailsPage() {
 
   return (
     <div className="flex flex-col justify-between p-6">
-      <div className="flex items-center justify-center mb-6">
+      <div className="flex items-center justify-center pb-6">
         <BackButton className="absolute left-4" />
         <h1 className="text-xl font-bold text-white text-center flex-1">{supplier.name}</h1>
         <div className="absolute right-4">

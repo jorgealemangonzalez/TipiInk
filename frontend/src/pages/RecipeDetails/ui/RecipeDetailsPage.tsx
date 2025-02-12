@@ -87,15 +87,15 @@ export const RecipeDetailsPage: FC = () => {
     <div className="min-h-screen flex flex-col">
       <div className="p-4 space-y-6">
         {/* Header */}
-        <div className="relative flex items-center">
-          <BackButton />
-          <h1 className="text-2xl font-bold text-primary ml-8">
-            Detalles de la receta
+        <div className="relative flex justify-center items-center">
+          <BackButton className='absolute left-0'/>
+          <h1 className="text-2xl font-bold text-primary">
+            Receta
           </h1>
           <div 
             onClick={() => toggleRecipeMenuStatus(recipe.id)}
             className={cn(
-              "w-[60px] h-[60px] rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity ml-auto",
+              "p-2 rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity absolute right-0",
               recipe.inMenu ? "bg-primary" : ""
             )}
           >

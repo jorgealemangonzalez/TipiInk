@@ -82,7 +82,7 @@ function DeliveryInfo({ deliveryDays, orderAdvanceHours }: DeliveryInfoProps) {
         </div>
       </div>
       <div>
-        <h4 className="text-sm font-medium text-gray-400 mb-1">Antelación Necesaria</h4>
+        <h4 className="text-sm font-medium text-gray-400 mb-1">Antelación</h4>
         <p className="flex items-center gap-2">
           <Clock className="w-4 h-4" />
           {orderAdvanceHours} horas
@@ -287,10 +287,10 @@ function DocumentsTabs({ deliveryNotes, invoices }: DocumentsTabsProps) {
     <Tabs defaultValue="pending" className="w-full">
       <TabsList className="w-full grid grid-cols-2 mb-4">
         <TabsTrigger value="pending" className="data-[state=active]:bg-primary data-[state=active]:text-black">
-          Albaranes Pendientes
+          Albaranes
         </TabsTrigger>
         <TabsTrigger value="invoices" className="data-[state=active]:bg-primary data-[state=active]:text-black">
-          Histórico Facturas
+          Facturas
         </TabsTrigger>
       </TabsList>
 
@@ -346,16 +346,20 @@ export function SupplierDetailsPage() {
       </div>
       
       <div className="px-6 space-y-6">
-        <div className="bg-dark-card-bg border-border/40 rounded-lg p-6">
-          <h2 className="flex items-center gap-2 text-lg font-semibold mb-4">
-            <Calendar className="w-5 h-5" />
-            Información de Reparto
-          </h2>
-          <DeliveryInfo 
-            deliveryDays={supplier.deliveryDays}
-            orderAdvanceHours={supplier.orderAdvanceHours}
-          />
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Calendar className="w-5 h-5" />
+              Información de Reparto
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DeliveryInfo 
+              deliveryDays={supplier.deliveryDays}
+              orderAdvanceHours={supplier.orderAdvanceHours}
+            />
+          </CardContent>
+        </Card>
 
         <DocumentsTabs 
           deliveryNotes={supplier.deliveryNotes}

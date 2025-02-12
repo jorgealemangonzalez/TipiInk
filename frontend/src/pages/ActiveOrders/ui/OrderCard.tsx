@@ -58,7 +58,7 @@ export const OrderCard: FC<OrderCardProps> = ({ order, disableDrag, className })
 
   return (
     <>
-      <div className={cn("relative touch-none", className)}>
+      <div className={cn("relative", className)}>
         {!disableDrag && (
           <>
             <motion.div 
@@ -97,7 +97,6 @@ export const OrderCard: FC<OrderCardProps> = ({ order, disableDrag, className })
           }}
           whileTap={disableDrag ? undefined : { cursor: 'grabbing' }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="touch-none"
         >
           <Card className={cn(
             "border-none rounded-[35px] shadow-[0_4px_20px_rgba(0,0,0,0.25)] select-none",

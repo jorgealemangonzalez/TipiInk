@@ -75,7 +75,7 @@ export const ActiveOrders: FC<ActiveOrdersProps> = ({ className, collapsed = fal
 
   return (
     <div className={cn("h-screen", className)}>
-      <div className="h-full bg-dark-card-bg rounded-t-[35px] shadow-[0_-1px_20px_rgba(0,0,0,0.25)]">
+      <div className="h-full bg-muted rounded-t-[35px] shadow-[0_-1px_20px_rgba(0,0,0,0.25)]">
         <Header />
         <OrdersList orders={sortedOrders} collapsed={collapsed} />
       </div>

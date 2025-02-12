@@ -265,7 +265,7 @@ export const ReceiveOrderModal: FC<ReceiveOrderModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-dark-bg z-50 flex flex-col min-h-screen">
+    <div className="fixed inset-0 bg-background z-50 flex flex-col min-h-screen">
       {renderStep()}
     </div>
   )

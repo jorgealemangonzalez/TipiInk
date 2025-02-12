@@ -11,8 +11,8 @@ export const ActiveOrdersPage: FC = () => {
   )
 
   return (
-    <div className="min-h-screen flex flex-col bg-dark-bg">
-      <div className="fixed top-0 left-0 right-0 shadow-md bg-dark-bg z-50">
+    <div className="min-h-screen flex flex-col bg-background">
+      <div className="fixed top-0 left-0 right-0 shadow-md bg-background z-50">
         <div className="flex justify-between items-center px-4 py-6">
           <button 
             onClick={() => navigate(-1)}

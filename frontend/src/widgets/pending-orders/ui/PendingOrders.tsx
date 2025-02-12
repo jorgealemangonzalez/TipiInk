@@ -75,7 +75,7 @@ export const PendingOrders: FC<PendingOrdersProps> = ({ className, collapsed = f
 
   return (
     <div className={cn("h-screen", className)}>
-      <div className="h-full bg-dark-card-bg rounded-t-[35px]">
+      <div className="h-full bg-muted rounded-t-[35px]">
         <Header />
         <OrdersList orders={sortedOrders} collapsed={collapsed} />
       </div>

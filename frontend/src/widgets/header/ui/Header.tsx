@@ -13,7 +13,7 @@ const NavigationCard: FC<{
   onClick?: () => void
 }> = ({ icon, label, onClick }) => (
   <div 
-    className="bg-dark-card-bg rounded-full pl-1 pr-7 gap-1.5 flex items-center flex-row hover:opacity-80 transition-opacity cursor-pointer h-[60px] shadow-[0_4px_12px_rgba(0,0,0,0.25)]"
+    className="bg-muted rounded-full pl-1 pr-7 gap-1.5 flex items-center flex-row hover:opacity-80 transition-opacity cursor-pointer h-[60px] shadow-[0_4px_12px_rgba(0,0,0,0.25)]"
     onClick={onClick}
   >
     <div className="min-w-[54px] h-[54px] rounded-full bg-gray-700 flex items-center justify-center">

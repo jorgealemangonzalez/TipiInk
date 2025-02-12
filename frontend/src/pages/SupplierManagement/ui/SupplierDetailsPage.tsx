@@ -192,7 +192,7 @@ function PendingDeliveryNotesTable({ deliveryNotes }: PendingDeliveryNotesTableP
       <div className="space-y-1">
         {pendingDeliveryNotes.map((note, index) => (
           <div key={note.id}>
-            <div className="py-4 px-2 flex items-center justify-between hover:bg-gray-700/30 transition-colors">
+            <div className="bg-background py-4 px-2 flex items-center justify-between hover:bg-gray-700/30 transition-colors">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="font-medium">{note.id}</span>
@@ -339,13 +339,19 @@ export function SupplierDetailsPage() {
   const supplier = mockSupplierData
 
   return (
-    <div className="min-h-screen pb-32">
-      <div className="p-4 flex items-center relative mb-4">
+    <div className="flex flex-col justify-between p-6">
+      <div className="flex items-center justify-center mb-6">
         <BackButton className="absolute left-4" />
-        <h1 className="text-xl font-bold text-white w-full text-center">{supplier.name}</h1>
+        <h1 className="text-xl font-bold text-white text-center flex-1">{supplier.name}</h1>
+        <div className="absolute right-4">
+          <FloatingContactButtons
+            commercialPhone={supplier.commercialPhone}
+            deliveryPhone={supplier.deliveryPhone}
+          />
+        </div>
       </div>
       
-      <div className="px-6 space-y-6">
+      <div className="space-y-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
@@ -366,13 +372,9 @@ export function SupplierDetailsPage() {
           invoices={supplier.invoices}
         />
 
-        <ActionButtons />
       </div>
 
-      <FloatingContactButtons
-        commercialPhone={supplier.commercialPhone}
-        deliveryPhone={supplier.deliveryPhone}
-      />
+      <ActionButtons />
     </div>
   )
 } 

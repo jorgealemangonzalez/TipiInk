@@ -28,7 +28,7 @@ export const RejectItemModal: FC<RejectItemModalProps> = ({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-dark-bg z-50 flex flex-col min-h-screen">
+    <div className="fixed inset-0 bg-background z-50 flex flex-col min-h-screen">
       <div className="flex justify-between items-center p-4 border-b border-white/10">
         <h2 className="text-xl font-bold text-white">Tu solicitud al proveedor</h2>
         <button onClick={onClose} className="p-2 text-white hover:bg-white/10 rounded-full transition-colors">

@@ -20,7 +20,7 @@ const Header: FC = () => {
   return (
     <div className="px-6 py-5">
       <div className="flex items-center gap-3">
-        <h2 className="text-2xl font-bold text-primary">Pedidos Activos</h2>
+        <h2 className="text-2xl font-bold text-primary">Pedidos a Recibir</h2>
       </div>
     </div>
   )

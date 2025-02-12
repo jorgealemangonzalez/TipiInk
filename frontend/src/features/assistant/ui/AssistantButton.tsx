@@ -39,7 +39,6 @@ export function AssistantButton() {
 
         vapi.on("speech-end", () => {
             console.log("Speech ended")
-            setIsListening(false)
             resetInactivityTimer()
         })
 
@@ -79,11 +78,12 @@ export function AssistantButton() {
     const stopListening = () => {
         console.log("Stopping assistant")
         vapi.stop()
-        setIsListening(false)
         setIsLoading(false)
-        setTranscript("")
-        setAssistantResponse("")
+        setIsListening(false)
         setCallInProgress(false)
+        setTranscript("")
+        setError(null)
+        setAssistantResponse("")
         if (inactivityTimer.current) {
             clearTimeout(inactivityTimer.current)
         }
@@ -100,7 +100,7 @@ export function AssistantButton() {
 
             try {
                 const assistant = await vapi.start("d92417fe-3a9d-4a90-8741-ab7c312be2f2")
-                setIsListening(true)
+                
                 console.log("Assistant started:", assistant)
             } catch (error) {
                 console.error("Error iniciando VAPI:", error)
@@ -116,11 +116,13 @@ export function AssistantButton() {
                 onClick={handleClick}
                 disabled={isLoading}
                 className={cn(
-                    "relative flex h-16 w-16 items-center justify-center rounded-full bg-blue-500 text-white shadow-lg transition-all duration-300 hover:bg-blue-600",
-                    "before:absolute before:h-full before:w-full before:rounded-full before:bg-blue-500/30 before:transition-all before:duration-300",
+                    "relative flex h-16 w-16 items-center justify-center rounded-full text-white shadow-lg transition-all duration-300",
+                    "before:absolute before:h-full before:w-full before:rounded-full before:transition-all before:duration-300",
+                    isListening 
+                        ? "bg-red-500 hover:bg-red-600 before:bg-red-500/30"
+                        : "bg-blue-500 hover:bg-blue-600 before:bg-blue-500/30",
                     isLoading && "before:animate-ping",
                     isListening && "before:animate-bounce",
-                    "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
                     "disabled:cursor-not-allowed disabled:opacity-70"
                 )}
                 title={isListening ? "Detener" : "Comenzar a escuchar"}

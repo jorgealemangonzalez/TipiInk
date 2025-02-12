@@ -15,7 +15,7 @@ export const ActiveOrdersPage: FC = () => {
       <div className="fixed top-0 left-0 right-0 shadow-md bg-dark-bg z-50">
         <div className="flex justify-between items-center px-4 py-6">
           <BackButton />
-          <h1 className="text-xl font-bold text-white">Pedidos Activos</h1>
+          <h1 className="text-xl font-bold text-white">Pedidos a Recibir</h1>
           <div className="w-10" /> {/* Spacer to maintain header centering */}
         </div>
       </div>

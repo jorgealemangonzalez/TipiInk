@@ -8,6 +8,7 @@ import { RecipeDetailsPage } from "@/pages/RecipeDetails/ui/RecipeDetailsPage";
 import { PendingOrdersPage } from "@/pages/PendingOrders";
 import { ActiveOrdersPage } from "@/pages/ActiveOrders";
 import { SupplierManagementPage } from "@/pages/SupplierManagement";
+import { SupplierDetailsPage } from "@/pages/SupplierManagement/ui/SupplierDetailsPage";
 import mixpanel from "mixpanel-browser";
 import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
@@ -38,6 +39,7 @@ export const RoutingComponent = () => {
                             <Route path="/recipe-review" element={<RecipeReviewPage />} />
                             <Route path="/recipe/:id" element={<RecipeDetailsPage />} />
                             <Route path="/supplier-management" element={<SupplierManagementPage />} />
+                            <Route path="/supplier-management/:supplierId" element={<SupplierDetailsPage />} />
                         </Routes>
                     </WithAnonymousUser>
                 }

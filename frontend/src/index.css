@@ -7,5 +7,5 @@
 }
 
 html, body, #root {
-    @apply h-full w-full bg-dark-bg;
+    @apply h-full w-full bg-dark-bg text-white;
 }

@@ -32,7 +32,7 @@ const OrderListItem: FC<OrderListItemProps> = ({ order, index, collapsed }) => {
     base: 'relative w-full h-[4.5rem]',
     top: `top-[${index * 30}px]`,
     zIndex: `z-[${index * 10}]`,
-    shadow: 'shadow-[0_4px_12px_rgba(0,0,0,0.35)] hover:shadow-[0_8px_16px_rgba(0,0,0,0.45)] transition-shadow duration-200'
+    shadow: 'shadow-[0_4px_12px_rgba(0,0,0,0.35)] rounded-full hover:shadow-[0_8px_16px_rgba(0,0,0,0.45)] transition-shadow duration-200'
   } : {}
 
   return (

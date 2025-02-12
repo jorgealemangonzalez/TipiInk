@@ -43,16 +43,12 @@ export function InvoicePage() {
   }
 
   return (
-    <div className="min-h-screen bg-dark-bg">
-      <div className="bg-gradient-to-b from-black/20 to-transparent">
-        <div className="container mx-auto">
-          <div className="flex items-center gap-4 p-4">
-            <BackButton />
-            <h1 className="text-xl font-bold text-white">Validación de Factura</h1>
-          </div>
-        </div>
+    <div className="min-h-screen">
+      <div className="p-4 flex items-center relative">
+        <BackButton className="absolute left-4" />
+        <h1 className="text-xl font-bold text-white w-full text-center">Validación de Factura</h1>
       </div>
-      <div className="container mx-auto p-6">
+      <div className="px-6">
         {renderStep()}
       </div>
     </div>

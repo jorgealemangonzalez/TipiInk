@@ -21,6 +21,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { BackButton } from '@/shared/ui/back-button'
 
 const getPercentageColor = (percentage: number): string => {
   if (percentage < 20) return 'text-emerald-500'
@@ -87,12 +88,7 @@ export const RecipeDetailsPage: FC = () => {
       <div className="p-4 space-y-6">
         {/* Header */}
         <div className="relative flex items-center">
-          <div 
-            onClick={() => navigate(-1)}
-            className="w-[60px] h-[60px] rounded-full bg-gray-700 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-          >
-            <ChevronLeft className="h-7 w-7 text-primary" />
-          </div>
+          <BackButton />
           <h1 className="text-2xl font-bold text-primary ml-8">
             Detalles de la receta
           </h1>
@@ -100,12 +96,12 @@ export const RecipeDetailsPage: FC = () => {
             onClick={() => toggleRecipeMenuStatus(recipe.id)}
             className={cn(
               "w-[60px] h-[60px] rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity ml-auto",
-              recipe.inMenu ? "bg-primary" : "bg-gray-700"
+              recipe.inMenu ? "bg-primary" : ""
             )}
           >
             <BookOpen className={cn(
               "h-7 w-7",
-              recipe.inMenu ? "text-black" : "text-primary/60"
+              recipe.inMenu ? "text-primary-foreground" : "text-primary"
             )} />
           </div>
         </div>

@@ -5,6 +5,7 @@ import { SearchBar } from './SearchBar'
 import { cn } from '../../../lib/utils'
 import { useRecipes } from '@/entities/recipe/model/hooks'
 import { Separator } from "@/components/ui/separator"
+import { BackButton } from '@/shared/ui/back-button'
 
 const getPercentageColor = (percentage: number): string => {
   if (percentage < 20) return 'text-emerald-500'
@@ -46,12 +47,7 @@ export const RecipeReviewPage: FC = () => {
     <div className="min-h-screen flex flex-col">
       <div className="p-4 space-y-4">
         <div className="flex items-center gap-4">
-          <div 
-            onClick={() => navigate(-1)}
-            className="w-[60px] h-[60px] rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
-          >
-            <ChevronLeft className="h-7 w-7 text-primary" />
-          </div>
+          <BackButton />
           <h1 className="absolute left-1/2 -translate-x-1/2 text-2xl font-bold text-primary">Recetario</h1>
           <div 
             onClick={() => setShowOnlyMenu(!showOnlyMenu)}

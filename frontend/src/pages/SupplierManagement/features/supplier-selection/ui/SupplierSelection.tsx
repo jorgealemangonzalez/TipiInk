@@ -2,21 +2,7 @@ import { cn } from "@/shared/lib/utils"
 import { Fish, Beef, Apple, Package2, Snowflake, Sparkles } from 'lucide-react'
 import { Separator } from "@/components/ui/separator"
 import { SupplierCategory } from "@/entities/order/model/types"
-
-const SUPPLIERS = {
-  PESCADERIA: { name: 'Pescaderia La Central', type: 'pescado' as const },
-  FRUTERIA: { name: 'Fruteria Huertano', type: 'frutaVerdura' as const },
-  CARNICERIA: { name: 'Carniceria Paco', type: 'carne' as const },
-  POLLERIA: { name: 'Polleria Gallo', type: 'carne' as const },
-  CHARCUTERIA: { name: 'Charcuteria Delicatessen', type: 'carne' as const },
-  CONGELADOS: { name: 'Congelados Polar', type: 'congelado' as const },
-  BEBIDAS: { name: 'Distribuidora de Bebidas', type: 'seco' as const },
-  CONSERVAS: { name: 'Conservas del Cantábrico', type: 'seco' as const },
-  LACTEOS: { name: 'Lácteos La Vaquita', type: 'seco' as const },
-  LIMPIEZA: { name: 'Productos de Limpieza Clean', type: 'limpieza' as const },
-  SECOS: { name: 'Alimentos Secos y Legumbres', type: 'seco' as const },
-  VERDULERIA: { name: 'Verduleria Huerta Fresca', type: 'frutaVerdura' as const }
-} as const
+import { SUPPLIERS } from "@/shared/api/mocks/suppliers"
 
 interface SupplierSelectionProps {
   selectedSupplier: string

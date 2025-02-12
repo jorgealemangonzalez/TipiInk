@@ -1,5 +1,6 @@
+import { Heart, Package, Truck } from 'lucide-react'
 import React, { FC } from 'react'
-import { Book, FileText } from 'react-feather'
+import { Book, BookOpen, FileText } from 'react-feather'
 import { useNavigate } from 'react-router-dom'
 
 interface HeaderProps {
@@ -21,7 +22,7 @@ const NavigationCard: FC<{
       })}
     </div>
     <div className="flex-1 w-full text-center">
-      <p className="text-primary text-[16px] font-medium leading-tight">{label}</p>
+      <p className="text-primary text-sm font-medium leading-tight">{label}</p>
     </div>
   </div>
 )
@@ -32,14 +33,14 @@ export const Header: FC<HeaderProps> = () => {
   return (
     <div className="grid grid-cols-2 gap-4 p-4">
       <NavigationCard
-        icon={<Book />}
-        label="Recetario"
+        icon={<BookOpen />}
+        label="Recetas"
         onClick={() => navigate('/recipe-review')}
       />
       <NavigationCard
-        icon={<FileText />}
-        label="Facturas"
-        onClick={() => navigate('/invoice')}
+        icon={<Truck />}
+        label="Proveedores"
+        onClick={() => navigate('/supplier-management')}
       />
     </div>
   )

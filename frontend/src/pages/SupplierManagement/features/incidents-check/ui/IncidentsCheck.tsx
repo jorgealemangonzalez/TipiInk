@@ -2,14 +2,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { AlertCircle, CheckCircle2, ArrowLeft } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-
-interface Incident {
-  id: string
-  description: string
-  date: string
-  status: "pending" | "resolved"
-  type: "albaran_missing" | "amount_correction" | "delivery_compensation"
-}
+import { SUPPLIERS } from "@/shared/api/mocks/suppliers"
 
 interface IncidentsCheckProps {
   supplierName: string
@@ -22,47 +15,11 @@ export function IncidentsCheck({
   onContinue,
   onBack
 }: IncidentsCheckProps) {
-  // Mock data - This would come from your backend
-  const getSupplierIncidents = (supplier: string): Incident[] => {
-    switch (supplier) {
-      case "Pescaderia La Central":
-        return [
-          {
-            id: "INC-001",
-            description: "Albarán ALB-2024-089 pendiente de recibir",
-            date: "2024-03-20",
-            status: "pending",
-            type: "albaran_missing"
-          },
-          {
-            id: "INC-002",
-            description: "Pendiente de cambio de importe en albarán ALB-2024-092",
-            date: "2024-03-21",
-            status: "resolved",
-            type: "amount_correction"
-          }
-        ]
-      case "Fruteria El Huertano":
-        return [
-          {
-            id: "INC-003",
-            description: "Pendiente de acordar compensación por deficiencia en entrega ALB-2024-095",
-            date: "2024-03-22",
-            status: "pending",
-            type: "delivery_compensation"
-          }
-        ]
-      case "Carniceria Paco":
-        return []
-      default:
-        return []
-    }
-  }
-
-  const incidents = getSupplierIncidents(supplierName)
+  const supplier = Object.values(SUPPLIERS).find(s => s.name === supplierName)
+  const incidents = supplier?.incidents ?? []
   const hasIncidents = incidents.some(incident => incident.status === "pending")
 
-  const getIncidentTypeText = (type: Incident["type"]) => {
+  const getIncidentTypeText = (type: typeof incidents[number]["type"]) => {
     switch (type) {
       case "albaran_missing":
         return "Albarán por corregir no recibido"

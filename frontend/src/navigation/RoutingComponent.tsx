@@ -9,10 +9,11 @@ import { PendingOrdersPage } from "@/pages/PendingOrders";
 import { ActiveOrdersPage } from "@/pages/ActiveOrders";
 import { SupplierManagementPage } from "@/pages/SupplierManagement";
 import { SupplierDetailsPage } from "@/pages/SupplierManagement/ui/SupplierDetailsPage";
+import { AddInvoicePage } from "@/pages/AddInvoice/ui/AddInvoicePage";
+import { InvoiceSummaryPage } from "@/pages/AddInvoice/ui/InvoiceSummaryPage";
 import mixpanel from "mixpanel-browser";
 import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
-import { AddInvoicePage } from "@/pages/AddInvoice/ui/InvoicePage";
 
 export const RoutingComponent = () => {
     const location = useLocation();
@@ -42,6 +43,7 @@ export const RoutingComponent = () => {
                             <Route path="/supplier-management" element={<SupplierManagementPage />} />
                             <Route path="/supplier-management/:supplierId" element={<SupplierDetailsPage />} />
                             <Route path="/supplier-management/:supplierId/addInvoice" element={<AddInvoicePage />} />
+                            <Route path="/supplier-management/:supplierId/addInvoice/summary" element={<InvoiceSummaryPage />} />
                         </Routes>
                     </WithAnonymousUser>
                 }

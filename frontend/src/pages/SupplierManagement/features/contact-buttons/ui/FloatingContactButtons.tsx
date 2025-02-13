@@ -84,7 +84,7 @@ export function FloatingContactButtons({ commercialPhone, deliveryPhone, central
       {/* Main Button */}
       <Button
         size="icon"
-        variant="ghost"
+        variant="outline"
         className="w-10 h-10 rounded-full hover:bg-gray-700/30"
         onClick={() => setIsOpen(!isOpen)}
       >

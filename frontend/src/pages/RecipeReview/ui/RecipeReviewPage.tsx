@@ -6,12 +6,14 @@ import { cn } from '../../../lib/utils'
 import { useRecipes } from '@/entities/recipe/model/hooks'
 import { Separator } from "@/components/ui/separator"
 import { BackButton } from '@/shared/ui/back-button'
+import { LocationSelector } from '@/shared/ui/location-selector'
+import { Location } from '@/entities/recipe/model/types'
 
-const getPercentageColor = (percentage: number): string => {
-  if (percentage < 20) return 'text-emerald-500'
-  if (percentage <= 25) return 'text-green-400'
-  if (percentage <= 30) return 'text-yellow-400'
-  if (percentage <= 32) return 'text-orange-400'
+const getCostColor = (cost: number): string => {
+  if (cost < 2) return 'text-emerald-500'
+  if (cost <= 3) return 'text-green-400'
+  if (cost <= 4) return 'text-yellow-400'
+  if (cost <= 5) return 'text-orange-400'
   return 'text-red-500'
 }
 
@@ -19,6 +21,7 @@ export const RecipeReviewPage: FC = () => {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [showOnlyMenu, setShowOnlyMenu] = useState(false)
+  const [location, setLocation] = useState<Location>('ibiza')
   const { getAllRecipes } = useRecipes()
   const recipes = getAllRecipes()
 
@@ -30,14 +33,14 @@ export const RecipeReviewPage: FC = () => {
         (recipe.name.toLowerCase().includes(query) ||
         recipe.ingredients.some(ingredient => ingredient.name.toLowerCase().includes(query)))
       )
-      .sort((a, b) => b.costPercentage - a.costPercentage)
-  }, [searchQuery, recipes, showOnlyMenu])
+      .sort((a, b) => b.costs[location].costPerServing - a.costs[location].costPerServing)
+  }, [searchQuery, recipes, showOnlyMenu, location])
 
-  const totalAverageCost = useMemo(() => {
+  const averageCost = useMemo(() => {
     if (filteredRecipes.length === 0) return 0
-    const total = filteredRecipes.reduce((acc, recipe) => acc + recipe.costPercentage, 0)
-    return Math.round(total / filteredRecipes.length)
-  }, [filteredRecipes, recipes])
+    const total = filteredRecipes.reduce((acc, recipe) => acc + recipe.costs[location].costPerServing, 0)
+    return Number((total / filteredRecipes.length).toFixed(2))
+  }, [filteredRecipes, location])
 
   const handleRecipeClick = (recipeId: number) => {
     navigate(`/recipe/${recipeId}`)
@@ -49,17 +52,20 @@ export const RecipeReviewPage: FC = () => {
         <div className="flex items-center gap-4">
           <BackButton />
           <h1 className="absolute left-1/2 -translate-x-1/2 text-2xl font-bold text-primary">Recetario</h1>
-          <div 
-            onClick={() => setShowOnlyMenu(!showOnlyMenu)}
-            className={cn(
-              "w-[60px] h-[60px] rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity ml-auto",
-              showOnlyMenu ? "bg-primary" : ""
-            )}
-          >
-            <BookOpen className={cn(
-              "h-7 w-7",
-              showOnlyMenu ? "text-primary-foreground" : "text-primary"
-            )} />
+          <div className="ml-auto flex items-center gap-4">
+            <LocationSelector value={location} onChange={setLocation} />
+            {/* <div 
+              onClick={() => setShowOnlyMenu(!showOnlyMenu)}
+              className={cn(
+                "w-[60px] h-[60px] rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity",
+                showOnlyMenu ? "bg-primary" : ""
+              )}
+            >
+              <BookOpen className={cn(
+                "h-7 w-7",
+                showOnlyMenu ? "text-primary-foreground" : "text-primary"
+              )} />
+            </div> */}
           </div>
         </div>
 
@@ -69,8 +75,8 @@ export const RecipeReviewPage: FC = () => {
               <Euro className="h-6 w-6 text-primary" />
             </div>
             <div className="flex flex-col">
-              <span className={cn("text-xl font-bold", getPercentageColor(totalAverageCost))}>
-                {totalAverageCost}%
+              <span className={cn("text-xl font-bold", getCostColor(averageCost))}>
+                {averageCost}€
               </span>
             </div>
           </div>
@@ -96,11 +102,11 @@ export const RecipeReviewPage: FC = () => {
                       "text-sm font-medium",
                       recipe.priceVariation > 0 ? "text-red-500" : "text-emerald-500"
                     )}>
-                      {Math.abs(recipe.priceVariation)}%
+                      {Math.abs(recipe.priceVariation).toFixed(2)}€
                     </span>
                   </div>
-                  <span className={cn("text-2xl font-bold", getPercentageColor(recipe.costPercentage))}>
-                    {recipe.costPercentage}%
+                  <span className={cn("text-2xl font-bold", getCostColor(recipe.costs[location].costPerServing))}>
+                    {recipe.costs[location].costPerServing.toFixed(2)}€
                   </span>
                 </div>
               </div>

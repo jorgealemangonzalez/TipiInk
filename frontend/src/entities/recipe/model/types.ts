@@ -1,5 +1,7 @@
 export type Allergen = 'gluten' | 'crustaceans' | 'eggs' | 'fish' | 'peanuts' | 'soy' | 'dairy' | 'nuts' | 'celery' | 'mustard' | 'sesame' | 'sulphites' | 'lupin' | 'molluscs'
 
+export type Location = 'ibiza' | 'japon' | 'bahamas'
+
 export interface RecipeIngredient {
   name: string
   quantity: number
@@ -29,4 +31,16 @@ export interface RecipeDetails {
     conservation: string[]
   }
   image: string
+  location: Location
+  costs: {
+    [key in Location]: {
+      costPerServing: number
+      productionCost: number
+      ingredientsCosts: Array<{
+        name: string
+        price: number
+        totalPrice: number
+      }>
+    }
+  }
 } 

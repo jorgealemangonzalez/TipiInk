@@ -1,4 +1,35 @@
-import { RecipeDetails } from './types'
+import { RecipeDetails, Location } from './types'
+
+const generateLocationCosts = (baseCosts: {
+  costPerServing: number
+  productionCost: number
+  ingredients: Array<{
+    name: string
+    price: number
+    totalPrice: number
+  }>
+}) => {
+  const locationMultipliers = {
+    ibiza: 1,
+    japon: 1.2,
+    bahamas: 1.4
+  }
+
+  return Object.entries(locationMultipliers).reduce((acc, [location, multiplier]) => {
+    return {
+      ...acc,
+      [location]: {
+        costPerServing: baseCosts.costPerServing * multiplier,
+        productionCost: baseCosts.productionCost * multiplier,
+        ingredientsCosts: baseCosts.ingredients.map(ingredient => ({
+          name: ingredient.name,
+          price: ingredient.price * multiplier,
+          totalPrice: ingredient.totalPrice * multiplier
+        }))
+      }
+    }
+  }, {} as { [key in Location]: typeof baseCosts & { ingredientsCosts: typeof baseCosts.ingredients } })
+}
 
 export const mockRecipes: RecipeDetails[] = [
   {
@@ -141,7 +172,73 @@ export const mockRecipes: RecipeDetails[] = [
       ]
     },
     image: '/210820-casa-elias-02.jpg',
-    inMenu: true
+    inMenu: true,
+    costs: generateLocationCosts({
+      costPerServing: 4.85,
+      productionCost: 19.40,
+      ingredients: [
+        {
+          name: 'Arroz bomba',
+          price: 4.50,
+          totalPrice: 1.80
+        },
+        {
+          name: 'Azafrán',
+          price: 3000,
+          totalPrice: 6.00
+        },
+        {
+          name: 'Caldo de pescado',
+          price: 2.50,
+          totalPrice: 3.00
+        },
+        {
+          name: 'Gambas',
+          price: 18.00,
+          totalPrice: 7.20
+        },
+        {
+          name: 'Mejillones',
+          price: 6.00,
+          totalPrice: 3.00
+        },
+        {
+          name: 'Calamares',
+          price: 15.00,
+          totalPrice: 4.50
+        },
+        {
+          name: 'Pimiento rojo',
+          price: 2.80,
+          totalPrice: 0.56
+        },
+        {
+          name: 'Tomate',
+          price: 2.50,
+          totalPrice: 0.50
+        },
+        {
+          name: 'Aceite de oliva',
+          price: 5.00,
+          totalPrice: 0.50
+        },
+        {
+          name: 'Ajo',
+          price: 6.00,
+          totalPrice: 0.12
+        },
+        {
+          name: 'Pimentón dulce',
+          price: 15.00,
+          totalPrice: 0.15
+        },
+        {
+          name: 'Sal',
+          price: 1.00,
+          totalPrice: 0.02
+        }
+      ]
+    })
   },
   {
     id: 2,
@@ -193,7 +290,23 @@ export const mockRecipes: RecipeDetails[] = [
       ]
     },
     image: '/risotto-setas.jpg',
-    inMenu: true
+    inMenu: true,
+    costs: generateLocationCosts({
+      costPerServing: 3.85,
+      productionCost: 15.40,
+      ingredients: [
+        {
+          name: 'Arroz arborio',
+          price: 5.50,
+          totalPrice: 1.76
+        },
+        {
+          name: 'Setas variadas',
+          price: 12.00,
+          totalPrice: 4.80
+        }
+      ]
+    })
   },
   {
     id: 3,
@@ -233,7 +346,18 @@ export const mockRecipes: RecipeDetails[] = [
       ]
     },
     image: '/tataki-atun.jpg',
-    inMenu: false
+    inMenu: false,
+    costs: generateLocationCosts({
+      costPerServing: 5.50,
+      productionCost: 22.00,
+      ingredients: [
+        {
+          name: 'Atún rojo',
+          price: 45.00,
+          totalPrice: 27.00
+        }
+      ]
+    })
   },
   {
     id: 4,
@@ -274,7 +398,18 @@ export const mockRecipes: RecipeDetails[] = [
       ]
     },
     image: '/canelones-espinacas.jpg',
-    inMenu: true
+    inMenu: true,
+    costs: generateLocationCosts({
+      costPerServing: 3.20,
+      productionCost: 19.20,
+      ingredients: [
+        {
+          name: 'Placas de canelones',
+          price: 3.50,
+          totalPrice: 3.50
+        }
+      ]
+    })
   },
   {
     id: 5,
@@ -314,7 +449,18 @@ export const mockRecipes: RecipeDetails[] = [
       ]
     },
     image: '/ceviche-corvina.jpg',
-    inMenu: true
+    inMenu: true,
+    costs: generateLocationCosts({
+      costPerServing: 4.50,
+      productionCost: 18.00,
+      ingredients: [
+        {
+          name: 'Corvina',
+          price: 25.00,
+          totalPrice: 15.00
+        }
+      ]
+    })
   },
   {
     id: 6,
@@ -354,7 +500,18 @@ export const mockRecipes: RecipeDetails[] = [
       ]
     },
     image: '/carrilleras-vino.jpg',
-    inMenu: false
+    inMenu: false,
+    costs: generateLocationCosts({
+      costPerServing: 4.00,
+      productionCost: 24.00,
+      ingredients: [
+        {
+          name: 'Carrilleras de cerdo',
+          price: 12.00,
+          totalPrice: 14.40
+        }
+      ]
+    })
   },
   {
     id: 7,
@@ -393,7 +550,18 @@ export const mockRecipes: RecipeDetails[] = [
       ]
     },
     image: '/tarta-queso.jpg',
-    inMenu: true
+    inMenu: true,
+    costs: generateLocationCosts({
+      costPerServing: 1.20,
+      productionCost: 14.40,
+      ingredients: [
+        {
+          name: 'Queso crema',
+          price: 4.50,
+          totalPrice: 3.38
+        }
+      ]
+    })
   },
   {
     id: 8,
@@ -433,7 +601,18 @@ export const mockRecipes: RecipeDetails[] = [
       ]
     },
     image: '/pulpo-gallega.jpg',
-    inMenu: true
+    inMenu: true,
+    costs: generateLocationCosts({
+      costPerServing: 6.00,
+      productionCost: 24.00,
+      ingredients: [
+        {
+          name: 'Pulpo',
+          price: 18.00,
+          totalPrice: 21.60
+        }
+      ]
+    })
   },
   {
     id: 9,
@@ -473,7 +652,18 @@ export const mockRecipes: RecipeDetails[] = [
       ]
     },
     image: '/gazpacho.jpg',
-    inMenu: false
+    inMenu: false,
+    costs: generateLocationCosts({
+      costPerServing: 1.50,
+      productionCost: 9.00,
+      ingredients: [
+        {
+          name: 'Tomates',
+          price: 2.50,
+          totalPrice: 2.50
+        }
+      ]
+    })
   },
   {
     id: 10,
@@ -513,7 +703,18 @@ export const mockRecipes: RecipeDetails[] = [
       ]
     },
     image: '/rabo-toro.jpg',
-    inMenu: true
+    inMenu: true,
+    costs: generateLocationCosts({
+      costPerServing: 5.25,
+      productionCost: 21.00,
+      ingredients: [
+        {
+          name: 'Rabo de toro',
+          price: 12.00,
+          totalPrice: 19.20
+        }
+      ]
+    })
   },
   {
     id: 11,
@@ -554,6 +755,17 @@ export const mockRecipes: RecipeDetails[] = [
       ]
     },
     image: '/sushi-variado.jpg',
-    inMenu: false
+    inMenu: false,
+    costs: generateLocationCosts({
+      costPerServing: 6.25,
+      productionCost: 25.00,
+      ingredients: [
+        {
+          name: 'Arroz sushi',
+          price: 4.50,
+          totalPrice: 1.80
+        }
+      ]
+    })
   }
 ] 

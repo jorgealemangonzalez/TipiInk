@@ -1,9 +1,10 @@
 import { FC, useState, useEffect, useRef } from 'react'
 import { ChevronLeft, BookOpen } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { RecipeDetails } from '@/entities/recipe/model/types'
+import { RecipeDetails, Location } from '@/entities/recipe/model/types'
 import { useRecipes } from '@/entities/recipe/model/hooks'
 import { AllergenIcon } from '@/shared/ui/allergen-icon'
+import { LocationSelector } from '@/shared/ui/location-selector'
 import { cn } from '@/shared/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -37,6 +38,7 @@ export const RecipeDetailsPage: FC = () => {
   const { getRecipeById, toggleRecipeMenuStatus } = useRecipes()
   const recipe = getRecipeById(Number(id))
   const [showPerServing, setShowPerServing] = useState(false)
+  const [location, setLocation] = useState<Location>('ibiza')
   const [activeStep, setActiveStep] = useState(0)
   const [scrollProgress, setScrollProgress] = useState(0)
   const stepsRef = useRef<(HTMLDivElement | null)[]>([])
@@ -49,6 +51,8 @@ export const RecipeDetailsPage: FC = () => {
       </div>
     )
   }
+
+  const currentCosts = recipe.costs[location]
 
   useEffect(() => {
     const options = {
@@ -90,19 +94,22 @@ export const RecipeDetailsPage: FC = () => {
         <div className="relative flex items-center">
           <BackButton />
           <h1 className="text-2xl font-bold text-primary ml-8">
-            Detalles de la receta
+            Receta
           </h1>
-          <div 
-            onClick={() => toggleRecipeMenuStatus(recipe.id)}
-            className={cn(
-              "w-[60px] h-[60px] rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity ml-auto",
-              recipe.inMenu ? "bg-primary" : ""
-            )}
-          >
-            <BookOpen className={cn(
-              "h-7 w-7",
-              recipe.inMenu ? "text-primary-foreground" : "text-primary"
-            )} />
+          <div className="ml-auto flex items-center gap-4">
+            <LocationSelector value={location} onChange={setLocation} />
+            {/* <div 
+              onClick={() => toggleRecipeMenuStatus(recipe.id)}
+              className={cn(
+                "w-[60px] h-[60px] rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity",
+                recipe.inMenu ? "bg-primary" : ""
+              )}
+            >
+              <BookOpen className={cn(
+                "h-7 w-7",
+                recipe.inMenu ? "text-primary-foreground" : "text-primary"
+              )} />
+            </div> */}
           </div>
         </div>
 
@@ -133,10 +140,7 @@ export const RecipeDetailsPage: FC = () => {
               <div>
                 <p className="text-sm text-primary/80">Coste por ración</p>
                 <p className="text-xl font-semibold">
-                  <span className={getPercentageColor(recipe.costPercentage)}>{recipe.costPerServing.toFixed(2)}€</span>
-                  <span className="text-sm ml-2">
-                    (<span className={getPercentageColor(recipe.costPercentage)}>{recipe.costPercentage}% Coste</span>)
-                  </span>
+                  {currentCosts.costPerServing.toFixed(2)}€
                 </p>
               </div>
               <div>
@@ -145,7 +149,7 @@ export const RecipeDetailsPage: FC = () => {
               </div>
               <div>
                 <p className="text-sm text-primary/80">Coste por producción</p>
-                <p className="text-xl font-semibold">{recipe.productionCost.toFixed(2)}€</p>
+                <p className="text-xl font-semibold">{currentCosts.productionCost.toFixed(2)}€</p>
               </div>
             </div>
             
@@ -189,10 +193,11 @@ export const RecipeDetailsPage: FC = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {recipe.ingredients.map((ingredient, index) => {
+                  {currentCosts.ingredientsCosts.map((ingredient, index) => {
+                    const recipeIngredient = recipe.ingredients[index]
                     const cantidad = showPerServing
-                      ? `${ingredient.quantityPerServing} ${ingredient.unit}`
-                      : `${ingredient.quantity} ${ingredient.unit}`
+                      ? `${recipeIngredient.quantityPerServing} ${recipeIngredient.unit}`
+                      : `${recipeIngredient.quantity} ${recipeIngredient.unit}`
 
                     const precioTotal = showPerServing
                       ? (ingredient.totalPrice / recipe.servingsPerProduction).toFixed(2)
@@ -202,7 +207,7 @@ export const RecipeDetailsPage: FC = () => {
                       <TableRow key={index}>
                         <TableCell className="font-medium border-r text-primary">{ingredient.name}</TableCell>
                         <TableCell className="border-r text-primary">{cantidad}</TableCell>
-                        <TableCell className="border-r text-primary">{ingredient.price.toFixed(2)}€/{ingredient.unit}</TableCell>
+                        <TableCell className="border-r text-primary">{ingredient.price.toFixed(2)}€/{recipeIngredient.unit}</TableCell>
                         <TableCell className="font-semibold text-primary">{precioTotal}€</TableCell>
                       </TableRow>
                     )

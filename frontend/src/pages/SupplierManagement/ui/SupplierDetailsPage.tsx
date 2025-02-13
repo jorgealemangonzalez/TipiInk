@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { BackButton } from "@/shared/ui/back-button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -19,56 +19,11 @@ import {
   Download,
   ExternalLink
 } from "lucide-react"
-import { SUPPLIERS } from "@/shared/api/mocks/suppliers"
 import { Supplier, Invoice, DeliveryNote } from "@/entities/supplier/model/types"
 import { FloatingContactButtons } from "../features/contact-buttons"
 import { Separator } from "@/components/ui/separator"
 import { Label } from "@/components/ui/label"
-
-// Mock data - Replace with real data later
-const mockSupplierData: Supplier = {
-  id: "1",
-  name: "Pescaderia La Central",
-  type: "pescaderia",
-  totalOrders: 156,
-  lastMonthInvoiced: 12500,
-  pendingIncidents: 2,
-  commercialPhone: "666777888",
-  deliveryPhone: "666999000",
-  deliveryDays: ["Lunes", "Miércoles", "Viernes"],
-  orderAdvanceHours: 24,
-  invoices: [
-    { id: "INV-001", date: "2024-03-15", total: 2500, status: "paid", pdfUrl: "#" },
-    { id: "INV-002", date: "2024-03-01", total: 3200, status: "paid", pdfUrl: "#" },
-    { id: "INV-003", date: "2024-02-15", total: 2800, status: "paid", pdfUrl: "#" },
-    { id: "INV-004", date: "2024-02-15", total: 2800, status: "paid", pdfUrl: "#" },
-    { id: "INV-005", date: "2024-02-15", total: 2800, status: "paid", pdfUrl: "#" },
-    { id: "INV-006", date: "2024-02-15", total: 2800, status: "paid", pdfUrl: "#" },
-    { id: "INV-007", date: "2024-02-15", total: 2800, status: "paid", pdfUrl: "#" },
-    { id: "INV-008", date: "2024-02-15", total: 2800, status: "paid", pdfUrl: "#" }
-  ],
-  deliveryNotes: [
-    { 
-      id: "ALB-001", 
-      date: "2024-03-20", 
-      total: 850, 
-      hasIncidents: true,
-      incidentDetails: {
-        description: "Producto en mal estado",
-        affectedItems: ["Lubina - 2kg", "Mejillones - 1kg"],
-        reportDate: "2024-03-20",
-        status: "pending"
-      }
-    },
-    { id: "ALB-002", date: "2024-03-18", total: 1200, hasIncidents: false },
-    { id: "ALB-003", date: "2024-03-15", total: 950, hasIncidents: false, invoiceId: "INV-001" },
-    { id: "ALB-004", date: "2024-03-15", total: 950, hasIncidents: false},
-    { id: "ALB-005", date: "2024-03-15", total: 950, hasIncidents: false},
-    { id: "ALB-006", date: "2024-03-15", total: 950, hasIncidents: false },
-    { id: "ALB-007", date: "2024-03-15", total: 950, hasIncidents: false, invoiceId: "INV-007" },
-    { id: "ALB-008", date: "2024-03-15", total: 950, hasIncidents: false, invoiceId: "INV-008" }
-  ]
-}
+import { useSupplier } from "@/entities/supplier/model/hooks"
 
 type DeliveryInfoProps = {
   deliveryDays: string[]
@@ -124,7 +79,7 @@ function IncidentDialog({ incidentDetails, noteId }: IncidentDialogProps) {
           Incidencia
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-destructive">
             <AlertTriangle className="w-5 h-5" />
@@ -316,11 +271,13 @@ function DocumentsTabs({ deliveryNotes, invoices }: DocumentsTabsProps) {
 }
 
 function ActionButtons() {
+  const navigate = useNavigate()
   return (
     <div className="grid grid-cols-2 gap-4">
       <Button 
         variant="secondary"
         size="lg"
+        onClick={() => navigate('addInvoice')}
       >
         <FileText className="w-4 h-4 mr-2" />
         Factura
@@ -338,8 +295,16 @@ function ActionButtons() {
 
 export function SupplierDetailsPage() {
   const { supplierId } = useParams()
-  // In a real app, we would fetch the supplier data here
-  const supplier = mockSupplierData
+  const supplier = useSupplier(supplierId!)
+
+  if (!supplier) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h1 className="text-xl font-bold mb-4">Proveedor no encontrado</h1>
+        <Button onClick={() => window.history.back()}>Volver</Button>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col justify-between p-6">
@@ -377,7 +342,7 @@ export function SupplierDetailsPage() {
 
       </div>
 
-      <ActionButtons />
+      <ActionButtons/>
     </div>
   )
 } 

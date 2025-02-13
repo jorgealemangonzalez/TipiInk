@@ -1,28 +1,8 @@
-import { SupplierCategory } from "@/entities/order/model/types"
-
-interface Incident {
-  id: string
-  description: string
-  date: string
-  status: "pending" | "resolved"
-  type: "albaran_missing" | "amount_correction" | "delivery_compensation"
-}
-
-interface DeliveryNote {
-  id: string
-  date: string
-  total: number
-}
-
-interface Supplier {
-  name: string
-  type: SupplierCategory
-  incidents: Incident[]
-  deliveryNotes: DeliveryNote[]
-}
+import { Supplier } from "./types"
 
 export const SUPPLIERS: Record<string, Supplier> = {
   PESCADERIA: {
+    id: '1',
     name: 'Pescaderia La Central',
     type: 'pescado',
     incidents: [
@@ -47,6 +27,7 @@ export const SUPPLIERS: Record<string, Supplier> = {
     ]
   },
   FRUTERIA: {
+    id: '2',
     name: 'Fruteria Huertano',
     type: 'frutaVerdura',
     incidents: [
@@ -63,63 +44,32 @@ export const SUPPLIERS: Record<string, Supplier> = {
     ]
   },
   CARNICERIA: {
+    id:'3',
     name: 'Carniceria Paco',
     type: 'carne',
     incidents: [],
     deliveryNotes: []
   },
   POLLERIA: {
+    id:'4',
     name: 'Polleria Gallo',
     type: 'carne',
     incidents: [],
     deliveryNotes: []
   },
   CHARCUTERIA: {
+    id:'5',
     name: 'Charcuteria Delicatessen',
     type: 'carne',
     incidents: [],
     deliveryNotes: []
   },
-  CONGELADOS: {
-    name: 'Congelados Polar',
-    type: 'congelado',
-    incidents: [],
-    deliveryNotes: []
-  },
-  BEBIDAS: {
-    name: 'Distribuidora de Bebidas',
-    type: 'seco',
-    incidents: [],
-    deliveryNotes: []
-  },
-  CONSERVAS: {
-    name: 'Conservas del Cantábrico',
-    type: 'seco',
-    incidents: [],
-    deliveryNotes: []
-  },
-  LACTEOS: {
-    name: 'Lácteos La Vaquita',
-    type: 'seco',
-    incidents: [],
-    deliveryNotes: []
-  },
-  LIMPIEZA: {
-    name: 'Productos de Limpieza Clean',
-    type: 'limpieza',
-    incidents: [],
-    deliveryNotes: []
-  },
-  SECOS: {
-    name: 'Alimentos Secos y Legumbres',
-    type: 'seco',
-    incidents: [],
-    deliveryNotes: []
-  },
-  VERDULERIA: {
-    name: 'Verduleria Huerta Fresca',
-    type: 'frutaVerdura',
-    incidents: [],
-    deliveryNotes: []
-  }
 } 
+
+export const useSuppliers = () => {
+  return Object.values(SUPPLIERS)
+}
+
+export const useSupplier = (id: string) => {
+  return useSuppliers().find(s => s.id === id)!
+}

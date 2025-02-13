@@ -4,37 +4,7 @@ import { Separator } from "@/components/ui/separator"
 import { Package, Truck, Beef, Phone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Supplier } from "@/entities/supplier/model/types"
-
-// Mock data - Replace with real data later
-const mockSuppliers: Supplier[] = [
-  {
-    id: "1",
-    name: "Pescaderia La Central",
-    type: "pescaderia",
-    totalOrders: 156,
-    lastMonthInvoiced: 12500,
-    pendingIncidents: 2,
-    phone: "916666666"
-  },
-  {
-    id: "2",
-    name: "Fruteria El Huertano",
-    type: "fruteria",
-    totalOrders: 89,
-    lastMonthInvoiced: 8900,
-    pendingIncidents: 0,
-    phone: "916666666"
-  },
-  {
-    id: "3",
-    name: "Carniceria Paco",
-    type: "carniceria",
-    totalOrders: 123,
-    lastMonthInvoiced: 15600,
-    pendingIncidents: 1,
-    phone: "916666666"
-  }
-]
+import { useSuppliers } from "@/entities/supplier/model/hooks"
 
 const SupplierIcon = ({ type }: { type: Supplier["type"] }) => {
   switch (type) {
@@ -49,6 +19,7 @@ const SupplierIcon = ({ type }: { type: Supplier["type"] }) => {
 
 export function SupplierManagementPage() {
   const navigate = useNavigate()
+  const suppliers = useSuppliers()
 
   const handleSupplierClick = (supplierId: string) => {
     navigate(`/supplier-management/${supplierId}`)
@@ -63,7 +34,7 @@ export function SupplierManagementPage() {
       
       <div className="max-w-3xl px-6">
         <div className="space-y-1">
-          {mockSuppliers.map((supplier, index) => (
+          {suppliers.map((supplier, index) => (
             <div key={supplier.id}>
               <div
                 onClick={() => handleSupplierClick(supplier.id)}
@@ -84,14 +55,13 @@ export function SupplierManagementPage() {
                   className="rounded-full"
                   onClick={(e) => {
                     e.stopPropagation()
-                    // Add phone call functionality here
-                    window.open(`tel:${supplier.phone}`, '_blank')
+                    window.open(`tel:${supplier.commercialPhone}`, '_blank')
                   }}
                 >
                   <Phone className="w-4 h-4" />
                 </Button>
               </div>
-              {index < mockSuppliers.length - 1 && (
+              {index < suppliers.length - 1 && (
                 <Separator className="bg-gray-700/50" />
               )}
             </div>

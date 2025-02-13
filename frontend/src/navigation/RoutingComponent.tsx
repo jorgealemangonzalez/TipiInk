@@ -12,6 +12,7 @@ import { SupplierDetailsPage } from "@/pages/SupplierManagement/ui/SupplierDetai
 import mixpanel from "mixpanel-browser";
 import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
+import { AddInvoicePage } from "@/pages/AddInvoice/ui/InvoicePage";
 
 export const RoutingComponent = () => {
     const location = useLocation();
@@ -40,6 +41,7 @@ export const RoutingComponent = () => {
                             <Route path="/recipe/:id" element={<RecipeDetailsPage />} />
                             <Route path="/supplier-management" element={<SupplierManagementPage />} />
                             <Route path="/supplier-management/:supplierId" element={<SupplierDetailsPage />} />
+                            <Route path="/supplier-management/:supplierId/addInvoice" element={<AddInvoicePage />} />
                         </Routes>
                     </WithAnonymousUser>
                 }

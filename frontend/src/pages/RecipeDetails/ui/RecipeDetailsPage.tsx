@@ -178,37 +178,34 @@ export const RecipeDetailsPage: FC = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="rounded-md border border-border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="border-r text-primary">Ingrediente</TableHead>
-                    <TableHead className="border-r text-primary">Cantidad</TableHead>
-                    <TableHead className="border-r text-primary">Precio/Unidad</TableHead>
-                    <TableHead className="text-primary">Precio Total</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recipe.ingredients.map((ingredient, index) => {
-                    const cantidad = showPerServing
-                      ? `${ingredient.quantityPerServing} ${ingredient.unit}`
-                      : `${ingredient.quantity} ${ingredient.unit}`
+            <div className="space-y-4">
+              {recipe.ingredients.map((ingredient, index) => {
+                const cantidad = showPerServing
+                  ? `${ingredient.quantityPerServing} ${ingredient.unit}`
+                  : `${ingredient.quantity} ${ingredient.unit}`
 
-                    const precioTotal = showPerServing
-                      ? (ingredient.totalPrice / recipe.servingsPerProduction).toFixed(2)
-                      : ingredient.totalPrice.toFixed(2)
+                const precioTotal = showPerServing
+                  ? (ingredient.totalPrice / recipe.servingsPerProduction).toFixed(2)
+                  : ingredient.totalPrice.toFixed(2)
 
-                    return (
-                      <TableRow key={index}>
-                        <TableCell className="font-medium border-r text-primary">{ingredient.name}</TableCell>
-                        <TableCell className="border-r text-primary">{cantidad}</TableCell>
-                        <TableCell className="border-r text-primary">{ingredient.price.toFixed(2)}€/{ingredient.unit}</TableCell>
-                        <TableCell className="font-semibold text-primary">{precioTotal}€</TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
+                return (
+                  <div key={index} className="flex flex-col space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-medium text-primary">{ingredient.name}</h3>
+                        <p className="text-sm text-primary/60">{ingredient.price.toFixed(2)}€/{ingredient.unit}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-lg font-medium text-primary">{cantidad}</p>
+                        <p className="text-sm font-semibold text-primary">{precioTotal}€</p>
+                      </div>
+                    </div>
+                    {index < recipe.ingredients.length - 1 && (
+                      <div className="h-px bg-border" />
+                    )}
+                  </div>
+                )
+              })}
             </div>
           </CardContent>
         </Card>

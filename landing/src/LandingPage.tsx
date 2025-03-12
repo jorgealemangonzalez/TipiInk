@@ -390,50 +390,14 @@ export function LandingPage() {
                     </div>
                 </section>
 
-                {/* Integrations Section */}
-                <section id="integrations" className="w-full px-2 py-12 md:py-24 bg-neutral-100">
-                    <div className="container px-4 md:px-6">
-                        <div className="text-center mb-12">
-                            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
-                                {t("integrations.title")}{" "}
-                                <span className="text-[#FF914D]">{t("integrations.highlight")}</span>
-                            </h2>
-                            <p className="mt-4 text-neutral-700 md:text-lg max-w-[800px] mx-auto">
-                                {t("integrations.description")}
-                            </p>
-                        </div>
-                        <div className="flex flex-wrap justify-center gap-8">
-                            <div className="flex flex-col items-center">
-                                <div className="w-16 h-16 rounded-full shadow-md flex items-center justify-center mb-2">
-                                    <Phone className="w-8 h-8 text-[#25D366]" />
-                                </div>
-                                <span className="text-sm text-neutral-700">WhatsApp</span>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
                 {/* Contact Section */}
-                <section id="contact" ref={contactSectionRef} className="w-full md:py-24 pb-12 px-6">
+                <section id="contact" ref={contactSectionRef} className="w-full md:pb-24 pb-12 px-6">
                     <div className="container px-4 md:px-6">
                         <div className="max-w-[600px] mx-auto text-center">
                             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl mb-6">
                                 {t("contact.title")} <span className="text-[#FF914D]">{t("contact.highlight")}</span>{" "}
                                 {t("contact.subtitle")}
                             </h2>
-                            <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                                <input
-                                    type="text"
-                                    placeholder={t("contact.placeholder")}
-                                    className="flex-1 px-4 py-3 rounded-md bg-white/10 border border-white/20  placeholder:/60 focus:outline-none focus:ring-2 focus:ring-[#FF914D]"
-                                />
-                                <Button
-                                    onClick={scrollToContact}
-                                    className="bg-[#FF914D]  hover:bg-[#FF914D]/90 rounded-md whitespace-nowrap"
-                                >
-                                    {t("contact.ctaButton")}
-                                </Button>
-                            </div>
                             <div className="flex flex-col sm:flex-row justify-center gap-6 /80">
                                 <div className="flex items-center">
                                     <Mail className="w-5 h-5 mr-2" />

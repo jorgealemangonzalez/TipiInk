@@ -23,22 +23,19 @@ import {
     X,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import mixpanel from "mixpanel-browser";
 
 export function LandingPage() {
     const { t } = useTranslation();
+    const contactSectionRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         mixpanel.track_pageview();
     }, []);
 
-    const redirectToSales = () => {
-        window.location.href = "https://calendar.app.google/dPWb5XdarVm7popF9";
-    };
-
-    const redirectToPlatform = () => {
-        window.location.href = "https://app.botwhirl.com";
+    const scrollToContact = () => {
+        contactSectionRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
     return (
@@ -49,7 +46,7 @@ export function LandingPage() {
                     <span className="text-2xl font-bold ">Tipi</span>
                 </a>
                 <div className="ml-auto flex items-center space-x-4">
-                    <Button onClick={redirectToSales} className="bg-[#FF914D]  hover:bg-[#FF914D]/90 rounded-md">
+                    <Button onClick={scrollToContact} className="bg-[#FF914D]  hover:bg-[#FF914D]/90 rounded-md">
                         {t("contact.ctaButton")}
                     </Button>
                 </div>
@@ -74,7 +71,7 @@ export function LandingPage() {
                                 </h1>
                                 <p className="max-w-[600px] text-neutral-700 md:text-xl">{t("hero.description")}</p>
                                 <Button
-                                    onClick={redirectToPlatform}
+                                    onClick={scrollToContact}
                                     className="bg-[#FF914D]  hover:bg-[#FF914D]/90 rounded-md px-8 py-6 text-lg font-semibold"
                                 >
                                     {t("hero.ctaButton")}
@@ -341,7 +338,7 @@ export function LandingPage() {
                                     </div>
                                     <p className="text-neutral-700 mb-6">{t("pricing.micro.description")}</p>
                                     <Button
-                                        onClick={redirectToSales}
+                                        onClick={scrollToContact}
                                         className="w-full bg-[#FF914D]  hover:bg-[#FF914D]/90 rounded-md"
                                     >
                                         {t("pricing.ctaButton")}
@@ -362,7 +359,7 @@ export function LandingPage() {
                                     </div>
                                     <p className="text-neutral-700 mb-6">{t("pricing.medium.description")}</p>
                                     <Button
-                                        onClick={redirectToSales}
+                                        onClick={scrollToContact}
                                         className="w-full bg-[#FF914D]  hover:bg-[#FF914D]/90 rounded-md"
                                     >
                                         {t("pricing.ctaButton")}
@@ -382,7 +379,7 @@ export function LandingPage() {
                                     </div>
                                     <p className="text-neutral-700 mb-6">{t("pricing.enterprise.description")}</p>
                                     <Button
-                                        onClick={redirectToSales}
+                                        onClick={scrollToContact}
                                         className="w-full bg-[#FF914D]  hover:bg-[#FF914D]/90 rounded-md"
                                     >
                                         {t("pricing.ctaButton")}
@@ -417,7 +414,7 @@ export function LandingPage() {
                 </section>
 
                 {/* Contact Section */}
-                <section id="contact" className="w-full md:py-24 pb-12 px-6">
+                <section id="contact" ref={contactSectionRef} className="w-full md:py-24 pb-12 px-6">
                     <div className="container px-4 md:px-6">
                         <div className="max-w-[600px] mx-auto text-center">
                             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl mb-6">
@@ -431,7 +428,7 @@ export function LandingPage() {
                                     className="flex-1 px-4 py-3 rounded-md bg-white/10 border border-white/20  placeholder:/60 focus:outline-none focus:ring-2 focus:ring-[#FF914D]"
                                 />
                                 <Button
-                                    onClick={redirectToSales}
+                                    onClick={scrollToContact}
                                     className="bg-[#FF914D]  hover:bg-[#FF914D]/90 rounded-md whitespace-nowrap"
                                 >
                                     {t("contact.ctaButton")}

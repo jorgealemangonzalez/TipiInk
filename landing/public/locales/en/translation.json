@@ -26,11 +26,11 @@
     "pricing.micro.title": "Micro Businesses",
     "pricing.micro.price": "€149",
     "pricing.micro.period": "/month",
-    "pricing.micro.description": "Ideal for small establishments with reduced teams.",
+    "pricing.micro.description": "Ideal for small establishments with reduced teams. Includes 20 weekly orders and 3 voice-created recipes.",
     "pricing.medium.title": "Medium Restaurants",
     "pricing.medium.price": "€250",
     "pricing.medium.period": "/month",
-    "pricing.medium.description": "Perfect for restaurants with multiple suppliers and staff.",
+    "pricing.medium.description": "Perfect for restaurants with multiple suppliers and staff. Includes 50 weekly orders and 8 voice-created recipes.",
     "pricing.enterprise.title": "Chains and Hotels",
     "pricing.enterprise.price": "Custom",
     "pricing.enterprise.description": "Tailored solutions for groups and hotel chains.",
@@ -87,7 +87,7 @@
     "contact.ctaButton": "Request a Trial",
     "contact.email": "noupgradeprocesses@gmail.com",
     "contact.phone": "+34 696 345 259",
-    "footer.copyright": "© 2023 Tipi. All rights reserved.",
+    "footer.copyright": "© 2025 Tipi. All rights reserved.",
     "footer.termsAndConditions": "Terms and Conditions",
     "footer.privacyPolicy": "Privacy Policy"
 }

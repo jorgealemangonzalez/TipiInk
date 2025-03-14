@@ -11,6 +11,7 @@ import {
     Headphones,
     Home,
     Mail,
+    MessageSquare,
     Mic,
     Phone,
     PhoneCall,
@@ -64,7 +65,7 @@ export function LandingPage() {
                         />
                     </div>
                     <div className="container px-4 md:px-6 relative z-10">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div className="grid grid-cols-1 gap-8 items-center">
                             <div className="space-y-4">
                                 <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
                                     {t("hero.title")} <span className="text-[#FF914D]">{t("hero.highlight")}</span>
@@ -76,13 +77,6 @@ export function LandingPage() {
                                 >
                                     {t("hero.ctaButton")}
                                 </Button>
-                            </div>
-                            <div className="relative h-[400px] w-full rounded-lg overflow-hidden shadow-xl hidden md:block">
-                                <img
-                                    src="/vertical-sarten-cocinando.png"
-                                    alt="Chef usando Tipi"
-                                    className="object-cover w-full h-full"
-                                />
                             </div>
                         </div>
                     </div>
@@ -173,7 +167,7 @@ export function LandingPage() {
                             <Card className="border-none shadow-lg hover:shadow-xl transition-all duration-300">
                                 <CardHeader>
                                     <div className="w-12 h-12 rounded-full bg-[#FF914D]/10 flex items-center justify-center mb-4">
-                                        <Phone className="w-6 h-6 text-[#FF914D]" />
+                                        <MessageSquare className="w-6 h-6 text-[#FF914D]" />
                                     </div>
                                     <CardTitle className="text-xl">{t("howItWorks.feature4.title")}</CardTitle>
                                 </CardHeader>
@@ -330,16 +324,26 @@ export function LandingPage() {
                                         <Home className="w-6 h-6 text-[#FF914D]" />
                                     </div>
                                     <CardTitle>{t("pricing.micro.title")}</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="mb-4">
+                                    <div className="mt-4">
                                         <span className="text-4xl font-bold">{t("pricing.micro.price")}</span>
                                         <span className="text-neutral-700">{t("pricing.micro.period")}</span>
                                     </div>
+                                </CardHeader>
+                                <CardContent>
                                     <p className="text-neutral-700 mb-6">{t("pricing.micro.description")}</p>
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-2">
+                                            <CheckCircle className="w-5 h-5 text-[#FF914D]" />
+                                            <span className="text-sm">20 pedidos semanales</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <CheckCircle className="w-5 h-5 text-[#FF914D]" />
+                                            <span className="text-sm">3 recetas creadas por voz semanales</span>
+                                        </div>
+                                    </div>
                                     <Button
                                         onClick={scrollToContact}
-                                        className="w-full bg-[#FF914D]  hover:bg-[#FF914D]/90 rounded-md"
+                                        className="w-full mt-6 bg-[#FF914D] hover:bg-[#FF914D]/90 rounded-md"
                                     >
                                         {t("pricing.ctaButton")}
                                     </Button>
@@ -351,16 +355,26 @@ export function LandingPage() {
                                         <Utensils className="w-6 h-6 text-[#FF914D]" />
                                     </div>
                                     <CardTitle>{t("pricing.medium.title")}</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="mb-4">
+                                    <div className="mt-4">
                                         <span className="text-4xl font-bold">{t("pricing.medium.price")}</span>
                                         <span className="text-neutral-700">{t("pricing.medium.period")}</span>
                                     </div>
+                                </CardHeader>
+                                <CardContent>
                                     <p className="text-neutral-700 mb-6">{t("pricing.medium.description")}</p>
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-2">
+                                            <CheckCircle className="w-5 h-5 text-[#FF914D]" />
+                                            <span className="text-sm">50 pedidos semanales</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <CheckCircle className="w-5 h-5 text-[#FF914D]" />
+                                            <span className="text-sm">8 recetas creadas por voz semanles</span>
+                                        </div>
+                                    </div>
                                     <Button
                                         onClick={scrollToContact}
-                                        className="w-full bg-[#FF914D]  hover:bg-[#FF914D]/90 rounded-md"
+                                        className="w-full mt-6 bg-[#FF914D] hover:bg-[#FF914D]/90 rounded-md"
                                     >
                                         {t("pricing.ctaButton")}
                                     </Button>
@@ -372,15 +386,25 @@ export function LandingPage() {
                                         <Building className="w-6 h-6 text-[#FF914D]" />
                                     </div>
                                     <CardTitle>{t("pricing.enterprise.title")}</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="mb-4">
+                                    <div className="mt-4">
                                         <span className="text-4xl font-bold">{t("pricing.enterprise.price")}</span>
                                     </div>
+                                </CardHeader>
+                                <CardContent>
                                     <p className="text-neutral-700 mb-6">{t("pricing.enterprise.description")}</p>
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-2">
+                                            <CheckCircle className="w-5 h-5 text-[#FF914D]" />
+                                            <span className="text-sm">Pedidos a medida</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <CheckCircle className="w-5 h-5 text-[#FF914D]" />
+                                            <span className="text-sm">Recetas a medida</span>
+                                        </div>
+                                    </div>
                                     <Button
                                         onClick={scrollToContact}
-                                        className="w-full bg-[#FF914D]  hover:bg-[#FF914D]/90 rounded-md"
+                                        className="w-full mt-6 bg-[#FF914D] hover:bg-[#FF914D]/90 rounded-md"
                                     >
                                         {t("pricing.ctaButton")}
                                     </Button>

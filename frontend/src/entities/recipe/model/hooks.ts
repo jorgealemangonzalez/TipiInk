@@ -1,13 +1,41 @@
-import { useState } from 'react'
-import { mockRecipes as initialMockRecipes } from './mock'
+import { useEffect } from 'react'
+import { mockRecipes } from './mock'
 import { RecipeDetails } from './types'
+import { useCollection } from '../../../firebase/hooks/useCollection'
 
 export const useRecipes = () => {
-  const [recipes, setRecipes] = useState(initialMockRecipes)
+  const {
+    results: recipes,
+    isLoading,
+    addDocument,
+    updateDocument,
+    removeDocument
+  } = useCollection<RecipeDetails>({
+    path: 'recipes',
+    orderBy: ['updatedAt', 'desc'],
+    limit: 100
+  })
+
+  // Initialize the database with mock recipes if none exist
+  useEffect(() => {
+    const initializeRecipes = async () => {
+      if (!isLoading && recipes.length === 0) {
+        console.log('No recipes found, initializing with mock data')
+        
+        // Add mock recipes to the database
+        for (const recipe of mockRecipes) {
+          const { id, ...recipeData } = recipe
+          await addDocument(recipeData)
+        }
+      }
+    }
+
+    initializeRecipes()
+  }, [isLoading, recipes.length, addDocument])
 
   const getAllRecipes = () => recipes
 
-  const getRecipeById = (id: number): RecipeDetails | undefined => 
+  const getRecipeById = (id: string): RecipeDetails | undefined => 
     recipes.find(recipe => recipe.id === id)
 
   const getRecipesByCategory = (category: string): RecipeDetails[] =>
@@ -16,14 +44,11 @@ export const useRecipes = () => {
   const getMenuRecipes = (): RecipeDetails[] =>
     recipes.filter(recipe => recipe.inMenu)
 
-  const toggleRecipeMenuStatus = (id: number) => {
-    setRecipes(currentRecipes => 
-      currentRecipes.map(recipe => 
-        recipe.id === id 
-          ? { ...recipe, inMenu: !recipe.inMenu }
-          : recipe
-      )
-    )
+  const toggleRecipeMenuStatus = (id: string) => {
+    const recipe = recipes.find(r => r.id === id)
+    if (recipe) {
+      updateDocument(id, { inMenu: !recipe.inMenu })
+    }
   }
 
   return {
@@ -31,6 +56,10 @@ export const useRecipes = () => {
     getRecipeById,
     getRecipesByCategory,
     getMenuRecipes,
-    toggleRecipeMenuStatus
+    toggleRecipeMenuStatus,
+    isLoading,
+    addRecipe: addDocument,
+    updateRecipe: updateDocument,
+    removeRecipe: removeDocument
   }
 } 

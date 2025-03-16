@@ -8,6 +8,10 @@ service cloud.firestore {
       allow read: if request.auth.uid == uid;
     }
 
+    match /recipes/{recipeId} {
+      allow read, write: if true;
+    }
+
     match /app_versions/{versionId} {
       allow read: if true;
     }

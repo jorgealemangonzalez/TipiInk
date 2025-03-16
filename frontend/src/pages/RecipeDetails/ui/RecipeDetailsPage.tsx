@@ -34,13 +34,21 @@ const getPercentageColor = (percentage: number): string => {
 export const RecipeDetailsPage: FC = () => {
   const navigate = useNavigate()
   const { id } = useParams()
-  const { getRecipeById, toggleRecipeMenuStatus } = useRecipes()
-  const recipe = getRecipeById(Number(id))
+  const { getRecipeById, toggleRecipeMenuStatus, isLoading } = useRecipes()
+  const recipe = id ? getRecipeById(id) : undefined
   const [showPerServing, setShowPerServing] = useState(false)
   const [activeStep, setActiveStep] = useState(0)
   const [scrollProgress, setScrollProgress] = useState(0)
   const stepsRef = useRef<(HTMLDivElement | null)[]>([])
   const processContainerRef = useRef<HTMLDivElement>(null)
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-primary text-xl">Cargando receta...</p>
+      </div>
+    )
+  }
 
   if (!recipe) {
     return (

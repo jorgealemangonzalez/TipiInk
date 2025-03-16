@@ -3,7 +3,6 @@ import { MainComponent } from "@/pages/MainComponent.tsx";
 import { UploadFilePage } from "@/pages/UploadFile.tsx";
 import { Home } from "@/pages/Home.tsx";
 import { AssistantPage } from "@/pages/AssistantPage";
-import { RecipeReviewPage } from "@/pages/RecipeReview";
 import { RecipeDetailsPage } from "@/pages/RecipeDetails/ui/RecipeDetailsPage";
 import { PendingOrdersPage } from "@/pages/PendingOrders";
 import { ActiveOrdersPage } from "@/pages/ActiveOrders";
@@ -14,6 +13,7 @@ import { InvoiceSummaryPage } from "@/pages/AddInvoice/ui/InvoiceSummaryPage";
 import mixpanel from "mixpanel-browser";
 import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
+import { RecipesPage } from "@/pages/Recipes/ui/RecipesPage";
 
 export const RoutingComponent = () => {
     const location = useLocation();
@@ -38,7 +38,7 @@ export const RoutingComponent = () => {
                             <Route path="/assistant" element={<AssistantPage />} />
                             <Route path="/pending-orders" element={<PendingOrdersPage />} />
                             <Route path="/active-orders" element={<ActiveOrdersPage />} />
-                            <Route path="/recipes" element={<RecipeReviewPage />} />
+                            <Route path="/recipes" element={<RecipesPage />} />
                             <Route path="/recipes/:id" element={<RecipeDetailsPage />} />
                             <Route path="/supplier-management" element={<SupplierManagementPage />} />
                             <Route path="/supplier-management/:supplierId" element={<SupplierDetailsPage />} />

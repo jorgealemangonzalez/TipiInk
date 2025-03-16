@@ -18,13 +18,13 @@ import { isLocalEnvironment } from '@/environment'
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: 'AIzaSyA2Ttfl8dPWRmInMCqL9oAJewl3ymHq_58',
-    authDomain: 'dondersteen-resort.firebaseapp.com',
-    projectId: 'dondersteen-resort',
-    storageBucket: 'dondersteen-resort.firebasestorage.app',
-    messagingSenderId: '969555424520',
-    appId: '1:969555424520:web:1f3230920e0432b4c9a8bd',
-    measurementId: 'G-4GE41TFN8J',
+    apiKey: "AIzaSyDsYrBS4X0C36ThgIfyj-AOcG7pq_oSk7s",
+    authDomain: "tipi-ink.firebaseapp.com",
+    projectId: "tipi-ink",
+    storageBucket: "tipi-ink.appspot.com",
+    messagingSenderId: "634165171036",
+    appId: "1:634165171036:web:981e4bbbd6e5d568f3e799",
+    measurementId: "G-CQ57GQBLGJ"
 }
 
 // Initialize Firebase
@@ -37,6 +37,7 @@ const storage = getStorage(firebaseApp)
 
 // // Connect to the emulator if in development
 if (isLocalEnvironment) {
+    console.log('Connecting to the emulator')
     connectAuthEmulator(auth, `http://${window.location.hostname}:5004`)
     connectFunctionsEmulator(functions, window.location.hostname, 5001)
     connectFirestoreEmulator(firestore, window.location.hostname, 5003)

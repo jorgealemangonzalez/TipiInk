@@ -15,11 +15,11 @@ const getPercentageColor = (percentage: number): string => {
   return 'text-red-500'
 }
 
-export const RecipeReviewPage: FC = () => {
+export const RecipesPage: FC = () => {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [showOnlyMenu, setShowOnlyMenu] = useState(false)
-  const { getAllRecipes } = useRecipes()
+  const { getAllRecipes, isLoading } = useRecipes()
   const recipes = getAllRecipes()
 
   const filteredRecipes = useMemo(() => {
@@ -39,8 +39,16 @@ export const RecipeReviewPage: FC = () => {
     return Math.round(total / filteredRecipes.length)
   }, [filteredRecipes, recipes])
 
-  const handleRecipeClick = (recipeId: number) => {
+  const handleRecipeClick = (recipeId: string) => {
     navigate(`/recipes/${recipeId}`)
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-primary text-xl">Cargando recetas...</p>
+      </div>
+    )
   }
 
   return (

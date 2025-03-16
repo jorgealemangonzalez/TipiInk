@@ -9,8 +9,9 @@ export interface RecipeIngredient {
   totalPrice: number
 }
 
-export interface RecipeDetails {
-  id: number
+import { FSDocument } from '../../../firebase/types'
+
+export interface RecipeDetails extends FSDocument {
   name: string
   category: string
   allergens: Allergen[]

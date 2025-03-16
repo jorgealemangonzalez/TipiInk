@@ -1,11 +1,11 @@
-import {useUser} from "@/auth/auth.tsx"
-import {useDocument} from "@/firebase/hooks/useDocument.ts"
-import {Invoice as InvoiceData, Item} from "../../../backend/functions/src/types/ExtractInvoice"
-import {Button} from "@/components/ui/button.tsx"
-import {ArrowLeft, Eye} from "lucide-react"
-import {Input} from "@/components/ui/input.tsx"
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx"
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx"
+import { useUser } from '@/auth/auth.tsx'
+import { useDocument } from '@/firebase/hooks/useDocument.tsx'
+import { Invoice as InvoiceData, Item } from '../../../backend/functions/src/types/ExtractInvoice'
+import { Button } from '@/components/ui/button.tsx'
+import { ArrowLeft, Eye } from 'lucide-react'
+import { Input } from '@/components/ui/input.tsx'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table.tsx'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx'
 
 export function AlbaranScreen({
     setActiveScreen,

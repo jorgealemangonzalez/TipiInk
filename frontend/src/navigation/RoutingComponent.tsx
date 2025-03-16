@@ -38,8 +38,8 @@ export const RoutingComponent = () => {
                             <Route path="/assistant" element={<AssistantPage />} />
                             <Route path="/pending-orders" element={<PendingOrdersPage />} />
                             <Route path="/active-orders" element={<ActiveOrdersPage />} />
-                            <Route path="/recipe-review" element={<RecipeReviewPage />} />
-                            <Route path="/recipe/:id" element={<RecipeDetailsPage />} />
+                            <Route path="/recipes" element={<RecipeReviewPage />} />
+                            <Route path="/recipes/:id" element={<RecipeDetailsPage />} />
                             <Route path="/supplier-management" element={<SupplierManagementPage />} />
                             <Route path="/supplier-management/:supplierId" element={<SupplierDetailsPage />} />
                             <Route path="/supplier-management/:supplierId/addInvoice" element={<AddInvoicePage />} />

@@ -1,5 +1,5 @@
 import { DocumentData } from 'firebase/firestore'
 
-export interface Document extends DocumentData {
+export interface FSDocument extends DocumentData {
     id: string
 }

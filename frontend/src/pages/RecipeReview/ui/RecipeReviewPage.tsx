@@ -1,11 +1,11 @@
-import { FC, useState, useMemo } from 'react'
-import { ChevronLeft, Euro, TrendingUp, TrendingDown, BookOpen } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { SearchBar } from './SearchBar'
-import { cn } from '../../../lib/utils'
-import { useRecipes } from '@/entities/recipe/model/hooks'
 import { Separator } from "@/components/ui/separator"
+import { useRecipes } from '@/entities/recipe/model/hooks'
 import { BackButton } from '@/shared/ui/back-button'
+import { BookOpen, Euro, TrendingDown, TrendingUp } from 'lucide-react'
+import { FC, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { cn } from '../../../lib/utils'
+import { SearchBar } from './SearchBar'
 
 const getPercentageColor = (percentage: number): string => {
   if (percentage < 20) return 'text-emerald-500'
@@ -40,7 +40,7 @@ export const RecipeReviewPage: FC = () => {
   }, [filteredRecipes, recipes])
 
   const handleRecipeClick = (recipeId: number) => {
-    navigate(`/recipe/${recipeId}`)
+    navigate(`/recipes/${recipeId}`)
   }
 
   return (

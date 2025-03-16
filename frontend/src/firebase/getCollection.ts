@@ -1,15 +1,17 @@
 import {
-    collection, orderBy as fOrderBy,
-    where as fWhere,
-    query as fQuery,
-    limit as fLimit,
-    startAfter as fStartAfter,
-    onSnapshot,
     Unsubscribe,
+    collection,
+    limit as fLimit,
+    orderBy as fOrderBy,
+    query as fQuery,
+    startAfter as fStartAfter,
+    where as fWhere,
+    getDocs,
+    onSnapshot,
 } from 'firebase/firestore'
-import { Document } from './types.ts'
-import {firestore} from './firebase.ts'
 
+import { firestore } from './firebase.ts'
+import { FSDocument } from './types.ts'
 
 export interface GetCollectionParams {
     path: string
@@ -19,26 +21,41 @@ export interface GetCollectionParams {
     where?: Parameters<typeof fWhere>[]
 }
 
-export const getCollection = async <T extends Document>(
-    {
-        path,
-        orderBy,
-        limit,
-        startAfter,
-        where,
-    }: GetCollectionParams,
+export const listenCollection = async <T extends FSDocument>(
+    { path, orderBy, limit, startAfter, where }: GetCollectionParams,
     onCollectionChange: (docs: T[]) => void,
 ): Promise<Unsubscribe> => {
     const ref = collection(firestore, path)
-    const query = fQuery(ref, ...[
-        ...(where ? where.map(w => fWhere(...w)) : []),
-        ...(orderBy ? [fOrderBy(...orderBy)] : []),
-        ...(limit ? [fLimit(limit)] : []),
-        ...(startAfter ? [fStartAfter(startAfter)] : []),
-    ])
+    const query = fQuery(
+        ref,
+        ...[
+            ...(where ? where.map(w => fWhere(...w)) : []),
+            ...(orderBy ? [fOrderBy(...orderBy)] : []),
+            ...(limit ? [fLimit(limit)] : []),
+            ...(startAfter ? [fStartAfter(startAfter)] : []),
+        ],
+    )
 
-    return onSnapshot(query, (snapshot) => {
+    return onSnapshot(query, snapshot => {
         const docs = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }) as T)
         onCollectionChange(docs)
     })
+}
+
+export const getCollection = async <T extends FSDocument>(
+    { path, orderBy, limit, startAfter, where }: GetCollectionParams,
+): Promise<T[]> => {
+    const ref = collection(firestore, path)
+    const query = fQuery(
+        ref,
+        ...[
+            ...(where ? where.map(w => fWhere(...w)) : []),
+            ...(orderBy ? [fOrderBy(...orderBy)] : []),
+            ...(limit ? [fLimit(limit)] : []),
+            ...(startAfter ? [fStartAfter(startAfter)] : []),
+        ],
+    )
+    console.log('query', query)
+    const docs = await getDocs(query)
+    return docs.docs.map(doc => ({ ...doc.data(), id: doc.id }) as T)
 }

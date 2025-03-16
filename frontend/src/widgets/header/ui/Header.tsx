@@ -35,7 +35,7 @@ export const Header: FC<HeaderProps> = () => {
       <NavigationCard
         icon={<BookOpen />}
         label="Recetas"
-        onClick={() => navigate('/recipe-review')}
+        onClick={() => navigate('/recipes')}
       />
       <NavigationCard
         icon={<Truck />}

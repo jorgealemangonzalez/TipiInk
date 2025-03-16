@@ -29,8 +29,9 @@ export const useCollection = <T extends FSDocument>({
     orderBy,
     limit,
     where,
+    converter,
 }: GetCollectionParams): UseCollectionsResponse<T> => {
-    const params = { path, orderBy, limit, where }
+    const params = { path, orderBy, limit, where, converter }
     const [startAfter, setStartAfter] = useState<number | undefined>(undefined)
     const [hasReachedEnd, setHasReachedEnd] = useState(false)
     const [results, setResults] = useState<T[]>(() => CollectionCache.get<T>(params) || [])
@@ -41,7 +42,7 @@ export const useCollection = <T extends FSDocument>({
         setResults(CollectionCache.get<T>(params) || [])
         let unsubscribe = () => {}
         const fetchResults = async () => {
-            unsubscribe = await listenCollection<T>({ ...params, startAfter }, upToDateDocs => {
+            unsubscribe = await listenCollection<T>({ ...params, startAfter, converter }, upToDateDocs => {
                 if (upToDateDocs.length) {
                     setResults(prev => {
                         console.log('where', where)
@@ -69,7 +70,7 @@ export const useCollection = <T extends FSDocument>({
         return () => {
             unsubscribe()
         }
-    }, [path, limit, startAfter, where])
+    }, [path, limit, startAfter, where, converter])
 
     const loadMore = () => {
         if (!results.length) setHasReachedEnd(true)

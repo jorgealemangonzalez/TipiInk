@@ -1,5 +1,5 @@
 import { Separator } from "@/components/ui/separator"
-import { useRecipes } from '@/entities/recipe/model/hooks'
+import { useRecipes } from '@/entities/recipe/model/recipeHooks'
 import { BackButton } from '@/shared/ui/back-button'
 import { BookOpen, Euro, TrendingDown, TrendingUp } from 'lucide-react'
 import { FC, useMemo, useState } from 'react'
@@ -108,7 +108,7 @@ export const RecipesPage: FC = () => {
                     </span>
                   </div>
                   <span className={cn("text-2xl font-bold", getPercentageColor(recipe.costPercentage))}>
-                    {recipe.costPercentage}%
+                    {recipe.costPercentage.toFixed(0)}%
                   </span>
                 </div>
               </div>

@@ -14,7 +14,7 @@
     "allowImportingTsExtensions": true,
     "jsx": "react-jsx"
   },
-  "include": ["src"],
+  "include": ["src", "../backend/functions/src/types/recipe.d.ts"],
   "references": [
     {
       "path": "./tsconfig.app.json"

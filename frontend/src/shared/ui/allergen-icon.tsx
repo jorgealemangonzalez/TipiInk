@@ -16,7 +16,7 @@ import {
   PiNutFill,
   PiCookingPotFill
 } from 'react-icons/pi'
-import { Allergen } from '@/entities/recipe/model/types'
+import { Allergen } from '@/entities/recipe/model/recipe'
 import { cn } from '@/shared/lib/utils'
 
 const allergenIcons: Record<Allergen, FC> = {

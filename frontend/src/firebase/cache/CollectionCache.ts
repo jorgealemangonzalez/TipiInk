@@ -13,6 +13,8 @@ export class CollectionCache {
     private static cleanupInterval: NodeJS.Timeout | null = null
 
     private static generateCacheKey(params: Omit<GetCollectionParams, 'startAfter'>): string {
+        // Extract only serializable properties for the cache key
+        // Explicitly exclude 'converter' as it's a function and can't be serialized
         const { path, orderBy, limit, where } = params
         return JSON.stringify({ path, orderBy, limit, where })
     }

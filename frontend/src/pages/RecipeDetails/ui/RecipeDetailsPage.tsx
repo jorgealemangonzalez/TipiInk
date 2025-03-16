@@ -1,8 +1,8 @@
 import { FC, useState, useEffect, useRef } from 'react'
 import { ChevronLeft, BookOpen } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { RecipeDetails } from '@/entities/recipe/model/types'
-import { useRecipes } from '@/entities/recipe/model/hooks'
+import { RecipeDetails } from '@/entities/recipe/model/recipe'
+import { useRecipes } from '@/entities/recipe/model/recipeHooks'
 import { AllergenIcon } from '@/shared/ui/allergen-icon'
 import { cn } from '@/shared/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -136,14 +136,14 @@ export const RecipeDetailsPage: FC = () => {
             <div className="grid grid-cols-2 gap-4 text-primary">
               <div>
                 <p className="text-sm text-primary/80">PVP</p>
-                <p className="text-xl font-semibold">{recipe.price.toFixed(2)}€</p>
+                <p className="text-xl font-semibold">{recipe.pvp.toFixed(2)}€</p>
               </div>
               <div>
                 <p className="text-sm text-primary/80">Coste por ración</p>
                 <p className="text-xl font-semibold">
                   <span className={getPercentageColor(recipe.costPercentage)}>{recipe.costPerServing.toFixed(2)}€</span>
                   <span className="text-sm ml-2">
-                    (<span className={getPercentageColor(recipe.costPercentage)}>{recipe.costPercentage}% Coste</span>)
+                    (<span className={getPercentageColor(recipe.costPercentage)}>{recipe.costPercentage.toFixed(0)}% Coste</span>)
                   </span>
                 </p>
               </div>
@@ -190,18 +190,18 @@ export const RecipeDetailsPage: FC = () => {
               {recipe.ingredients.map((ingredient, index) => {
                 const cantidad = showPerServing
                   ? `${ingredient.quantityPerServing} ${ingredient.unit}`
-                  : `${ingredient.quantity} ${ingredient.unit}`
+                  : `${ingredient.quantityPerProduction} ${ingredient.unit}`
 
                 const precioTotal = showPerServing
-                  ? (ingredient.totalPrice / recipe.servingsPerProduction).toFixed(2)
-                  : ingredient.totalPrice.toFixed(2)
+                  ? (ingredient.pricePerProduction / recipe.servingsPerProduction).toFixed(2)
+                  : ingredient.pricePerProduction.toFixed(2)
 
                 return (
                   <div key={index} className="flex flex-col space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <h3 className="text-lg font-medium text-primary">{ingredient.name}</h3>
-                        <p className="text-sm text-primary/60">{ingredient.price.toFixed(2)}€/{ingredient.unit}</p>
+                        <p className="text-sm text-primary/60">{ingredient.pricePerUnit.toFixed(2)}€/{ingredient.unit}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-lg font-medium text-primary">{cantidad}</p>

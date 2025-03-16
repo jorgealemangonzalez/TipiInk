@@ -1,4 +1,4 @@
-import {https, logger} from 'firebase-functions'
+import {https, logger} from 'firebase-functions/v1'
 import OpenAI from 'openai'
 import {onFunctionsInit} from './OnFunctionsInit'
 import {zodResponseFormat} from 'openai/helpers/zod'

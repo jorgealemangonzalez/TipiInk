@@ -1,7 +1,26 @@
 import { useEffect } from 'react'
-import { mockRecipes } from './mock'
-import { RecipeDetails } from './types'
+import { mockRecipes } from './recipesMock'
 import { useCollection } from '../../../firebase/hooks/useCollection'
+import { Recipe, RecipeDBModel } from '@monorepo/functions/src/types/recipe'
+import { FirestoreDataConverter, WithFieldValue } from 'firebase/firestore'
+import { getCostPercentage } from './recipeModelServices'
+
+const recipeConverter: FirestoreDataConverter<Recipe, RecipeDBModel> = {
+  toFirestore: (recipe: WithFieldValue<Recipe>) => {
+    console.log('toFirestore', recipe)
+    const { costPercentage, ...recipeData } = recipe
+    return recipeData
+  },
+  fromFirestore: (snapshot, options) => {
+    console.log('fromFirestore', snapshot)
+    const data = snapshot.data(options) as RecipeDBModel
+    return {
+      ...data,
+      id: snapshot.id,
+      costPercentage: getCostPercentage(data)
+    } as Recipe
+  }
+}
 
 export const useRecipes = () => {
   const {
@@ -10,10 +29,11 @@ export const useRecipes = () => {
     addDocument,
     updateDocument,
     removeDocument
-  } = useCollection<RecipeDetails>({
+  } = useCollection<Recipe>({
     path: 'recipes',
     orderBy: ['updatedAt', 'desc'],
-    limit: 100
+    limit: 100,
+    converter: recipeConverter
   })
 
   // Initialize the database with mock recipes if none exist
@@ -24,8 +44,7 @@ export const useRecipes = () => {
         
         // Add mock recipes to the database
         for (const recipe of mockRecipes) {
-          const { id, ...recipeData } = recipe
-          await addDocument(recipeData)
+          await addDocument(recipe)
         }
       }
     }
@@ -35,13 +54,13 @@ export const useRecipes = () => {
 
   const getAllRecipes = () => recipes
 
-  const getRecipeById = (id: string): RecipeDetails | undefined => 
+  const getRecipeById = (id: string): Recipe | undefined => 
     recipes.find(recipe => recipe.id === id)
 
-  const getRecipesByCategory = (category: string): RecipeDetails[] =>
+  const getRecipesByCategory = (category: string): Recipe[] =>
     recipes.filter(recipe => recipe.category === category)
 
-  const getMenuRecipes = (): RecipeDetails[] =>
+  const getMenuRecipes = (): Recipe[] =>
     recipes.filter(recipe => recipe.inMenu)
 
   const toggleRecipeMenuStatus = (id: string) => {

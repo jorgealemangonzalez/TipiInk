@@ -1,0 +1,124 @@
+{
+  "type": "object",
+  "properties": {
+    "recipe": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "allergens": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "gluten",
+              "crustaceans",
+              "eggs",
+              "fish",
+              "peanuts",
+              "soy",
+              "dairy",
+              "nuts",
+              "celery",
+              "mustard",
+              "sesame",
+              "sulphites",
+              "lupin",
+              "molluscs"
+            ]
+          }
+        },
+        "productionTime": {
+          "type": "string"
+        },
+        "pvp": {
+          "type": "number"
+        },
+        "costPerServing": {
+          "type": "number"
+        },
+        "servingsPerProduction": {
+          "type": "number"
+        },
+        "productionCost": {
+          "type": "number"
+        },
+        "priceVariation": {
+          "type": "number"
+        },
+        "inMenu": {
+          "type": "boolean"
+        },
+        "ingredients": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "quantityPerProduction": {
+                "type": "number"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "quantityPerServing": {
+                "type": "number"
+              },
+              "pricePerUnit": {
+                "type": "number"
+              },
+              "pricePerProduction": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "preparation": {
+          "type": "object",
+          "properties": {
+            "prePreparation": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "preparation": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "conservation": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "image": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "recipe"
+  ],
+  "additionalProperties": false
+}

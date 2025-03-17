@@ -1,12 +1,12 @@
 import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
+import {logger} from 'firebase-functions'
+import {ZodSchema} from 'zod'
 
-admin.initializeApp(
-    {
-        projectId: 'tipi-ink',
-        storageBucket: 'tipi-ink.appspot.com',
-    }
-)
+admin.initializeApp({
+    projectId: 'tipi-ink',
+    storageBucket: 'tipi-ink.appspot.com',
+})
 
 export const isLocalEnvironment = () => {
     return process.env.FUNCTIONS_EMULATOR === 'true'
@@ -17,6 +17,9 @@ export const firestore = admin.firestore()
 export const storage = admin.storage()
 
 functions.setGlobalOptions({region: 'europe-west3'})
+firestore.settings({
+    ignoreUndefinedProperties: true,
+})
 
 export const onCallWithSecretKey = <P, R>(handler: (request: functions.https.CallableRequest<P>) => Promise<R>) => {
     return functions.https.onCall(async (request) => {
@@ -40,5 +43,16 @@ export const onCallUnauthenticated = <P, R>(handler: (request: functions.https.C
 }
 
 export interface Request<P> extends functions.https.CallableRequest<P> {
-    rawRequest: functions.https.Request
+    rawRequest: functions.https.Request;
+}
+
+export const onAIToolRequest = <P, R>(schema: ZodSchema, handler: (request: P) => Promise<R>) => {
+    return functions.https.onRequest(async (request, response) => {
+        logger.info({body: request.body, headers: request.headers})
+
+        const body = request.body.message.toolCalls[0].function.arguments
+        const parsedBody = schema.parse(body)
+        const result = await handler(parsedBody)
+        response.send(result)
+    })
 }

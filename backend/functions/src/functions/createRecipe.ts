@@ -1,8 +1,9 @@
 import {logger} from 'firebase-functions'
-import {firestore, onCallWithSecretKey, Request} from '../FirebaseInit'
+import {firestore, onAIToolRequest, onCallWithSecretKey, Request} from '../FirebaseInit'
 import {CreateRecipeRequest, CreateRecipeResponse} from '../types/CreateRecipe.d'
 import {RecipeDBModel, RecipeIngredient} from '../types/recipe.d'
 import {Timestamp} from 'firebase-admin/firestore'
+import {CreateRecipeRequestSchema} from '../types/CreateRecipeRequestSchema'
 
 const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredient>): RecipeIngredient => {
     // Define default values for required fields
@@ -92,19 +93,22 @@ const mapToRecipeDBModel = (recipeData: Partial<RecipeDBModel>): RecipeDBModel =
     }
 }
 
+const createRecipeFunction = async (recipeData: RecipeDBModel) => {
+    // Map the input data to the database model
+    const recipeToStore = mapToRecipeDBModel(recipeData)
+
+    // Store in Firestore
+    const recipeRef = await firestore.collection('recipes').add(recipeToStore)
+    const recipe = await recipeRef.get()
+    const newRecipe = recipe.data() as RecipeDBModel
+    return newRecipe
+}
+
 export const createRecipe = onCallWithSecretKey(
     async (request: Request<CreateRecipeRequest>): Promise<CreateRecipeResponse> => {
         try {
             const recipeData = request.data.recipe
-
-            // Map the input data to the database model
-            const recipeToStore = mapToRecipeDBModel(recipeData)
-
-            // Store in Firestore
-            const recipeRef = await firestore.collection('recipes').add(recipeToStore)
-            const recipe = await recipeRef.get()
-            const newRecipe = recipe.data() as RecipeDBModel
-
+            const newRecipe = await createRecipeFunction(recipeData)
             return {
                 success: true,
                 recipe: newRecipe,
@@ -118,3 +122,8 @@ export const createRecipe = onCallWithSecretKey(
         }
     }
 )
+
+export const createRecipeTool = onAIToolRequest(CreateRecipeRequestSchema, async (request: CreateRecipeRequest) => {
+    const newRecipe = await createRecipeFunction(request.recipe)
+    return newRecipe
+})

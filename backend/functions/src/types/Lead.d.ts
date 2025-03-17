@@ -9,4 +9,4 @@ export interface CreateLeadRequest {
   name: string
   phone: string
   weeklyOrders: number
-} 
+}

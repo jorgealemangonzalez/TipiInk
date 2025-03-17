@@ -1,11 +1,8 @@
-import { logger } from 'firebase-functions';
-import { firestore, onCallWithSecretKey, Request } from '../FirebaseInit';
-import { CreateRecipeRequest, CreateRecipeResponse } from '../types/CreateRecipe.d';
-import { RecipeDBModel, RecipeIngredient } from '../types/recipe.d';
+import {logger} from 'firebase-functions'
+import {firestore, onCallWithSecretKey, Request} from '../FirebaseInit'
+import {CreateRecipeRequest, CreateRecipeResponse} from '../types/CreateRecipe.d'
+import {RecipeDBModel, RecipeIngredient} from '../types/recipe.d'
 
-/**
- * Maps the input ingredient data to ensure only the desired fields are stored
- */
 const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredient>): RecipeIngredient => {
     // Define default values for required fields
     const defaultIngredient: RecipeIngredient = {
@@ -15,13 +12,13 @@ const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredient>): RecipeIng
         quantityPerServing: 0,
         pricePerUnit: 0,
         pricePerProduction: 0,
-    };
+    }
 
     // Extract only the fields that should be stored in the database
-    const { name, quantityPerProduction, unit, quantityPerServing, pricePerUnit, pricePerProduction } = {
+    const {name, quantityPerProduction, unit, quantityPerServing, pricePerUnit, pricePerProduction} = {
         ...defaultIngredient,
         ...ingredient,
-    };
+    }
 
     // Return the mapped ingredient with only the desired fields
     return {
@@ -31,13 +28,9 @@ const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredient>): RecipeIng
         quantityPerServing,
         pricePerUnit,
         pricePerProduction,
-    };
-};
+    }
+}
 
-/**
- * Maps the input recipe data to the database model, ensuring only desired fields are stored
- * and applying default values for missing fields.
- */
 const mapToRecipeDBModel = (recipeData: Partial<RecipeDBModel>): RecipeDBModel => {
     // Define default values for required fields
     const defaultRecipe: RecipeDBModel = {
@@ -55,13 +48,13 @@ const mapToRecipeDBModel = (recipeData: Partial<RecipeDBModel>): RecipeDBModel =
             preparation: [],
             conservation: [],
         },
-    };
+    }
 
     // Merge with defaults
-    const mergedData = { ...defaultRecipe, ...recipeData };
+    const mergedData = {...defaultRecipe, ...recipeData}
 
     // Map ingredients to ensure only desired fields are stored
-    const mappedIngredients = mergedData.ingredients.map(mapToRecipeIngredient);
+    const mappedIngredients = mergedData.ingredients.map(mapToRecipeIngredient)
 
     // Extract only the fields that should be stored in the database
     const {
@@ -76,7 +69,7 @@ const mapToRecipeDBModel = (recipeData: Partial<RecipeDBModel>): RecipeDBModel =
         priceVariation,
         inMenu,
         preparation,
-    } = mergedData;
+    } = mergedData
 
     // Return the mapped recipe with only the desired fields
     return {
@@ -92,32 +85,32 @@ const mapToRecipeDBModel = (recipeData: Partial<RecipeDBModel>): RecipeDBModel =
         inMenu,
         ingredients: mappedIngredients,
         preparation,
-    };
-};
+    }
+}
 
 export const createRecipe = onCallWithSecretKey(
     async (request: Request<CreateRecipeRequest>): Promise<CreateRecipeResponse> => {
         try {
-            const recipeData = request.data.recipe;
+            const recipeData = request.data.recipe
 
             // Map the input data to the database model
-            const recipeToStore = mapToRecipeDBModel(recipeData);
+            const recipeToStore = mapToRecipeDBModel(recipeData)
 
             // Store in Firestore
-            const recipeRef = await firestore.collection('recipes').add(recipeToStore);
-            const recipe = await recipeRef.get();
-            const newRecipe = recipe.data() as RecipeDBModel;
+            const recipeRef = await firestore.collection('recipes').add(recipeToStore)
+            const recipe = await recipeRef.get()
+            const newRecipe = recipe.data() as RecipeDBModel
 
             return {
                 success: true,
                 recipe: newRecipe,
-            };
+            }
         } catch (error) {
-            logger.error('Error creating recipe:', error);
+            logger.error('Error creating recipe:', error)
             return {
                 success: false,
                 error: error instanceof Error ? error.message : 'Unknown error occurred',
-            };
+            }
         }
     }
-);
+)

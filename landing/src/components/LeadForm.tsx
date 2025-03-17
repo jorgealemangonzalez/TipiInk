@@ -1,11 +1,11 @@
+import { initializeApp } from "firebase/app";
+import { connectFunctionsEmulator, getFunctions, httpsCallable } from "firebase/functions";
+import mixpanel from "mixpanel-browser";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Select } from "./ui/select";
 import { Button } from "./ui/button";
-import { initializeApp } from "firebase/app";
-import { getFunctions, httpsCallable, connectFunctionsEmulator } from "firebase/functions";
+import { Input } from "./ui/input";
+import { Select } from "./ui/select";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -63,9 +63,15 @@ export function LeadForm({ onSuccess }: LeadFormProps) {
             setFormSuccess(true);
             setFormData({ name: "", phone: "", weeklyOrders: 10 });
             if (onSuccess) onSuccess();
+            mixpanel.track("lead_form_success", {
+                weeklyOrders: formData.weeklyOrders,
+            });
         } catch (error) {
             console.error("Error submitting form:", error);
             setFormError(t("leadForm.errorMessage"));
+            mixpanel.track("lead_form_error", {
+                error: error,
+            });
         } finally {
             setIsSubmitting(false);
         }
@@ -73,12 +79,8 @@ export function LeadForm({ onSuccess }: LeadFormProps) {
 
     if (formSuccess) {
         return (
-            <div className="bg-green-50 p-6 rounded-lg text-center">
-                <h3 className="text-xl font-bold text-green-800 mb-2">{t("leadForm.successTitle")}</h3>
-                <p className="text-green-700">{t("leadForm.successMessage")}</p>
-                <Button onClick={() => setFormSuccess(false)} variant="default" className="mt-4">
-                    {t("leadForm.submitAnother")}
-                </Button>
+            <div className="p-6 rounded-lg text-center">
+                <p className="text-green-500">{t("leadForm.successMessage")}</p>
             </div>
         );
     }

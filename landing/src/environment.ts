@@ -1,1 +1,1 @@
-export const isTestEnvironment = window.location.hostname !== 'botwhirl.com' && window.location.hostname !== 'www.botwhirl.com'
+export const isTestEnvironment = window.location.hostname !== 'tipi.ink' && window.location.hostname !== 'www.tipi.ink'

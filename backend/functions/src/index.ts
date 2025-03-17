@@ -1,4 +1,5 @@
-import 'source-map-support/register'
-import './FirebaseInit'
+import 'source-map-support/register';
+import './FirebaseInit';
 //export {extractInvoice} from './functions/extractInvoice'
-export {createRecipe} from './functions/createRecipe'
+export { createRecipe } from './functions/createRecipe';
+export { createLead } from './functions/createLead';

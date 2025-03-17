@@ -26,6 +26,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useEffect, useRef } from "react";
 import mixpanel from "mixpanel-browser";
+import { LeadForm } from "@/components/LeadForm";
 
 export function LandingPage() {
     const { t } = useTranslation();
@@ -422,7 +423,11 @@ export function LandingPage() {
                                 {t("contact.title")} <span className="text-[#FF914D]">{t("contact.highlight")}</span>{" "}
                                 {t("contact.subtitle")}
                             </h2>
-                            <div className="flex flex-col sm:flex-row justify-center gap-6 /80">
+                            <LeadForm />
+
+                            <h3 className="text-2xl font-semibold mt-8 mb-4">{t("contact.getInTouch")}</h3>
+                            
+                            <div className="flex flex-col sm:flex-row justify-center gap-6 mb-8">
                                 <div className="flex items-center">
                                     <Mail className="w-5 h-5 mr-2" />
                                     <a href={`mailto:${t("contact.email")}`} className="hover:text-[#FF914D]">

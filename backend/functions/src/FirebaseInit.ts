@@ -33,6 +33,12 @@ export const onCallWithSecretKey = <P, R>(handler: (request: functions.https.Cal
     })
 }
 
+export const onCallUnauthenticated = <P, R>(handler: (request: functions.https.CallableRequest<P>) => Promise<R>) => {
+    return functions.https.onCall(async (request) => {
+        return handler(request)
+    })
+}
+
 export interface Request<P> extends functions.https.CallableRequest<P> {
     rawRequest: functions.https.Request
 }

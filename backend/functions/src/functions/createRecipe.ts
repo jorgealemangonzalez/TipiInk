@@ -1,9 +1,9 @@
-import { Timestamp } from 'firebase-admin/firestore'
-import { logger } from 'firebase-functions'
-import { firestore, onAIToolRequest, onCallWithSecretKey, Request } from '../FirebaseInit'
-import { CreateRecipeRequest, CreateRecipeResponse } from '../types/CreateRecipe.d'
-import { CreateRecipeRequestSchema } from '../types/CreateRecipeRequestSchema'
-import { RecipeDBModel, RecipeIngredient } from '../types/recipe.d'
+import {Timestamp} from 'firebase-admin/firestore'
+import {logger} from 'firebase-functions'
+import {firestore, onAIToolRequest, onCallWithSecretKey, Request} from '../FirebaseInit'
+import {CreateRecipeRequest, CreateRecipeResponse} from '../types/CreateRecipe.d'
+import {CreateRecipeRequestSchema} from '../types/CreateRecipeRequestSchema'
+import {RecipeDBModel, RecipeIngredient} from '../types/recipe.d'
 
 const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredient>): RecipeIngredient => {
     // Define default values for required fields

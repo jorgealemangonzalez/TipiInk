@@ -25,7 +25,8 @@
         "openai": "^4.63.0",
         "source-map-support": "^0.5.21",
         "stripe": "^16.2.0",
-        "zod": "^3.23.8"
+        "zod": "^3.23.8",
+        "ws": "8.18.0"
     },
     "devDependencies": {
         "@google-cloud/storage": "^7.15.2",

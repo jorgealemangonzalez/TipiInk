@@ -1,30 +1,30 @@
 {
-  "name": "TipiInk",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "set-admin": "node scripts/designateAsAdmin.js",
-    "list-admins": "node scripts/listAdminUsers.js",
-    "frontend:deploy": "cd frontend && pnpm run deploy",
-    "landing:deploy": "cd landing && pnpm run deploy",
-    "functions:deploy": "pnpm firebase deploy --only=functions",
-    "all:build": "cd frontend && pnpm run build && cd .. && cd backend/functions && pnpm run build && cd ../.. && cd landing && pnpm run build && cd ..",
-    "deploy": "pnpm run all:build && pnpm firebase deploy",
-    "deploy:breaking": "IS_BREAKING_CHANGE=true pnpm run deploy",
-    "postDeployHook": "node scripts/writeVersion.js",
-    "backend:watch": "cd backend/functions && pnpm run build:watch",
-    "backend:emulate": "pnpm firebase emulators:start --import=backend/emulator-data --export-on-exit=backend/emulator-data --inspect-functions",
-    "frontend:dev": "cd frontend && pnpm run dev",
-    "stripe:listen": "stripe listen  --forward-to http://localhost:5001/tipi-ink/us-central1/ext-firestore-stripe-payments-handleWebhookEvents --forward-connect-to http://localhost:5001/tipi-ink/us-central1/stripeWebhookEvents",
-    "start": "concurrently \"pnpm backend:watch\" \"pnpm backend:emulate\" \"pnpm frontend:dev\""
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "concurrently": "^8.2.2",
-    "firebase-admin": "^12.1.0",
-    "firebase-tools": "^13.11.4"
-  }
+    "name": "TipiInk",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "set-admin": "node scripts/designateAsAdmin.js",
+        "list-admins": "node scripts/listAdminUsers.js",
+        "frontend:deploy": "cd frontend && pnpm run deploy",
+        "landing:deploy": "cd landing && pnpm run deploy",
+        "functions:deploy": "pnpm firebase deploy --only=functions",
+        "all:build": "cd frontend && pnpm run build && cd .. && cd backend/functions && pnpm run build && cd ../.. && cd landing && pnpm run build && cd ..",
+        "deploy": "pnpm run all:build && pnpm firebase deploy",
+        "deploy:breaking": "IS_BREAKING_CHANGE=true pnpm run deploy",
+        "postDeployHook": "node scripts/writeVersion.js",
+        "backend:watch": "cd backend/functions && pnpm run build:watch",
+        "backend:emulate": "pnpm firebase emulators:start --import=backend/emulator-data --export-on-exit=backend/emulator-data --inspect-functions",
+        "frontend:dev": "cd frontend && pnpm run dev",
+        "stripe:listen": "stripe listen  --forward-to http://localhost:5001/tipi-ink/us-central1/ext-firestore-stripe-payments-handleWebhookEvents --forward-connect-to http://localhost:5001/tipi-ink/us-central1/stripeWebhookEvents",
+        "start": "concurrently \"pnpm backend:watch\" \"pnpm backend:emulate\" \"pnpm frontend:dev\""
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "concurrently": "^8.2.2",
+        "firebase-admin": "^13.2.0",
+        "firebase-tools": "^13.34.0"
+    }
 }

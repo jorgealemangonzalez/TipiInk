@@ -38,7 +38,7 @@ const invoiceSchema = z.object({
 }).strict()
 
 
-async function getInvoice(data: ExtractInvoiceRequest): Promise<Omit<Invoice, 'id'>> {
+async function getInvoice(data: ExtractInvoiceRequest): Promise<Omit<Invoice, 'id' | 'createdAt'>> {
     const fileRef = storage.bucket().file(data.imagePath)
 
     let invoiceImageUrl = await getDownloadURL(fileRef)

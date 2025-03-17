@@ -1,7 +1,7 @@
-import { onCallWithSecretKey, Request, firestore } from '../FirebaseInit';
-import { RecipeDBModel, RecipeIngredient } from '../types/recipe.d';
-import { CreateRecipeRequest, CreateRecipeResponse } from '../types/CreateRecipe.d';
 import { logger } from 'firebase-functions';
+import { firestore, onCallWithSecretKey, Request } from '../FirebaseInit';
+import { CreateRecipeRequest, CreateRecipeResponse } from '../types/CreateRecipe.d';
+import { RecipeDBModel, RecipeIngredient } from '../types/recipe.d';
 
 /**
  * Maps the input ingredient data to ensure only the desired fields are stored
@@ -76,7 +76,6 @@ const mapToRecipeDBModel = (recipeData: Partial<RecipeDBModel>): RecipeDBModel =
         priceVariation,
         inMenu,
         preparation,
-        image,
     } = mergedData;
 
     // Return the mapped recipe with only the desired fields
@@ -93,7 +92,6 @@ const mapToRecipeDBModel = (recipeData: Partial<RecipeDBModel>): RecipeDBModel =
         inMenu,
         ingredients: mappedIngredients,
         preparation,
-        image,
     };
 };
 

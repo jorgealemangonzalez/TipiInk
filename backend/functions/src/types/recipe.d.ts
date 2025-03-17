@@ -25,6 +25,11 @@ export interface RecipeIngredient {
     pricePerProduction: number;
 }
 
+export interface RecipePreparation {
+    prePreparation: string[];
+    preparation: string[];
+    conservation: string[];
+}
 export interface RecipeDBModel {
     name: string;
     category?: string;
@@ -37,11 +42,7 @@ export interface RecipeDBModel {
     priceVariation: number;
     inMenu: boolean;
     ingredients: RecipeIngredient[];
-    preparation: {
-        prePreparation: string[];
-        preparation: string[];
-        conservation: string[];
-    };
+    preparation: RecipePreparation;
     image?: string;
     createdAt: Timestamp;
     updatedAt: Timestamp;

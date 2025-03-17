@@ -1,7 +1,7 @@
 import {logger} from 'firebase-functions'
 import {firestore, onAIToolRequest, onCallWithSecretKey, Request} from '../FirebaseInit'
 import {CreateRecipeRequest, CreateRecipeResponse} from '../types/CreateRecipe.d'
-import {RecipeDBModel, RecipeIngredient} from '../types/recipe.d'
+import {RecipeDBModel, RecipeIngredient, RecipePreparation} from '../types/recipe.d'
 import {Timestamp} from 'firebase-admin/firestore'
 import {CreateRecipeRequestSchema} from '../types/CreateRecipeRequestSchema'
 
@@ -35,62 +35,27 @@ const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredient>): RecipeIng
 
 const mapToRecipeDBModel = (recipeData: Partial<RecipeDBModel>): RecipeDBModel => {
     // Define default values for required fields
-    const defaultRecipe: Omit<RecipeDBModel, 'createdAt' | 'updatedAt'> = {
-        name: '',
-        allergens: [],
-        pvp: 0,
-        costPerServing: 0,
-        servingsPerProduction: 1,
-        productionCost: 0,
-        priceVariation: 0,
-        inMenu: false,
-        ingredients: [],
-        preparation: {
-            prePreparation: [],
-            preparation: [],
-            conservation: [],
-        },
-    }
-
-    // Merge with defaults
-    const mergedData = {...defaultRecipe, ...recipeData}
-
-    // Map ingredients to ensure only desired fields are stored
-    const mappedIngredients = mergedData.ingredients.map(mapToRecipeIngredient)
-
-    // Extract only the fields that should be stored in the database
-    const {
-        name,
-        category,
-        allergens,
-        productionTime,
-        pvp,
-        costPerServing,
-        servingsPerProduction,
-        productionCost,
-        priceVariation,
-        inMenu,
-        preparation,
-    } = mergedData
-
     const createdAt = Timestamp.now()
-    // Return the mapped recipe with only the desired fields
-    return {
-        name,
-        category,
-        allergens,
-        productionTime,
-        pvp,
-        costPerServing,
-        servingsPerProduction,
-        productionCost,
-        priceVariation,
-        inMenu,
-        ingredients: mappedIngredients,
-        preparation,
+    const recipe: RecipeDBModel = {
+        name: recipeData.name || '',
+        allergens: recipeData.allergens ?? [],
+        pvp: recipeData.pvp ?? 0,
+        costPerServing: recipeData.costPerServing ?? 0,
+        servingsPerProduction: recipeData.servingsPerProduction ?? 1,
+        productionCost: recipeData.productionCost ?? 0,
+        priceVariation: recipeData.priceVariation ?? 0,
+        inMenu: recipeData.inMenu ?? false,
+        ingredients: recipeData.ingredients?.map(mapToRecipeIngredient) ?? [],
+        preparation: {
+            prePreparation: recipeData.preparation?.prePreparation ?? [],
+            preparation: recipeData.preparation?.preparation ?? [],
+            conservation: recipeData.preparation?.conservation ?? [],
+        },
         createdAt,
         updatedAt: createdAt,
     }
+
+    return recipe
 }
 
 const createRecipeFunction = async (recipeData: RecipeDBModel) => {

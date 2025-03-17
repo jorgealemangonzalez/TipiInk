@@ -57,6 +57,11 @@ export class CollectionCache {
         }
     }
 
+    public static async erase(): Promise<void> {
+        this.cache.clear()
+        await this.saveToStorage()
+    }
+
     static async initialize(): Promise<void> {
         await this.loadFromStorage()
 

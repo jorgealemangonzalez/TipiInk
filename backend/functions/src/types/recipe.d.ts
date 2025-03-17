@@ -1,3 +1,5 @@
+import {Timestamp} from 'firebase-admin/firestore'
+
 export type Allergen =
     | 'gluten'
     | 'crustaceans'
@@ -41,6 +43,8 @@ export interface RecipeDBModel {
         conservation: string[];
     };
     image?: string;
+    createdAt: Timestamp;
+    updatedAt: Timestamp;
 }
 
 

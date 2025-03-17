@@ -1,10 +1,11 @@
-import {Version} from './Version.ts'
-import {collection, getDocs, limit, orderBy, query, QuerySnapshot, Timestamp} from "firebase/firestore"
-import {getCollection} from "@/firebase/getCollection.ts"
-import {firestore} from "@/firebase/firebase.ts"
-import {isLocalEnvironment} from "@/environment.ts"
-import {Sentry} from "@/sentry.ts"
+import { isLocalEnvironment } from "@/environment.ts"
+import { firestore } from "@/firebase/firebase.ts"
+import { listenCollection } from "@/firebase/getCollection.ts"
+import { Sentry } from "@/sentry.ts"
+import { collection, getDocs, limit, orderBy, query, QuerySnapshot, Timestamp } from "firebase/firestore"
 import mixpanel from "mixpanel-browser"
+import { Version } from './Version.ts'
+import { CollectionCache } from "@/firebase/cache/CollectionCache.ts"
 
 const getCurrentVersionFromDb = async () => {
     if (isLocalEnvironment) {
@@ -36,13 +37,13 @@ async function listenToVersionChanges() {
 
     setCurrentLocalVersion(currentVersion)
 
-    getCollection<Version>({
+    listenCollection<Version>({
         orderBy: ["createdAt", "desc"],
         where: [["isBreaking", "==", true]],
         path: 'app_versions',
         limit: 1
     },
-    ([latestBreakingVersion]) => {
+    async ([latestBreakingVersion]) => {
         try {
             console.log('Listener received a new version:', {latestBreakingVersion})
             if (
@@ -53,6 +54,7 @@ async function listenToVersionChanges() {
                     latestBreakingVersion,
                     currentVersion
                 })
+                await CollectionCache.erase()
                 setCurrentLocalVersion(latestBreakingVersion)
                 window.location.reload()
             }

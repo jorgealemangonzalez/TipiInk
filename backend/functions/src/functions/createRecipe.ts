@@ -2,6 +2,7 @@ import {logger} from 'firebase-functions'
 import {firestore, onCallWithSecretKey, Request} from '../FirebaseInit'
 import {CreateRecipeRequest, CreateRecipeResponse} from '../types/CreateRecipe.d'
 import {RecipeDBModel, RecipeIngredient} from '../types/recipe.d'
+import {Timestamp} from 'firebase-admin/firestore'
 
 const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredient>): RecipeIngredient => {
     // Define default values for required fields
@@ -33,7 +34,7 @@ const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredient>): RecipeIng
 
 const mapToRecipeDBModel = (recipeData: Partial<RecipeDBModel>): RecipeDBModel => {
     // Define default values for required fields
-    const defaultRecipe: RecipeDBModel = {
+    const defaultRecipe: Omit<RecipeDBModel, 'createdAt' | 'updatedAt'> = {
         name: '',
         allergens: [],
         pvp: 0,
@@ -71,6 +72,7 @@ const mapToRecipeDBModel = (recipeData: Partial<RecipeDBModel>): RecipeDBModel =
         preparation,
     } = mergedData
 
+    const createdAt = Timestamp.now()
     // Return the mapped recipe with only the desired fields
     return {
         name,
@@ -85,6 +87,8 @@ const mapToRecipeDBModel = (recipeData: Partial<RecipeDBModel>): RecipeDBModel =
         inMenu,
         ingredients: mappedIngredients,
         preparation,
+        createdAt,
+        updatedAt: createdAt,
     }
 }
 

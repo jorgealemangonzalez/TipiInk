@@ -31,10 +31,10 @@ export const useRecipes = () => {
     removeDocument
   } = useCollection<Recipe>({
     path: 'recipes',
-    orderBy: ['updatedAt', 'desc'],
     limit: 100,
     converter: recipeConverter
   })
+  console.log('recipes', recipes)
 
   // Initialize the database with mock recipes if none exist
   useEffect(() => {

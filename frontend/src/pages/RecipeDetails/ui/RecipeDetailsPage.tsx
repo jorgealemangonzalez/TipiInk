@@ -5,14 +5,32 @@ import {
   CardContent,
   CardHeader
 } from "@/components/ui/card"
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select"
 import { useRecipes } from '@/entities/recipe/model/recipeHooks'
 import { uploadFileToStorage } from '@/firebase/fileStorage'
 import { cn } from '@/shared/lib/utils'
 import { AllergenIcon } from '@/shared/ui/allergen-icon'
 import { BackButton } from '@/shared/ui/back-button'
-import { BookOpen, Loader2, Upload } from 'lucide-react'
-import { FC, useRef, useState } from 'react'
+import { BookOpen, Loader2, Upload, Clock } from 'lucide-react'
+import { ChangeEvent, FC, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
+
+// Recipe categories available
+const RECIPE_CATEGORIES = [
+  'Arroces',
+  'Pescados',
+  'Pasta',
+  'Carnes',
+  'Postres',
+  'Asiático',
+  'Otros'
+]
 
 const getPercentageColor = (percentage: number): string => {
   if (percentage < 20) return 'text-emerald-500'
@@ -31,6 +49,7 @@ export const RecipeDetailsPage: FC = () => {
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isEditingTime, setIsEditingTime] = useState(false)
 
   if (isLoading) {
     return (
@@ -76,6 +95,25 @@ export const RecipeDetailsPage: FC = () => {
     }
   }
 
+  const handleCategoryChange = async (category: string) => {
+    if (!recipe) return
+    await updateRecipe(recipe.id, { category })
+  }
+
+  const handleProductionTimeChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!recipe) return
+    const minutes = e.target.value
+    if (minutes) {
+      await updateRecipe(recipe.id, { productionTime: `${minutes} min` })
+    }
+  }
+
+  const extractMinutes = (timeString?: string): string => {
+    if (!timeString) return ''
+    const match = timeString.match(/(\d+)/)
+    return match ? match[1] : ''
+  }
+
   const triggerFileInput = () => {
     fileInputRef.current?.click()
   }
@@ -111,12 +149,32 @@ export const RecipeDetailsPage: FC = () => {
                 <div className="flex items-center gap-3">
                   <h2 className="text-2xl font-bold text-primary">{recipe.name}</h2>
                 </div>
-                <p className="text-sm text-primary/80">{recipe.category}</p>
+                <div>
+                  <Select
+                    defaultValue={recipe.category || undefined}
+                    onValueChange={handleCategoryChange}
+                  >
+                    <SelectTrigger className="w-40 h-6 text-sm py-0 px-0 border-0 bg-transparent focus:ring-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0">
+                      <SelectValue placeholder="Seleccionar categoría" className="text-primary/50 italic" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {RECIPE_CATEGORIES.map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <div className="flex gap-2 items-center">
-                {recipe.allergens.map((allergen, index) => (
-                  <AllergenIcon key={index} allergen={allergen} />
-                ))}
+                {recipe.allergens.length > 0 ? (
+                  recipe.allergens.map((allergen, index) => (
+                    <AllergenIcon key={index} allergen={allergen} />
+                  ))
+                ) : (
+                  <p className="text-xs text-primary/50 italic">Sin alérgenos</p>
+                )}
               </div>
             </div>
           </CardHeader>
@@ -149,7 +207,16 @@ export const RecipeDetailsPage: FC = () => {
             {/* Production Time */}
             <div className="flex justify-between items-center border-t border-border mt-6 pt-4">
               <p className="text-sm text-primary/80">Tiempo de producción</p>
-              <p className="text-xl font-semibold text-primary">{recipe.productionTime}</p>
+              <div className="flex items-center gap-2">
+                <input 
+                  type="number" 
+                  className="w-16 h-8 bg-transparent border-none text-xl font-semibold text-primary text-right focus:outline-none" 
+                  value={extractMinutes(recipe.productionTime)}
+                  onChange={handleProductionTimeChange}
+                  placeholder="0"
+                />
+                <span className="text-xl text-primary font-semibold">min</span>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -175,35 +242,41 @@ export const RecipeDetailsPage: FC = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {recipe.ingredients.map((ingredient, index) => {
-                const cantidad = showPerServing
-                  ? `${ingredient.quantityPerServing} ${ingredient.unit}`
-                  : `${ingredient.quantityPerProduction} ${ingredient.unit}`
+            {recipe.ingredients.length > 0 ? (
+              <div className="space-y-4">
+                {recipe.ingredients.map((ingredient, index) => {
+                  const cantidad = showPerServing
+                    ? `${ingredient.quantityPerServing} ${ingredient.unit}`
+                    : `${ingredient.quantityPerProduction} ${ingredient.unit}`
 
-                const precioTotal = showPerServing
-                  ? (ingredient.pricePerProduction / recipe.servingsPerProduction).toFixed(2)
-                  : ingredient.pricePerProduction.toFixed(2)
+                  const precioTotal = showPerServing
+                    ? (ingredient.pricePerProduction / recipe.servingsPerProduction).toFixed(2)
+                    : ingredient.pricePerProduction.toFixed(2)
 
-                return (
-                  <div key={index} className="flex flex-col space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-medium text-primary">{ingredient.name}</h3>
-                        <p className="text-sm text-primary/60">{ingredient.pricePerUnit.toFixed(2)}€/{ingredient.unit}</p>
+                  return (
+                    <div key={index} className="flex flex-col space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-medium text-primary">{ingredient.name}</h3>
+                          <p className="text-sm text-primary/60">{ingredient.pricePerUnit.toFixed(2)}€/{ingredient.unit}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-medium text-primary">{cantidad}</p>
+                          <p className="text-sm font-semibold text-primary">{precioTotal}€</p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-lg font-medium text-primary">{cantidad}</p>
-                        <p className="text-sm font-semibold text-primary">{precioTotal}€</p>
-                      </div>
+                      {index < recipe.ingredients.length - 1 && (
+                        <div className="h-px bg-border" />
+                      )}
                     </div>
-                    {index < recipe.ingredients.length - 1 && (
-                      <div className="h-px bg-border" />
-                    )}
-                  </div>
-                )
-              })}
-            </div>
+                  )
+                })}
+              </div>
+            ) : (
+              <div className="py-8 flex flex-col items-center justify-center text-primary/50">
+                <p>No hay ingredientes en esta receta</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -214,59 +287,61 @@ export const RecipeDetailsPage: FC = () => {
           </CardHeader>
           <CardContent>
             <div className="relative flex gap-1" ref={processContainerRef}>
-
               {/* Pasos del proceso */}
               <div className="flex-1 space-y-16">
                 {/* Preelaboración */}
-                <div 
-                  className={cn(
-                    "transition-all duration-300"
-                  )}
-                >
-                  <h4 className="text-lg font-semibold text-primary mb-4">Preelaboración</h4>
-                  <ul className="list-none space-y-3">
-                    {recipe.preparation.prePreparation.map((step, index) => (
-                      <li key={index} className="text-primary/80 flex items-start gap-3">
-                        <span className="text-primary mt-1">•</span>
-                        <span>{step}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {recipe.preparation.prePreparation.length > 0 && (
+                  <div className="transition-all duration-300">
+                    <h4 className="text-lg font-semibold text-primary mb-4">Preelaboración</h4>
+                    <ul className="list-none space-y-3">
+                      {recipe.preparation.prePreparation.map((step, index) => (
+                        <li key={index} className="text-primary/80 flex items-start gap-3">
+                          <span className="text-primary mt-1">•</span>
+                          <span>{step}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
                 {/* Elaboración */}
-                <div 
-                  className={cn(
-                    "transition-all duration-300"
-                  )}
-                >
-                  <h4 className="text-lg font-semibold text-primary mb-4">Elaboración</h4>
-                  <ul className="list-none space-y-3">
-                    {recipe.preparation.preparation.map((step, index) => (
-                      <li key={index} className="text-primary/80 flex items-start gap-3">
-                        <span className="text-primary mt-1">•</span>
-                        <span>{step}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {recipe.preparation.preparation.length > 0 && (
+                  <div className="transition-all duration-300">
+                    <h4 className="text-lg font-semibold text-primary mb-4">Elaboración</h4>
+                    <ul className="list-none space-y-3">
+                      {recipe.preparation.preparation.map((step, index) => (
+                        <li key={index} className="text-primary/80 flex items-start gap-3">
+                          <span className="text-primary mt-1">•</span>
+                          <span>{step}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
                 {/* Conservación */}
-                <div 
-                  className={cn(
-                    "transition-all duration-300"
-                  )}
-                >
-                  <h4 className="text-lg font-semibold text-primary mb-4">Conservación</h4>
-                  <ul className="list-none space-y-3">
-                    {recipe.preparation.conservation.map((step, index) => (
-                      <li key={index} className="text-primary/80 flex items-start gap-3">
-                        <span className="text-primary mt-1">•</span>
-                        <span>{step}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {recipe.preparation.conservation.length > 0 && (
+                  <div className="transition-all duration-300">
+                    <h4 className="text-lg font-semibold text-primary mb-4">Conservación</h4>
+                    <ul className="list-none space-y-3">
+                      {recipe.preparation.conservation.map((step, index) => (
+                        <li key={index} className="text-primary/80 flex items-start gap-3">
+                          <span className="text-primary mt-1">•</span>
+                          <span>{step}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* No process steps message */}
+                {recipe.preparation.prePreparation.length === 0 && 
+                 recipe.preparation.preparation.length === 0 && 
+                 recipe.preparation.conservation.length === 0 && (
+                  <div className="py-8 flex flex-col items-center justify-center text-primary/50">
+                    <p>No hay pasos de elaboración definidos</p>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>
@@ -293,7 +368,7 @@ export const RecipeDetailsPage: FC = () => {
                   onClick={triggerFileInput} 
                   className={cn(
                     "absolute inset-0 rounded-lg flex flex-col items-center justify-center active:scale-95 transition-all duration-150 cursor-pointer",
-                    isUploading ? "bg-black/50" : "active:bg-black/20"
+                    isUploading ? "bg-black/50" : "opacity-0 group-hover:opacity-100 bg-black/30"
                   )}
                 >
                   <input 
@@ -303,7 +378,7 @@ export const RecipeDetailsPage: FC = () => {
                     accept="image/*"
                     onChange={handleImageUpload}
                   />
-                  {isUploading && (
+                  {isUploading ? (
                     <div className="flex flex-col items-center gap-2">
                       <div className="relative">
                         <Loader2 className="size-20 text-white animate-spin" />
@@ -312,6 +387,8 @@ export const RecipeDetailsPage: FC = () => {
                         </div>
                       </div>
                     </div>
+                  ) : (
+                    <Upload className="h-12 w-12 text-white" />
                   )}
                 </div>
               </div>

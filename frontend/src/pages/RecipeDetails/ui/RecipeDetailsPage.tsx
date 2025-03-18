@@ -29,6 +29,7 @@ export const RecipeDetailsPage: FC = () => {
   const [showPerServing, setShowPerServing] = useState(false)
   const processContainerRef = useRef<HTMLDivElement>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   if (isLoading) {
@@ -52,13 +53,16 @@ export const RecipeDetailsPage: FC = () => {
     
     try {
       setIsUploading(true)
+      setUploadProgress(0)
       const file = event.target.files[0]
       const fileName = `${Date.now()}`
       const filePath = `recipes/${recipe.id}/${fileName}`
       
       // Upload file and get download URL
-      const imageUrl = await uploadFileToStorage(filePath, file, (progress) => {
-        console.log(`Upload progress: ${progress} bytes`)
+      const imageUrl = await uploadFileToStorage(filePath, file, (totalUploaded) => {
+        const percentage = Math.round((totalUploaded / file.size) * 100)
+        setUploadProgress(percentage)
+        console.log(`Upload progress: ${totalUploaded} bytes (${percentage}%)`)
       })
       
       // Update recipe with new image URL
@@ -68,6 +72,7 @@ export const RecipeDetailsPage: FC = () => {
       console.error('Error uploading image:', error)
     } finally {
       setIsUploading(false)
+      setUploadProgress(0)
     }
   }
 
@@ -278,10 +283,19 @@ export const RecipeDetailsPage: FC = () => {
                 <img 
                   src={recipe.image} 
                   alt={recipe.name}
-                  className="w-full h-80 object-cover rounded-lg"
+                  className={cn(
+                    "w-full h-80 object-cover rounded-lg transition-all duration-150",
+                    isUploading && "opacity-60"
+                  )}
                 />
                 {/* Hover overlay with upload button */}
-                <div onClick={triggerFileInput} className="absolute inset-0 rounded-lg flex flex-col items-center justify-center">
+                <div 
+                  onClick={triggerFileInput} 
+                  className={cn(
+                    "absolute inset-0 rounded-lg flex flex-col items-center justify-center active:scale-95 transition-all duration-150 cursor-pointer",
+                    isUploading ? "bg-black/50" : "active:bg-black/20"
+                  )}
+                >
                   <input 
                     type="file" 
                     ref={fileInputRef}
@@ -291,14 +305,21 @@ export const RecipeDetailsPage: FC = () => {
                   />
                   {isUploading && (
                     <div className="flex flex-col items-center gap-2">
-                      <Loader2 className="h-12 w-12 text-white animate-spin" />
-                      <p className="text-white">Subiendo imagen...</p>
+                      <div className="relative">
+                        <Loader2 className="size-20 text-white animate-spin" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="text-white text-xs font-medium">{uploadProgress}%</span>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
               </div>
             ) : (
-              <div className="w-full h-80 flex flex-col items-center justify-center gap-4 border-2 border-dashed border-primary/30 rounded-lg bg-black/5">
+              <div 
+                onClick={triggerFileInput} 
+                className="w-full h-80 flex flex-col items-center justify-center gap-4 border-2 border-dashed border-primary/30 rounded-lg bg-black/5 active:scale-[0.98] active:border-primary/60 active:bg-black/10 transition-all duration-150 cursor-pointer"
+              >
                 <input 
                   type="file" 
                   ref={fileInputRef}
@@ -308,19 +329,18 @@ export const RecipeDetailsPage: FC = () => {
                 />
                 {isUploading ? (
                   <div className="flex flex-col items-center gap-2">
-                    <Loader2 className="h-12 w-12 text-primary/60 animate-spin" />
-                    <p className="text-primary/70">Subiendo imagen...</p>
+                    <div className="relative">
+                      <Loader2 className="h-12 w-12 text-primary/60 animate-spin" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-primary/90 text-xs font-medium">{uploadProgress}%</span>
+                      </div>
+                    </div>
+                    <p className="text-primary/70">Subiendo imagen... ({uploadProgress}%)</p>
                   </div>
                 ) : (
                   <>
                     <Upload className="h-12 w-12 text-primary/60" />
-                    <p className="text-primary/70 text-center max-w-sm">No hay imagen para esta receta. Sube una foto del plato terminado.</p>
-                    <Button 
-                      onClick={triggerFileInput}
-                      className="mt-2"
-                    >
-                      Subir imagen
-                    </Button>
+                    <p className="text-primary/70 text-center max-w-sm">Sube una foto del plato terminado.</p>
                   </>
                 )}
               </div>

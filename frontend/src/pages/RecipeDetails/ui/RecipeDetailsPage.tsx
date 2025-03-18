@@ -17,9 +17,15 @@ import { uploadFileToStorage } from '@/firebase/fileStorage'
 import { cn } from '@/shared/lib/utils'
 import { AllergenIcon } from '@/shared/ui/allergen-icon'
 import { BackButton } from '@/shared/ui/back-button'
-import { BookOpen, Loader2, Upload, Clock } from 'lucide-react'
+import { BookOpen, Loader2, Upload, Clock, Info } from 'lucide-react'
 import { ChangeEvent, FC, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 // Recipe categories available
 const RECIPE_CATEGORIES = [
@@ -186,7 +192,23 @@ export const RecipeDetailsPage: FC = () => {
                 <p className="text-xl font-semibold">{recipe.pvp.toFixed(2)}€</p>
               </div>
               <div>
-                <p className="text-sm text-primary/80">Coste por ración</p>
+                <p className="text-sm text-primary/80 flex items-center gap-1">
+                  Coste por ración
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="h-3.5 w-3.5 text-primary/60 cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent 
+                        side="top" 
+                        align="center" 
+                        className="bg-gray-900 border-gray-800 text-primary"
+                      >
+                        <p className="max-w-60 text-xs">Suma de los costes de ingredientes</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </p>
                 <p className="text-xl font-semibold">
                   <span className={getPercentageColor(recipe.costPercentage)}>{recipe.costPerServing.toFixed(2)}€</span>
                   <span className="text-sm ml-2">

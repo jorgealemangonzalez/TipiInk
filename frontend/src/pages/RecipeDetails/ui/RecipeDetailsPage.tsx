@@ -1,31 +1,45 @@
-import { useAuth } from '@/auth/auth'
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardHeader
 } from "@/components/ui/card"
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select"
-import { useRecipes } from '@/entities/recipe/model/recipeHooks'
-import { uploadFileToStorage } from '@/firebase/fileStorage'
-import { cn } from '@/shared/lib/utils'
-import { AllergenIcon } from '@/shared/ui/allergen-icon'
-import { BackButton } from '@/shared/ui/back-button'
-import { BookOpen, Loader2, Upload, Clock, Info } from 'lucide-react'
-import { ChangeEvent, FC, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Badge } from "@/components/ui/badge"
+import { 
+  Command, 
+  CommandEmpty, 
+  CommandGroup, 
+  CommandInput, 
+  CommandItem, 
+  CommandList 
+} from "@/components/ui/command"
+import { 
+  Popover, 
+  PopoverContent, 
+  PopoverTrigger 
+} from "@/components/ui/popover"
+import { X, Check, ChevronsUpDown } from "lucide-react"
+import { useRecipes } from '@/entities/recipe/model/recipeHooks'
+import { uploadFileToStorage } from '@/firebase/fileStorage'
+import { cn } from '@/shared/lib/utils'
+import { BackButton } from '@/shared/ui/back-button'
+import { BookOpen, Info, Loader2, Upload } from 'lucide-react'
+import { ChangeEvent, FC, useRef, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { AllergenIcon } from '@/shared/ui/allergen-icon'
+import { Allergen } from '@monorepo/functions/src/types/recipe'
 
 // Recipe categories available
 const RECIPE_CATEGORIES = [
@@ -38,12 +52,101 @@ const RECIPE_CATEGORIES = [
   'Otros'
 ]
 
+// Allergens available with their display names
+const ALLERGENS = [
+  { value: 'gluten' as Allergen, label: 'Gluten' },
+  { value: 'crustaceans' as Allergen, label: 'Crustáceos' },
+  { value: 'eggs' as Allergen, label: 'Huevos' },
+  { value: 'fish' as Allergen, label: 'Pescado' },
+  { value: 'peanuts' as Allergen, label: 'Cacahuetes' },
+  { value: 'soy' as Allergen, label: 'Soja' },
+  { value: 'dairy' as Allergen, label: 'Lácteos' },
+  { value: 'nuts' as Allergen, label: 'Frutos secos' },
+  { value: 'celery' as Allergen, label: 'Apio' },
+  { value: 'mustard' as Allergen, label: 'Mostaza' },
+  { value: 'sesame' as Allergen, label: 'Sésamo' },
+  { value: 'sulphites' as Allergen, label: 'Sulfitos' },
+  { value: 'lupin' as Allergen, label: 'Altramuces' },
+  { value: 'molluscs' as Allergen, label: 'Moluscos' }
+]
+
 const getPercentageColor = (percentage: number): string => {
   if (percentage < 20) return 'text-emerald-500'
   if (percentage <= 25) return 'text-green-400'
   if (percentage <= 30) return 'text-yellow-400'
   if (percentage <= 32) return 'text-orange-400'
   return 'text-red-500'
+}
+
+const AllergenSelector: FC<{
+  selected: Allergen[]
+  onChange: (values: Allergen[]) => void
+}> = ({ selected, onChange }) => {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <div className="flex items-center gap-2">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <div className="flex items-center gap-1 cursor-pointer group pr-1.5">
+            {selected.length > 0 ? (
+              <>
+                <div className="flex gap-1">
+                  {selected.map((allergen) => (
+                    <AllergenIcon key={allergen} allergen={allergen} />
+                  ))}
+                </div>
+                <ChevronsUpDown className="h-3 w-3 opacity-0 group-hover:opacity-50 transition-opacity" />
+              </>
+            ) : (
+              <>
+                <p className="text-xs text-primary/50 italic">
+                  Sin alérgenos
+                </p>
+                <ChevronsUpDown className="h-3 w-3 opacity-0 group-hover:opacity-50 transition-opacity" />
+              </>
+            )}
+          </div>
+        </PopoverTrigger>
+        <PopoverContent className="p-0 w-[280px]" align="end">
+          <Command>
+            <CommandInput placeholder="Buscar alérgeno..." />
+            <CommandList>
+              <CommandEmpty>No hay coincidencias.</CommandEmpty>
+              <CommandGroup>
+                {ALLERGENS.map((option) => {
+                  const isSelected = selected.includes(option.value)
+                  return (
+                    <CommandItem
+                      key={option.value}
+                      onSelect={() => {
+                        onChange(
+                          isSelected
+                            ? selected.filter((value) => value !== option.value)
+                            : [...selected, option.value]
+                        )
+                        setOpen(true)
+                      }}
+                    >
+                      <div
+                        className={cn(
+                          "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary/20",
+                          isSelected ? "bg-primary" : "opacity-50"
+                        )}
+                      >
+                        {isSelected && <Check className="h-3 w-3 text-primary-foreground" />}
+                      </div>
+                      <span>{option.label}</span>
+                    </CommandItem>
+                  )
+                })}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    </div>
+  )
 }
 
 export const RecipeDetailsPage: FC = () => {
@@ -106,12 +209,15 @@ export const RecipeDetailsPage: FC = () => {
     await updateRecipe(recipe.id, { category })
   }
 
+  const handleAllergensChange = async (allergens: Allergen[]) => {
+    if (!recipe) return
+    await updateRecipe(recipe.id, { allergens })
+  }
+
   const handleProductionTimeChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!recipe) return
     const minutes = e.target.value
-    if (minutes) {
-      await updateRecipe(recipe.id, { productionTime: `${minutes} min` })
-    }
+    await updateRecipe(recipe.id, { productionTime: `${minutes} min` })
   }
 
   const extractMinutes = (timeString?: string): string => {
@@ -173,16 +279,13 @@ export const RecipeDetailsPage: FC = () => {
                   </Select>
                 </div>
               </div>
-              <div className="flex gap-2 items-center">
-                {recipe.allergens.length > 0 ? (
-                  recipe.allergens.map((allergen, index) => (
-                    <AllergenIcon key={index} allergen={allergen} />
-                  ))
-                ) : (
-                  <p className="text-xs text-primary/50 italic">Sin alérgenos</p>
-                )}
-              </div>
             </div>
+              <div className="flex gap-2 items-center">
+                <AllergenSelector 
+                  selected={recipe.allergens}
+                  onChange={handleAllergensChange}
+                />
+              </div>
           </CardHeader>
           <CardContent>
             {/* Pricing and Production Info */}
@@ -449,4 +552,4 @@ export const RecipeDetailsPage: FC = () => {
       </div>
     </div>
   )
-} 
+}

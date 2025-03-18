@@ -41,7 +41,7 @@ const RecipeDBModelSchema = z.object({
     productionTime: z.string().optional(),
     pvp: z.number().optional(),
     costPerServing: z.number().optional(),
-    servingsPerProduction: z.number().optional(),
+    servingsPerProduction: z.number().optional().describe('Number of servings per production'),
     productionCost: z.number().optional(),
     priceVariation: z.number().optional(),
     inMenu: z.boolean().optional(),

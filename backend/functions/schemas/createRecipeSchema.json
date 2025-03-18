@@ -42,7 +42,8 @@
           "type": "number"
         },
         "servingsPerProduction": {
-          "type": "number"
+          "type": "number",
+          "description": "Number of servings per production"
         },
         "productionCost": {
           "type": "number"

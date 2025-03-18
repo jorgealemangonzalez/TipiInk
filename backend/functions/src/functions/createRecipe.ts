@@ -1,10 +1,10 @@
 import { Timestamp } from 'firebase-admin/firestore';
 import { logger } from 'firebase-functions';
-import { firestore, onAIToolRequest, onCallWithSecretKey, Request } from '../FirebaseInit';
+import { firestore, isLocalEnvironment, onAIToolRequest, onCallWithSecretKey, Request } from '../FirebaseInit';
 import { CreateRecipeRequest, CreateRecipeResponse } from '../types/CreateRecipe.d';
 import { CreateRecipeRequestSchema } from '../types/CreateRecipeRequestSchema';
 import { RecipeDBModel, RecipeIngredient } from '../types/recipe.d';
-import { TrieveSDK } from 'trieve-ts-sdk';
+import { ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk';
 
 const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredient>): RecipeIngredient => {
     // Define default values for required fields
@@ -60,7 +60,7 @@ const mapToRecipeDBModel = (recipeData: Partial<RecipeDBModel>): RecipeDBModel =
 };
 export const trieve = new TrieveSDK({
     apiKey: process.env.TRIEVE_API_KEY || '',
-    datasetId: 'cd4edb52-2fcb-4e69-bd5a-8275b3a79eaa',
+    datasetId: isLocalEnvironment() ? 'c7b4534b-ed9b-40b7-8b20-268b76bf4217' : 'cd4edb52-2fcb-4e69-bd5a-8275b3a79eaa',
 });
 
 const createRecipeFunction = async (recipeData: RecipeDBModel) => {
@@ -77,6 +77,10 @@ const createRecipeFunction = async (recipeData: RecipeDBModel) => {
         metadata: {
             recipeId: recipe.id,
         },
+    });
+
+    await recipeRef.update({
+        chunkId: (response.chunk_metadata as ChunkMetadata).id,
     });
 
     console.log(response);

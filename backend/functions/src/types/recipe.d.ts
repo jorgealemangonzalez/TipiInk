@@ -1,4 +1,4 @@
-import {Timestamp} from 'firebase-admin/firestore'
+import { Timestamp } from 'firebase-admin/firestore';
 
 export type Allergen =
     | 'gluten'
@@ -46,8 +46,8 @@ export interface RecipeDBModel {
     image?: string;
     createdAt: Timestamp;
     updatedAt: Timestamp;
+    chunkId?: string; // Trive Chunk ID
 }
-
 
 export interface Recipe extends RecipeDBModel {
     id: string;

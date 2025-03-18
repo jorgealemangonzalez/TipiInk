@@ -1,27 +1,15 @@
-import { FC, useState, useEffect, useRef } from 'react'
-import { ChevronLeft, BookOpen } from 'lucide-react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { RecipeDetails } from '@/entities/recipe/model/recipe'
-import { useRecipes } from '@/entities/recipe/model/recipeHooks'
-import { AllergenIcon } from '@/shared/ui/allergen-icon'
-import { cn } from '@/shared/lib/utils'
-import { Button } from '@/components/ui/button'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
+  CardHeader
 } from "@/components/ui/card"
+import { useRecipes } from '@/entities/recipe/model/recipeHooks'
+import { cn } from '@/shared/lib/utils'
+import { AllergenIcon } from '@/shared/ui/allergen-icon'
 import { BackButton } from '@/shared/ui/back-button'
+import { BookOpen } from 'lucide-react'
+import { FC, useRef, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 const getPercentageColor = (percentage: number): string => {
   if (percentage < 20) return 'text-emerald-500'
@@ -32,48 +20,12 @@ const getPercentageColor = (percentage: number): string => {
 }
 
 export const RecipeDetailsPage: FC = () => {
-  const navigate = useNavigate()
   const { id } = useParams()
   const { getRecipeById, toggleRecipeMenuStatus, isLoading } = useRecipes()
   const recipe = id ? getRecipeById(id) : undefined
   const [showPerServing, setShowPerServing] = useState(false)
-  const [activeStep, setActiveStep] = useState(0)
-  const [scrollProgress, setScrollProgress] = useState(0)
-  const stepsRef = useRef<(HTMLDivElement | null)[]>([])
   const processContainerRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const options = {
-      root: null,
-      rootMargin: '-20% 0px -20% 0px',
-      threshold: Array.from({ length: 101 }, (_, i) => i / 100),
-    }
-
-    const calculateProgress = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const index = stepsRef.current.findIndex(ref => ref === entry.target)
-          if (index !== -1) {
-            setActiveStep(index)
-            const progress = (index * 33.33) + (entry.intersectionRatio * 33.33)
-            setScrollProgress(Math.min(progress, 100))
-          }
-        }
-      })
-    }
-
-    const observer = new IntersectionObserver(calculateProgress, options)
-
-    stepsRef.current.forEach((ref) => {
-      if (ref) observer.observe(ref)
-    })
-
-    return () => {
-      stepsRef.current.forEach((ref) => {
-        if (ref) observer.unobserve(ref)
-      })
-    }
-  }, [])
 
   if (isLoading) {
     return (
@@ -226,51 +178,13 @@ export const RecipeDetailsPage: FC = () => {
           </CardHeader>
           <CardContent>
             <div className="relative flex gap-1" ref={processContainerRef}>
-              {/* Slider vertical */}
-              <div className="sticky top-6 self-start">
-                <div className="relative w-2 h-[600px] bg-gray-800 rounded-full">
-                  <div 
-                    className="absolute top-0 w-full rounded-full bg-primary transition-all duration-300 ease-out"
-                    style={{
-                      height: `${scrollProgress}%`
-                    }}
-                  />
-                  {/* Puntos del slider */}
-                  <div className="absolute inset-0 flex flex-col justify-between py-[10%]">
-                    {[0, 1, 2].map((step) => (
-                      <button
-                        key={step}
-                        onClick={() => {
-                          stepsRef.current[step]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-                        }}
-                        className={cn(
-                          "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 -ml-2",
-                          scrollProgress >= (step + 1) * 33.33 
-                            ? "bg-gray-800 border-primary" 
-                            : "bg-gray-800 border-gray-600",
-                          "hover:border-primary/80"
-                        )}
-                      >
-                        <div 
-                          className={cn(
-                            "w-2 h-2 rounded-full transition-all duration-300",
-                            scrollProgress >= (step + 1) * 33.33 ? "bg-primary" : "bg-gray-600"
-                          )}
-                        />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
 
               {/* Pasos del proceso */}
-              <div className="flex-1 space-y-16 pl-20">
+              <div className="flex-1 space-y-16">
                 {/* Preelaboración */}
                 <div 
-                  ref={el => stepsRef.current[0] = el}
                   className={cn(
-                    "transition-all duration-300",
-                    activeStep === 0 ? "opacity-100" : "opacity-50"
+                    "transition-all duration-300"
                   )}
                 >
                   <h4 className="text-lg font-semibold text-primary mb-4">Preelaboración</h4>
@@ -286,10 +200,8 @@ export const RecipeDetailsPage: FC = () => {
 
                 {/* Elaboración */}
                 <div 
-                  ref={el => stepsRef.current[1] = el}
                   className={cn(
-                    "transition-all duration-300",
-                    activeStep === 1 ? "opacity-100" : "opacity-50"
+                    "transition-all duration-300"
                   )}
                 >
                   <h4 className="text-lg font-semibold text-primary mb-4">Elaboración</h4>
@@ -305,10 +217,8 @@ export const RecipeDetailsPage: FC = () => {
 
                 {/* Conservación */}
                 <div 
-                  ref={el => stepsRef.current[2] = el}
                   className={cn(
-                    "transition-all duration-300",
-                    activeStep === 2 ? "opacity-100" : "opacity-50"
+                    "transition-all duration-300"
                   )}
                 >
                   <h4 className="text-lg font-semibold text-primary mb-4">Conservación</h4>

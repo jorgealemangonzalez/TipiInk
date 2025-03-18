@@ -10,7 +10,8 @@
         "deploy": "firebase deploy --only functions",
         "deploy:breaking": "IS_BREAKING_CHANGE=true pnpm run deploy",
         "logs": "firebase functions:log",
-        "generate:schema": "ts-node src/scripts/generateCreateRecipeSchema.ts"
+        "generate:schema": "ts-node src/scripts/generateCreateRecipeSchema.ts",
+        "generate:update-schema": "ts-node src/scripts/generateUpdateRecipeSchema.ts"
     },
     "engines": {
         "node": "20"

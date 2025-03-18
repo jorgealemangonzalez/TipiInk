@@ -1,13 +1,16 @@
+import { useAuth } from '@/auth/auth'
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardHeader
 } from "@/components/ui/card"
 import { useRecipes } from '@/entities/recipe/model/recipeHooks'
+import { uploadFileToStorage } from '@/firebase/fileStorage'
 import { cn } from '@/shared/lib/utils'
 import { AllergenIcon } from '@/shared/ui/allergen-icon'
 import { BackButton } from '@/shared/ui/back-button'
-import { BookOpen } from 'lucide-react'
+import { BookOpen, Loader2, Upload } from 'lucide-react'
 import { FC, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -21,11 +24,12 @@ const getPercentageColor = (percentage: number): string => {
 
 export const RecipeDetailsPage: FC = () => {
   const { id } = useParams()
-  const { getRecipeById, toggleRecipeMenuStatus, isLoading } = useRecipes()
+  const { getRecipeById, toggleRecipeMenuStatus, updateRecipe, isLoading } = useRecipes()
   const recipe = id ? getRecipeById(id) : undefined
   const [showPerServing, setShowPerServing] = useState(false)
   const processContainerRef = useRef<HTMLDivElement>(null)
-
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   if (isLoading) {
     return (
@@ -43,6 +47,33 @@ export const RecipeDetailsPage: FC = () => {
     )
   }
 
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!recipe || !event.target.files || !event.target.files[0]) return
+    
+    try {
+      setIsUploading(true)
+      const file = event.target.files[0]
+      const fileName = `${Date.now()}`
+      const filePath = `recipes/${recipe.id}/${fileName}`
+      
+      // Upload file and get download URL
+      const imageUrl = await uploadFileToStorage(filePath, file, (progress) => {
+        console.log(`Upload progress: ${progress} bytes`)
+      })
+      
+      // Update recipe with new image URL
+      await updateRecipe(recipe.id, { image: imageUrl })
+      
+    } catch (error) {
+      console.error('Error uploading image:', error)
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click()
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -242,11 +273,58 @@ export const RecipeDetailsPage: FC = () => {
             <h2 className="text-2xl font-bold text-primary">Foto del plato</h2>
           </CardHeader>
           <CardContent>
-            <img 
-              src={recipe.image} 
-              alt={recipe.name}
-              className="w-full h-80 object-cover rounded-lg"
-            />
+            {recipe.image ? (
+              <div className="relative group">
+                <img 
+                  src={recipe.image} 
+                  alt={recipe.name}
+                  className="w-full h-80 object-cover rounded-lg"
+                />
+                {/* Hover overlay with upload button */}
+                <div onClick={triggerFileInput} className="absolute inset-0 rounded-lg flex flex-col items-center justify-center">
+                  <input 
+                    type="file" 
+                    ref={fileInputRef}
+                    className="hidden" 
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                  />
+                  {isUploading && (
+                    <div className="flex flex-col items-center gap-2">
+                      <Loader2 className="h-12 w-12 text-white animate-spin" />
+                      <p className="text-white">Subiendo imagen...</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="w-full h-80 flex flex-col items-center justify-center gap-4 border-2 border-dashed border-primary/30 rounded-lg bg-black/5">
+                <input 
+                  type="file" 
+                  ref={fileInputRef}
+                  className="hidden" 
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
+                {isUploading ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <Loader2 className="h-12 w-12 text-primary/60 animate-spin" />
+                    <p className="text-primary/70">Subiendo imagen...</p>
+                  </div>
+                ) : (
+                  <>
+                    <Upload className="h-12 w-12 text-primary/60" />
+                    <p className="text-primary/70 text-center max-w-sm">No hay imagen para esta receta. Sube una foto del plato terminado.</p>
+                    <Button 
+                      onClick={triggerFileInput}
+                      className="mt-2"
+                    >
+                      Subir imagen
+                    </Button>
+                  </>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

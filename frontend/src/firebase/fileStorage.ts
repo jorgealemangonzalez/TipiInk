@@ -1,11 +1,11 @@
-import {ref, uploadBytesResumable} from 'firebase/storage'
+import {ref, uploadBytesResumable, getDownloadURL} from 'firebase/storage'
 import {storage} from './firebase.ts'
 
 export const uploadFileToStorage = async (
     filePath: string,
     file: File,
     onProgressUpdated?: (totalUploaded: number) => void
-): Promise<void> => {
+): Promise<string> => {
     try {
         const storageRef = ref(storage, filePath)
         const uploadTask = uploadBytesResumable(storageRef, file)
@@ -14,7 +14,12 @@ export const uploadFileToStorage = async (
         })
         await uploadTask
         console.log('Uploaded file:', filePath)
+        
+        // Get download URL
+        const downloadURL = await getDownloadURL(storageRef)
+        return downloadURL
     } catch (error) {
         console.error('Error uploading file:', error)
+        throw error
     }
 }

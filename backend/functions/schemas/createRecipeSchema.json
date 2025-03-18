@@ -5,10 +5,12 @@
       "type": "object",
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Name of the recipe"
         },
         "category": {
-          "type": "string"
+          "type": "string",
+          "description": "Category of the recipe"
         },
         "allergens": {
           "type": "array",
@@ -30,29 +32,36 @@
               "lupin",
               "molluscs"
             ]
-          }
+          },
+          "description": "Allergens of the recipe"
         },
         "productionTime": {
-          "type": "string"
+          "type": "string",
+          "description": "Production time of the recipe"
         },
         "pvp": {
-          "type": "number"
+          "type": "number",
+          "description": "Sell price per unit of the recipe"
         },
         "costPerServing": {
-          "type": "number"
+          "type": "number",
+          "description": "Ingredients cost per serving of the recipe"
         },
         "servingsPerProduction": {
           "type": "number",
           "description": "Number of servings per production"
         },
         "productionCost": {
-          "type": "number"
+          "type": "number",
+          "description": "Ingredients cost per production"
         },
         "priceVariation": {
-          "type": "number"
+          "type": "number",
+          "description": "Price variation of the recipe"
         },
         "inMenu": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "If the recipe is in the menu"
         },
         "ingredients": {
           "type": "array",
@@ -60,29 +69,36 @@
             "type": "object",
             "properties": {
               "name": {
-                "type": "string"
+                "type": "string",
+                "description": "Name of the ingredient"
               },
               "quantityPerProduction": {
-                "type": "number"
+                "type": "number",
+                "description": "Quantity per production"
               },
               "unit": {
-                "type": "string"
+                "type": "string",
+                "description": "Unit of the ingredient"
               },
               "quantityPerServing": {
-                "type": "number"
+                "type": "number",
+                "description": "Quantity per serving"
               },
               "pricePerUnit": {
-                "type": "number"
+                "type": "number",
+                "description": "Price per unit"
               },
               "pricePerProduction": {
-                "type": "number"
+                "type": "number",
+                "description": "Price per production"
               }
             },
             "required": [
               "name"
             ],
             "additionalProperties": false
-          }
+          },
+          "description": "Ingredients of the recipe"
         },
         "preparation": {
           "type": "object",
@@ -91,25 +107,30 @@
               "type": "array",
               "items": {
                 "type": "string"
-              }
+              },
+              "description": "Pre-preparation steps those cuts and elaborations that need to be done before the preparation"
             },
             "preparation": {
               "type": "array",
               "items": {
                 "type": "string"
-              }
+              },
+              "description": "Steps to prepare the recipe"
             },
             "conservation": {
               "type": "array",
               "items": {
                 "type": "string"
-              }
+              },
+              "description": "Steps to conserve the recipe"
             }
           },
-          "additionalProperties": false
+          "additionalProperties": false,
+          "description": "Preparation steps of the recipe"
         },
         "image": {
-          "type": "string"
+          "type": "string",
+          "description": "Image of the recipe"
         }
       },
       "required": [

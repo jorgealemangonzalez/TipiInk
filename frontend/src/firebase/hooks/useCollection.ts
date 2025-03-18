@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { deleteDocument, setDocument } from '../DocumentsDAO'
-import { CollectionCache } from '../cache/CollectionCache'
 import { GetCollectionParams, listenCollection } from '../getCollection'
 import { FSDocument } from '../types'
 
@@ -34,12 +33,10 @@ export const useCollection = <T extends FSDocument>({
     const params = { path, orderBy, limit, where, converter }
     const [startAfter, setStartAfter] = useState<number | undefined>(undefined)
     const [hasReachedEnd, setHasReachedEnd] = useState(false)
-    const [results, setResults] = useState<T[]>(() => CollectionCache.get<T>(params) || [])
-    const [isLoading, setIsLoading] = useState(() => !CollectionCache.contains(params))
-    const [isFirstLoadFromDB, setIsFirstLoadFromDB] = useState(true)
+    const [results, setResults] = useState<T[]>([])
+    const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        setResults(CollectionCache.get<T>(params) || [])
         let unsubscribe = () => {}
         const fetchResults = async () => {
             unsubscribe = await listenCollection<T>({ ...params, startAfter, converter }, upToDateDocs => {
@@ -47,20 +44,10 @@ export const useCollection = <T extends FSDocument>({
                     setResults(prev => {
                         console.log('where', where)
                         console.log('upToDateDocs', upToDateDocs)
-                        if (isFirstLoadFromDB) {
-                            setIsFirstLoadFromDB(false)
-                            CollectionCache.set(params, upToDateDocs)
-                            return upToDateDocs
-                        } else {
-                            const newResults = removeDuplicates(prev ?? [], upToDateDocs)
-                            // Update cache with new results
-                            CollectionCache.set(params, newResults)
-                            return newResults
-                        }
+                        return startAfter ? removeDuplicates(prev, upToDateDocs) : upToDateDocs
                     })
                 } else {
                     setHasReachedEnd(true)
-                    CollectionCache.set(params, results)
                 }
                 setIsLoading(false)
             })
@@ -94,7 +81,7 @@ export const useCollection = <T extends FSDocument>({
                 data: docWithTimestamps,
             })
             const typedDoc = newDoc as unknown as T
-            setResults([...results, typedDoc])
+            setResults(prev => [...prev, typedDoc])
             return typedDoc
         },
         [path],

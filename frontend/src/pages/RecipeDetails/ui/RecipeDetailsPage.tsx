@@ -42,22 +42,6 @@ export const RecipeDetailsPage: FC = () => {
   const stepsRef = useRef<(HTMLDivElement | null)[]>([])
   const processContainerRef = useRef<HTMLDivElement>(null)
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-primary text-xl">Cargando receta...</p>
-      </div>
-    )
-  }
-
-  if (!recipe) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-primary text-xl">Receta no encontrada</p>
-      </div>
-    )
-  }
-
   useEffect(() => {
     const options = {
       root: null,
@@ -90,6 +74,23 @@ export const RecipeDetailsPage: FC = () => {
       })
     }
   }, [])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-primary text-xl">Cargando receta...</p>
+      </div>
+    )
+  }
+
+  if (!recipe) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-primary text-xl">Receta no encontrada</p>
+      </div>
+    )
+  }
+
 
   return (
     <div className="min-h-screen flex flex-col">

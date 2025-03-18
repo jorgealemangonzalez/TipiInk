@@ -20,34 +20,34 @@ const AllergenEnum = z.enum<Allergen, [Allergen, ...Allergen[]]>([
 ])
 
 const RecipeIngredientSchema = z.object({
-    name: z.string(),
-    quantityPerProduction: z.number().optional(),
-    unit: z.string().optional(),
-    quantityPerServing: z.number().optional(),
-    pricePerUnit: z.number().optional(),
-    pricePerProduction: z.number().optional(),
+    name: z.string().describe('Name of the ingredient'),
+    quantityPerProduction: z.number().optional().describe('Quantity per production'),
+    unit: z.string().optional().describe('Unit of the ingredient'),
+    quantityPerServing: z.number().optional().describe('Quantity per serving'),
+    pricePerUnit: z.number().optional().describe('Price per unit'),
+    pricePerProduction: z.number().optional().describe('Price per production'),
 })
 
 const PreparationSchema = z.object({
-    prePreparation: z.array(z.string()).optional(),
-    preparation: z.array(z.string()).optional(),
-    conservation: z.array(z.string()).optional(),
+    prePreparation: z.array(z.string()).optional().describe('Pre-preparation steps those cuts and elaborations that need to be done before the preparation'),
+    preparation: z.array(z.string()).optional().describe('Steps to prepare the recipe'),
+    conservation: z.array(z.string()).optional().describe('Steps to conserve the recipe'),
 })
 
 const RecipeDBModelSchema = z.object({
-    name: z.string(),
-    category: z.string().optional(),
-    allergens: z.array(AllergenEnum).optional(),
-    productionTime: z.string().optional(),
-    pvp: z.number().optional(),
-    costPerServing: z.number().optional(),
+    name: z.string().describe('Name of the recipe'),
+    category: z.string().optional().describe('Category of the recipe'),
+    allergens: z.array(AllergenEnum).optional().describe('Allergens of the recipe'),
+    productionTime: z.string().optional().describe('Production time of the recipe'),
+    pvp: z.number().optional().describe('Sell price per unit of the recipe'),
+    costPerServing: z.number().optional().describe('Ingredients cost per serving of the recipe'),
     servingsPerProduction: z.number().optional().describe('Number of servings per production'),
-    productionCost: z.number().optional(),
-    priceVariation: z.number().optional(),
-    inMenu: z.boolean().optional(),
-    ingredients: z.array(RecipeIngredientSchema).optional(),
-    preparation: PreparationSchema.optional(),
-    image: z.string().optional(),
+    productionCost: z.number().optional().describe('Ingredients cost per production'),
+    priceVariation: z.number().optional().describe('Price variation of the recipe'),
+    inMenu: z.boolean().optional().describe('If the recipe is in the menu'),
+    ingredients: z.array(RecipeIngredientSchema).optional().describe('Ingredients of the recipe'),
+    preparation: PreparationSchema.optional().describe('Preparation steps of the recipe'),
+    image: z.string().optional().describe('Image of the recipe')    ,
 })
 
 // Define the CreateRecipeRequest schema

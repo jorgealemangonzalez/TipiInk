@@ -1,4 +1,4 @@
-import { RecipeDBModel } from "./recipe";
+import {RecipeDBModel} from './recipe'
 
 export type UpdateRecipeRequest = RecipeDBModel & { id: string }
 

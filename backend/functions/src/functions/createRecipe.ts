@@ -5,8 +5,8 @@ import {CreateRecipeRequest, CreateRecipeResponse} from '../types/CreateRecipe.d
 import {CreateRecipeRequestSchema} from '../types/CreateRecipeRequestSchema'
 import {RecipeDBModel, RecipeIngredient} from '../types/recipe.d'
 import {ChunkMetadata, TrieveSDK} from 'trieve-ts-sdk'
-import { UpdateRecipeRequestSchema } from '../types/UpdateRecipeRequestSchema'
-import { UpdateRecipeRequest } from '../types/UpdateRecipe'
+import {UpdateRecipeRequestSchema} from '../types/UpdateRecipeRequestSchema'
+import {UpdateRecipeRequest} from '../types/UpdateRecipe'
 
 const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredient>): RecipeIngredient => {
     // Define default values for required fields
@@ -123,7 +123,7 @@ const updateRecipeFunction = async (recipeData: UpdateRecipeRequest) => {
 
     const recipe = (await recipeRef.get()).data() as RecipeDBModel
 
-    //store in trieve
+    // store in trieve
     const response = await trieve.updateChunk({
         chunk_id: recipe.chunkId,
         chunk_html: JSON.stringify({id: recipeRef.id, ...recipe}),

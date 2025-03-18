@@ -34,10 +34,11 @@ export const RecipesPage: FC = () => {
   }, [searchQuery, recipes, showOnlyMenu])
 
   const totalAverageCost = useMemo(() => {
-    if (filteredRecipes.length === 0) return 0
-    const total = filteredRecipes.reduce((acc, recipe) => acc + recipe.costPercentage, 0)
-    return Math.round(total / filteredRecipes.length)
-  }, [filteredRecipes, recipes])
+    const recipesWithCost = filteredRecipes.filter(recipe => recipe.costPercentage > 0)
+    if (recipesWithCost.length === 0) return 0
+    const total = recipesWithCost.reduce((acc, recipe) => acc + recipe.costPercentage, 0)
+    return Math.round(total / recipesWithCost.length)
+  }, [filteredRecipes])
 
   const handleRecipeClick = (recipeId: string) => {
     navigate(`/recipes/${recipeId}`)

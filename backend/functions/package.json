@@ -11,7 +11,8 @@
         "deploy:breaking": "IS_BREAKING_CHANGE=true pnpm run deploy",
         "logs": "firebase functions:log",
         "generate:schema": "ts-node src/scripts/generateCreateRecipeSchema.ts",
-        "generate:update-schema": "ts-node src/scripts/generateUpdateRecipeSchema.ts"
+        "generate:update-schema": "ts-node src/scripts/generateUpdateRecipeSchema.ts",
+        "migrate:recipes": "ts-node src/scripts/migrateRecipesToTrieve.ts"
     },
     "engines": {
         "node": "20"

@@ -1,6 +1,8 @@
-import {RecipeDBModel} from './recipe'
+import {RecipeDBModel, RecipeIngredient, RecipePreparation} from './recipe'
+import {z} from 'zod'
+import { UpdateRecipeRequestSchema } from './UpdateRecipeRequestSchema';
 
-export type UpdateRecipeRequest = RecipeDBModel & { id: string }
+export type UpdateRecipeRequest = z.infer<typeof UpdateRecipeRequestSchema>
 
 export type UpdateRecipeResponse = {
     success: boolean;

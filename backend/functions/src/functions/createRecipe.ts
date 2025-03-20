@@ -3,7 +3,7 @@ import {logger} from 'firebase-functions'
 import {firestore, isLocalEnvironment, onAIToolRequest, onCallWithSecretKey, Request} from '../FirebaseInit'
 import {CreateRecipeRequest, CreateRecipeResponse} from '../types/CreateRecipe.d'
 import {CreateRecipeRequestSchema} from '../types/CreateRecipeRequestSchema'
-import {RecipeDBModel, RecipeIngredient} from '../types/recipe.d'
+import {RecipeDBModel, RecipeIngredient, RecipePreparation} from '../types/recipe.d'
 import {ChunkMetadata, TrieveSDK} from 'trieve-ts-sdk'
 import {UpdateRecipeRequestSchema} from '../types/UpdateRecipeRequestSchema'
 import {UpdateRecipeRequest} from '../types/UpdateRecipe'
@@ -114,22 +114,72 @@ export const createRecipeTool = onAIToolRequest(CreateRecipeRequestSchema, async
     return newRecipe
 })
 
+const unifyIngredients = (
+    existingIngredients: RecipeIngredient[],
+    ingredientsToRemove: string[],
+    newIngredients: Partial<RecipeIngredient>[]
+) => {
+    if (!newIngredients) {
+        return existingIngredients
+    }
+    const ingredientsToStore = existingIngredients.filter(
+        (ingredient) => !ingredientsToRemove.includes(ingredient.name)
+    )
+    for (const ingredient of newIngredients) {
+        const existingIngredient = ingredientsToStore.find((i) => i.name === ingredient.name)
+        if (existingIngredient) {
+            existingIngredient.quantityPerProduction =
+                ingredient.quantityPerProduction ?? existingIngredient.quantityPerProduction
+            existingIngredient.quantityPerServing =
+                ingredient.quantityPerServing ?? existingIngredient.quantityPerServing
+            existingIngredient.pricePerUnit = ingredient.pricePerUnit ?? existingIngredient.pricePerUnit
+            existingIngredient.pricePerProduction =
+                ingredient.pricePerProduction ?? existingIngredient.pricePerProduction
+        } else {
+            ingredientsToStore.push(mapToRecipeIngredient(ingredient))
+        }
+    }
+    return ingredientsToStore
+}
+
+const unifyPreparation = (existingPreparation: RecipePreparation, newPreparation: Partial<RecipePreparation>) => {
+    return {
+        ...existingPreparation,
+        ...newPreparation,
+    }
+}
 const updateRecipeFunction = async (recipeData: UpdateRecipeRequest) => {
     const recipeRef = firestore.collection('recipes').doc(recipeData.id)
-    await recipeRef.update({
+    const recipeRefData = await recipeRef.get()
+    if (!recipeRefData.exists) {
+        throw new Error('Recipe with id ' + recipeData.id + ' not found')
+    }
+    const recipe = recipeRefData.data() as RecipeDBModel
+    logger.info('Updating recipe', {oldRecipe: recipe, newRecipeDetails: recipeData})
+
+    const newRecipe = {
+        ...recipe,
         ...recipeData,
+        ingredients: unifyIngredients(
+            recipe.ingredients,
+            recipeData.ingredientsToRemove || [],
+            recipeData.ingredients || []
+        ),
+        preparation: unifyPreparation(recipe.preparation, recipeData.preparation || {}),
+    }
+
+    await recipeRef.update({
+        ...newRecipe,
         updatedAt: Timestamp.now(),
     })
-
-    const recipe = (await recipeRef.get()).data() as RecipeDBModel
 
     // store in trieve
     const response = await trieve.updateChunk({
         chunk_id: recipe.chunkId,
-        chunk_html: JSON.stringify({id: recipeRef.id, ...recipe}),
+        chunk_html: JSON.stringify(newRecipe),
     })
 
-    console.log('Trieve response', response)
+    console.log('Trieve recipe updated', response)
 
     return recipeRef
 }

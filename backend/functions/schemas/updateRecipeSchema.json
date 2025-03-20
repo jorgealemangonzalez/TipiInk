@@ -5,6 +5,13 @@
       "type": "string",
       "description": "ID of the recipe to update"
     },
+    "ingredientsToRemove": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of ingredients names to remove from the recipe, exactly extracted from the knowledge base"
+    },
     "name": {
       "type": "string",
       "description": "Name of the recipe"

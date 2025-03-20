@@ -14,5 +14,5 @@
       ]
     }
   },
-  "include": ["src", "../backend/functions/src/types/recipe.d.ts"]
+  "include": ["src"]
 }

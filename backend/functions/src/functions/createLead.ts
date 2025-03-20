@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
-import {CreateLeadRequest, Lead} from '../types/Lead'
-import {onCallUnauthenticated, Request} from '../FirebaseInit'
+import { CreateLeadRequest, Lead } from '../types/Lead'
+import { onCallUnauthenticated, Request } from '../FirebaseInit'
 /**
  * Creates a new lead in the database
  * This function is public and doesn't require authentication

@@ -1,7 +1,7 @@
 import * as admin from 'firebase-admin'
 import * as functions from 'firebase-functions'
-import {logger} from 'firebase-functions'
-import {ZodSchema} from 'zod'
+import { logger } from 'firebase-functions'
+import { ZodSchema } from 'zod'
 
 admin.initializeApp({
     projectId: 'tipi-ink',
@@ -16,13 +16,13 @@ export const firestore = admin.firestore()
 
 export const storage = admin.storage()
 
-functions.setGlobalOptions({region: 'europe-west3'})
+functions.setGlobalOptions({ region: 'europe-west3' })
 firestore.settings({
     ignoreUndefinedProperties: true,
 })
 
 export const onCallWithSecretKey = <P, R>(handler: (request: functions.https.CallableRequest<P>) => Promise<R>) => {
-    return functions.https.onCall(async (request) => {
+    return functions.https.onCall(async request => {
         const serverSecretKey = process.env.SERVER_SECRET_KEY
         if (!serverSecretKey) {
             throw new functions.https.HttpsError('unauthenticated', 'Server secret key not found')
@@ -37,7 +37,7 @@ export const onCallWithSecretKey = <P, R>(handler: (request: functions.https.Cal
 }
 
 export const onCallUnauthenticated = <P, R>(handler: (request: functions.https.CallableRequest<P>) => Promise<R>) => {
-    return functions.https.onCall(async (request) => {
+    return functions.https.onCall(async request => {
         return handler(request)
     })
 }
@@ -48,7 +48,7 @@ export interface Request<P> extends functions.https.CallableRequest<P> {
 
 export const onAIToolRequest = <P, R>(schema: ZodSchema, handler: (request: P) => Promise<R>) => {
     return functions.https.onRequest(async (request, response) => {
-        logger.info({body: request.body, headers: request.headers})
+        logger.info({ body: request.body, headers: request.headers })
 
         const body = request.body.message.toolCalls[0].function.arguments
         const parsedBody = schema.parse(body)

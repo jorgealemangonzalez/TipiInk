@@ -1,6 +1,6 @@
-import {AuthData, CallableContext} from 'firebase-functions/lib/common/providers/https'
+import { AuthData, CallableContext } from 'firebase-functions/lib/common/providers/https'
 import * as functions from 'firebase-functions'
-import {auth} from 'firebase-admin'
+import { auth } from 'firebase-admin'
 
 export const throwIfUnauthenticated = (context: CallableContext): AuthData => {
     // Authentication / user information is automatically added to the request.
@@ -35,5 +35,5 @@ export const throwIfUnauthenticatedRequest = async (req: functions.https.Request
     // Now you have access to the user’s auth context
     const uid = decodedToken.uid
 
-    return {uid, token: decodedToken}
+    return { uid, token: decodedToken }
 }

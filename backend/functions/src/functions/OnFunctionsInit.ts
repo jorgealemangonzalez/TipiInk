@@ -1,4 +1,4 @@
-import {onInit} from 'firebase-functions'
+import { onInit } from 'firebase-functions'
 
 const initialisationFunctions: Array<() => void> = []
 
@@ -8,5 +8,5 @@ export const onFunctionsInit = (callback: () => void) => {
 
 
 onInit(() => {
-    initialisationFunctions.forEach((callback) => callback())
+    initialisationFunctions.forEach(callback => callback())
 })

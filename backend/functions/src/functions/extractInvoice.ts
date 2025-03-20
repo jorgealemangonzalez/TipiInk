@@ -1,21 +1,21 @@
-import {https, logger} from 'firebase-functions/v1'
+import { https, logger } from 'firebase-functions/v1'
 import OpenAI from 'openai'
-import {onFunctionsInit} from './OnFunctionsInit'
-import {zodResponseFormat} from 'openai/helpers/zod'
-import {z} from 'zod'
-import {firestore, isLocalEnvironment, storage} from '../FirebaseInit'
-import {ExtractInvoiceRequest, ExtractInvoiceResponse, Invoice} from '../types/ExtractInvoice'
-import {getDownloadURL} from 'firebase-admin/storage'
-import {extractInvoicePrompt} from './prompts'
-import {throwIfUnauthenticated} from '../auth/throwIfUnauthenticated'
+import { onFunctionsInit } from './OnFunctionsInit'
+import { zodResponseFormat } from 'openai/helpers/zod'
+import { z } from 'zod'
+import { firestore, isLocalEnvironment, storage } from '../FirebaseInit'
+import { ExtractInvoiceRequest, ExtractInvoiceResponse, Invoice } from '../types/ExtractInvoice'
+import { getDownloadURL } from 'firebase-admin/storage'
+import { extractInvoicePrompt } from './prompts'
+import { throwIfUnauthenticated } from '../auth/throwIfUnauthenticated'
 import axios from 'axios'
-import {User} from '../types/User'
-import {Timestamp} from 'firebase-admin/firestore'
+import { User } from '../types/User'
+import { Timestamp } from 'firebase-admin/firestore'
 
 let openai: OpenAI
 
 onFunctionsInit(() => {
-    openai = new OpenAI({apiKey: process.env.OPENAI_SECRET_KEY})
+    openai = new OpenAI({ apiKey: process.env.OPENAI_SECRET_KEY })
 })
 
 
@@ -44,7 +44,7 @@ async function getInvoice(data: ExtractInvoiceRequest): Promise<Omit<Invoice, 'i
     let invoiceImageUrl = await getDownloadURL(fileRef)
     if (isLocalEnvironment()) {
         // Fetch the image as binary data using axios
-        const response = await axios.get(invoiceImageUrl, {responseType: 'arraybuffer'})
+        const response = await axios.get(invoiceImageUrl, { responseType: 'arraybuffer' })
 
         // Convert the binary data to a Base64 string
         invoiceImageUrl = 'data:image/jpeg;base64,' + Buffer.from(response.data, 'binary').toString('base64')
@@ -64,7 +64,7 @@ async function getInvoice(data: ExtractInvoiceRequest): Promise<Omit<Invoice, 'i
                     {
                         type: 'image_url',
                         image_url: {
-                            'url': invoiceImageUrl,
+                            url: invoiceImageUrl,
                         },
                     },
                 ],
@@ -81,7 +81,7 @@ export const extractInvoice = https.onCall(async (
     data: ExtractInvoiceRequest,
     context
 ): Promise<ExtractInvoiceResponse> => {
-    const {uid} = throwIfUnauthenticated(context)
+    const { uid } = throwIfUnauthenticated(context)
 
     if ( !data.imagePath || !data.imagePath.startsWith(`users/${uid}`) ) {
         throw new https.HttpsError('invalid-argument', 'Invalid imagePath')
@@ -90,9 +90,9 @@ export const extractInvoice = https.onCall(async (
     const collectionReference = firestore.collection('users')
     const user = (await collectionReference.doc(uid).get()).data() as User
     const col = await collectionReference.get()
-    logger.info('User', {user, size: col.size})
+    logger.info('User', { user, size: col.size })
     col.forEach((doc: any) => {
-        logger.info(`${doc.id} =>`, {data: doc.data(), uid})
+        logger.info(`${doc.id} =>`, { data: doc.data(), uid })
     })
     const invoice = await getInvoice(data)
     const storedInvoiceRef = await firestore.collection(`companies/${user.companyId}/invoices`).add({
@@ -100,6 +100,6 @@ export const extractInvoice = https.onCall(async (
         createdAt: Timestamp.now(),
     })
 
-    console.log('Invoice:', {invoice})
-    return {invoiceId: storedInvoiceRef.id}
+    console.log('Invoice:', { invoice })
+    return { invoiceId: storedInvoiceRef.id }
 })

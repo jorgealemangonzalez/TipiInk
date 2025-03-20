@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import {zodToJsonSchema} from 'zod-to-json-schema'
-import {CreateRecipeRequestSchema} from '../types/CreateRecipeRequestSchema'
+import { zodToJsonSchema } from 'zod-to-json-schema'
+import { CreateRecipeRequestSchema } from '../types/CreateRecipeRequestSchema'
 
 // Generate JSON Schema
 const jsonSchema = zodToJsonSchema(CreateRecipeRequestSchema, {
@@ -12,7 +12,7 @@ const jsonSchema = zodToJsonSchema(CreateRecipeRequestSchema, {
 // Write the schema to a file
 const outputDir = path.resolve(__dirname, '../../schemas')
 if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, {recursive: true})
+    fs.mkdirSync(outputDir, { recursive: true })
 }
 
 const outputPath = path.join(outputDir, 'createRecipeSchema.json')

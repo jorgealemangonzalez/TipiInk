@@ -15,9 +15,8 @@ module.exports = {
       { allowConstantExport: true },
     ],
     "semi": ["error", "never"],
-    "indent": ["error", 4],
     "max-len": ["error", {
-      "code": 120,
+      "code": 150,
       "tabWidth": 2,
       "ignoreUrls": true,
       "ignoreComments": false,

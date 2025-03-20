@@ -183,5 +183,4 @@ ij_typescript_spaces_within_union_types = true
 ij_typescript_spaces_within_while_parentheses = false
 ij_typescript_special_else_if_treatment = true
 ij_typescript_ternary_operation_signs_on_next_line = false
-ij_typescript_ternary_operation_wrap
 

@@ -17,29 +17,30 @@ module.exports = {
         project: ['tsconfig.json', 'tsconfig.dev.json'],
         sourceType: 'module',
     },
-    ignorePatterns: [
-        '/lib/**/*', // Ignore built files.
-        '/generated/**/*', // Ignore generated files.
-    ],
-    plugins: [
-        '@typescript-eslint',
-        'import',
-    ],
+    ignorePatterns: ['/lib/**/*', '/generated/**/*'],
+    plugins: ['@typescript-eslint', 'import'],
     rules: {
-        'quotes': ['error', 'single'],
+        quotes: ['error', 'single', 'avoid-escape'],
+        'quote-props': ['error', 'as-needed'],
+        'operator-linebreak': ['error', 'after'],
         'import/no-unresolved': 0,
-        'indent': ['error', 4],
-        'semi': ['error', 'never'],
+        indent: ['error', 4, { SwitchCase: 1 }],
+        semi: ['error', 'never'],
         'require-jsdoc': 0,
-        'max-len': ['error', {
-            'code': 120,
-            'tabWidth': 2,
-            'ignoreUrls': true,
-            'ignoreComments': false,
-            'ignoreStrings': true,
-            'ignoreTemplateLiterals': true,
-        }],
+        'max-len': [
+            'error',
+            {
+                code: 120,
+                tabWidth: 2,
+                ignoreUrls: true,
+                ignoreComments: false,
+                ignoreStrings: true,
+                ignoreTemplateLiterals: true,
+            },
+        ],
+        'object-curly-spacing': ['error', 'always'],
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
+        'arrow-parens': ['error', 'as-needed'],
     },
 }

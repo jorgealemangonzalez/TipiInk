@@ -1,26 +1,24 @@
-import {Timestamp} from 'firebase-admin/firestore'
-import {logger} from 'firebase-functions'
-import {firestore, isLocalEnvironment, onAIToolRequest, onCallWithSecretKey, Request} from '../FirebaseInit'
-import {CreateRecipeRequest, CreateRecipeResponse} from '../types/CreateRecipe.d'
-import {CreateRecipeRequestSchema} from '../types/CreateRecipeRequestSchema'
-import {RecipeDBModel, RecipeIngredient, RecipePreparation} from '../types/recipe.d'
-import {ChunkMetadata, TrieveSDK} from 'trieve-ts-sdk'
-import {UpdateRecipeRequestSchema} from '../types/UpdateRecipeRequestSchema'
-import {UpdateRecipeRequest} from '../types/UpdateRecipe'
+import { Timestamp } from 'firebase-admin/firestore'
+import { logger } from 'firebase-functions'
+import { firestore, isLocalEnvironment, onAIToolRequest, onCallWithSecretKey, Request } from '../FirebaseInit'
+import { CreateRecipeRequest, CreateRecipeResponse } from '../types/CreateRecipe.d'
+import { CreateRecipeRequestSchema } from '../types/CreateRecipeRequestSchema'
+import { RecipeDBModel, RecipeIngredientDBModel, RecipePreparation } from '../types/recipe.d'
+import { ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk'
+import { UpdateRecipeRequestSchema } from '../types/UpdateRecipeRequestSchema'
+import { UpdateRecipeRequest } from '../types/UpdateRecipe'
 
-const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredient>): RecipeIngredient => {
+const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredientDBModel>): RecipeIngredientDBModel => {
     // Define default values for required fields
-    const defaultIngredient: RecipeIngredient = {
+    const defaultIngredient: RecipeIngredientDBModel = {
         name: '',
         quantityPerProduction: 0,
         unit: '',
-        quantityPerServing: 0,
         pricePerUnit: 0,
-        pricePerProduction: 0,
     }
 
     // Extract only the fields that should be stored in the database
-    const {name, quantityPerProduction, unit, quantityPerServing, pricePerUnit, pricePerProduction} = {
+    const { name, quantityPerProduction, unit, pricePerUnit } = {
         ...defaultIngredient,
         ...ingredient,
     }
@@ -30,9 +28,7 @@ const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredient>): RecipeIng
         name,
         quantityPerProduction,
         unit,
-        quantityPerServing,
         pricePerUnit,
-        pricePerProduction,
     }
 }
 
@@ -43,7 +39,6 @@ const mapToRecipeDBModel = (recipeData: Partial<RecipeDBModel>): RecipeDBModel =
         name: recipeData.name || '',
         allergens: recipeData.allergens ?? [],
         pvp: recipeData.pvp ?? 0,
-        costPerServing: recipeData.costPerServing ?? 0,
         servingsPerProduction: recipeData.servingsPerProduction ?? 1,
         productionCost: recipeData.productionCost ?? 0,
         priceVariation: recipeData.priceVariation ?? 0,
@@ -75,7 +70,7 @@ const createRecipeFunction = async (recipeData: RecipeDBModel) => {
     const newRecipe = recipe.data() as RecipeDBModel
 
     const response = await trieve.createChunk({
-        chunk_html: JSON.stringify({id: recipeRef.id, ...newRecipe}),
+        chunk_html: JSON.stringify({ id: recipeRef.id, ...newRecipe }),
         metadata: {
             recipeId: recipeRef.id,
         },
@@ -115,26 +110,30 @@ export const createRecipeTool = onAIToolRequest(CreateRecipeRequestSchema, async
 })
 
 const unifyIngredients = (
-    existingIngredients: RecipeIngredient[],
+    existingIngredients: RecipeIngredientDBModel[],
     ingredientsToRemove: string[],
-    newIngredients: Partial<RecipeIngredient>[]
+    newIngredients: Partial<RecipeIngredientDBModel>[]
 ) => {
     if (!newIngredients) {
         return existingIngredients
     }
     const ingredientsToStore = existingIngredients.filter(
-        (ingredient) => !ingredientsToRemove.includes(ingredient.name)
+        ingredient => !ingredientsToRemove.includes(ingredient.name)
     )
     for (const ingredient of newIngredients) {
-        const existingIngredient = ingredientsToStore.find((i) => i.name === ingredient.name)
+        const existingIngredient = ingredientsToStore.find(i => i.name === ingredient.name)
         if (existingIngredient) {
-            existingIngredient.quantityPerProduction =
-                ingredient.quantityPerProduction ?? existingIngredient.quantityPerProduction
-            existingIngredient.quantityPerServing =
-                ingredient.quantityPerServing ?? existingIngredient.quantityPerServing
-            existingIngredient.pricePerUnit = ingredient.pricePerUnit ?? existingIngredient.pricePerUnit
-            existingIngredient.pricePerProduction =
-                ingredient.pricePerProduction ?? existingIngredient.pricePerProduction
+            const updatedIngredient: RecipeIngredientDBModel = { // Just to get the help of the type checker
+                name: ingredient.name ?? existingIngredient.name,
+                unit: ingredient.unit ?? existingIngredient.unit,
+                quantityPerProduction: ingredient.quantityPerProduction ?? existingIngredient.quantityPerProduction,
+                pricePerUnit: ingredient.pricePerUnit ?? existingIngredient.pricePerUnit,
+            }
+
+            existingIngredient.name = updatedIngredient.name
+            existingIngredient.unit = updatedIngredient.unit
+            existingIngredient.quantityPerProduction = updatedIngredient.quantityPerProduction
+            existingIngredient.pricePerUnit = updatedIngredient.pricePerUnit
         } else {
             ingredientsToStore.push(mapToRecipeIngredient(ingredient))
         }
@@ -155,7 +154,7 @@ const updateRecipeFunction = async (recipeData: UpdateRecipeRequest) => {
         throw new Error('Recipe with id ' + recipeData.id + ' not found')
     }
     const recipe = recipeRefData.data() as RecipeDBModel
-    logger.info('Updating recipe', {oldRecipe: recipe, newRecipeDetails: recipeData})
+    logger.info('Updating recipe', { oldRecipe: recipe, newRecipeDetails: recipeData })
 
     const newRecipe = {
         ...recipe,

@@ -1,15 +1,31 @@
-import { useEffect } from 'react'
-import { mockRecipes } from './recipesMock'
-import { useCollection } from '../../../firebase/hooks/useCollection'
 import { Recipe, RecipeDBModel } from '@monorepo/functions/src/types/recipe'
-import { FirestoreDataConverter, WithFieldValue } from 'firebase/firestore'
-import { getCostPercentage } from './recipeModelServices'
+import { FirestoreDataConverter } from 'firebase/firestore'
+import { useEffect } from 'react'
+import { useCollection } from '../../../firebase/hooks/useCollection'
+import { getCostPercentage, getCostPerServing, getPricePerProduction, getQuantityPerServing } from './recipeModelServices'
+import { mockRecipes } from './recipesMock'
 
-const recipeConverter: FirestoreDataConverter<Recipe, RecipeDBModel> = {
-  toFirestore: (recipe: WithFieldValue<Recipe>) => {
+const recipeConverter: FirestoreDataConverter<Recipe, RecipeDBModel> = { // TODO MOVE TO BACKEND AND IMPORT FROM @MONOREPO/FUNCTIONS
+  toFirestore: (recipe: Recipe) => {
     console.log('toFirestore', recipe)
-    const { costPercentage, ...recipeData } = recipe
-    return recipeData
+    const {
+      id,
+      costPercentage,
+      costPerServing,
+      ingredients,
+      ...recipeData 
+    } = recipe
+    return {
+      ...recipeData,
+      ingredients: ingredients.map((ingredient) => {
+        const {
+          pricePerProduction,
+          quantityPerServing,
+          ...ingredientData
+        } = ingredient
+        return ingredientData
+      }),
+    }
   },
   fromFirestore: (snapshot, options) => {
     console.log('fromFirestore', snapshot)
@@ -17,9 +33,15 @@ const recipeConverter: FirestoreDataConverter<Recipe, RecipeDBModel> = {
     return {
       ...data,
       id: snapshot.id,
-      costPercentage: getCostPercentage(data)
+      costPercentage: getCostPercentage(data),
+      costPerServing: getCostPerServing(data),
+      ingredients: data.ingredients.map((ingredient) => ({
+        ...ingredient,
+        pricePerProduction: getPricePerProduction(ingredient),
+        quantityPerServing: getQuantityPerServing(data, ingredient),
+      })),
     } as Recipe
-  }
+  },
 }
 
 export const useRecipes = () => {

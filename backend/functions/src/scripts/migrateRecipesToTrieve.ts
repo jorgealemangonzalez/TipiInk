@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 
 import * as admin from 'firebase-admin'
-import {ChunkMetadata, TrieveSDK} from 'trieve-ts-sdk'
+import { ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk'
 
 // Parse command line arguments
 const args = process.argv.slice(2)
@@ -91,7 +91,7 @@ async function migrateRecipesToTrieve() {
 
                     // Create chunk in Trieve
                     const response = await trieve.createChunk({
-                        chunk_html: JSON.stringify({id: recipeId, ...recipeData}),
+                        chunk_html: JSON.stringify({ id: recipeId, ...recipeData }),
                         metadata: {
                             recipeId: recipeId,
                         },
@@ -141,7 +141,7 @@ async function migrateRecipesToTrieve() {
 
         if (stats.errors.length > 0) {
             console.log('\nErrors:')
-            stats.errors.forEach(({id, error}) => {
+            stats.errors.forEach(({ id, error }) => {
                 console.log(`- Recipe ${id}: ${error}`)
             })
         }
@@ -158,7 +158,7 @@ async function migrateRecipesToTrieve() {
 // Execute migration
 migrateRecipesToTrieve()
     .then(() => process.exit(0))
-    .catch((error) => {
+    .catch(error => {
         console.error('Unhandled error during migration:', error)
         process.exit(1)
     })

@@ -1,5 +1,5 @@
-import {z} from 'zod'
-import {Allergen} from './recipe'
+import { z } from 'zod'
+import { Allergen } from './recipe'
 
 // Define Zod schemas based on the existing types
 export const AllergenEnum = z.enum<Allergen, [Allergen, ...Allergen[]]>([
@@ -23,9 +23,7 @@ export const RecipeIngredientSchema = z.object({
     name: z.string().describe('Name of the ingredient'),
     quantityPerProduction: z.number().optional().describe('Quantity per production'),
     unit: z.string().optional().describe('Unit of the ingredient'),
-    quantityPerServing: z.number().optional().describe('Quantity per serving'),
     pricePerUnit: z.number().optional().describe('Price per unit'),
-    pricePerProduction: z.number().optional().describe('Price per production'),
 })
 
 export const PreparationSchema = z.object({
@@ -44,7 +42,6 @@ export const BaseRecipeSchema = z.object({
     allergens: z.array(AllergenEnum).optional().describe('Allergens of the recipe'),
     productionTime: z.string().optional().describe('Production time of the recipe'),
     pvp: z.number().optional().describe('Sell price per unit of the recipe'),
-    costPerServing: z.number().optional().describe('Ingredients cost per serving of the recipe'),
     servingsPerProduction: z.number().optional().describe('Number of servings per production'),
     productionCost: z.number().optional().describe('Ingredients cost per production'),
     priceVariation: z.number().optional().describe('Price variation of the recipe'),

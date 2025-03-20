@@ -1,4 +1,4 @@
-import {Timestamp} from 'firebase-admin/firestore'
+import { Timestamp } from 'firebase-admin/firestore'
 
 export type Allergen =
     | 'gluten'
@@ -16,13 +16,16 @@ export type Allergen =
     | 'lupin'
     | 'molluscs';
 
-export interface RecipeIngredient {
+export interface RecipeIngredientDBModel {
     name: string;
     quantityPerProduction: number;
     unit: string;
-    quantityPerServing: number;
     pricePerUnit: number;
+}
+
+export interface RecipeIngredient extends RecipeIngredientDBModel {
     pricePerProduction: number;
+    quantityPerServing: number;
 }
 
 export interface RecipePreparation {
@@ -36,12 +39,11 @@ export interface RecipeDBModel {
     allergens: Allergen[];
     productionTime?: string;
     pvp: number;
-    costPerServing: number;
     servingsPerProduction: number;
     productionCost: number;
     priceVariation: number;
     inMenu: boolean;
-    ingredients: RecipeIngredient[];
+    ingredients: RecipeIngredientDBModel[];
     preparation: RecipePreparation;
     image?: string;
     createdAt: Timestamp;
@@ -49,7 +51,9 @@ export interface RecipeDBModel {
     chunkId?: string; // Trive Chunk ID
 }
 
-export interface Recipe extends RecipeDBModel {
+export interface Recipe extends Omit<RecipeDBModel, 'ingredients'> {
     id: string;
     costPercentage: number;
+    costPerServing: number;
+    ingredients: RecipeIngredient[];
 }

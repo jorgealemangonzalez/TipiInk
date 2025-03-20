@@ -1,4 +1,4 @@
-import {Timestamp} from 'firebase-admin/lib/firestore'
+import { Timestamp } from 'firebase-admin/lib/firestore'
 
 export type ExtractInvoiceRequest = {
     imagePath: string // inside cloud storage

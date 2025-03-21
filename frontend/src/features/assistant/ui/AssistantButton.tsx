@@ -26,7 +26,7 @@ export function AssistantButton() {
                 stopListening()
             }, INACTIVITY_TIMEOUT)
         }
-        
+
         // Set up event listeners
         vapi.on('message', () => {
             resetInactivityTimer()

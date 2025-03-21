@@ -46,10 +46,36 @@ export interface Request<P> extends functions.https.CallableRequest<P> {
     rawRequest: functions.https.Request
 }
 
-const snakeCaseToCamelCase = (str: object) => {
-    return Object.fromEntries(
-        Object.entries(str).map(([key, value]) => [key.replace(/(_\w)/g, (_, letter) => letter.toUpperCase()), value]),
+function snakeToCamelString(str: string): string {
+    return str.replace(
+        /([-_]\w)/g,
+        group =>
+            group
+                .toUpperCase() // Turn "_a" into "_A"
+                .replace(/[-_]/, ''), // Remove the underscore or hyphen
     )
+}
+
+function snakeToCamel<T>(value: T): T {
+    // If it's an array, map each value through snakeToCamel
+    if (Array.isArray(value)) {
+        return value.map(item => snakeToCamel(item)) as unknown as T
+    }
+
+    // If it's an object and not null, convert its keys
+    if (value !== null && typeof value === 'object') {
+        const newObj: Record<string, unknown> = {}
+        for (const key in value) {
+            if (Object.prototype.hasOwnProperty.call(value, key)) {
+                const newKey = snakeToCamelString(key)
+                newObj[newKey] = snakeToCamel((value as Record<string, unknown>)[key])
+            }
+        }
+        return newObj as T
+    }
+
+    // If it's neither an array nor an object (primitive), just return it
+    return value
 }
 
 export const onAIToolRequest = <P, R>(schema: ZodSchema, handler: (request: P) => Promise<R>) => {
@@ -57,7 +83,8 @@ export const onAIToolRequest = <P, R>(schema: ZodSchema, handler: (request: P) =
         logger.info({ body: request.body, headers: request.headers })
 
         const body: object = request.body.message.toolCalls[0].function.arguments
-        const parsedBody = schema.parse(snakeCaseToCamelCase(body))
+        const parsedBody = schema.parse(snakeToCamel(body))
+        logger.info({ body, parsedBody })
         const result = await handler(parsedBody)
         response.send(result)
     })

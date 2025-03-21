@@ -1,8 +1,7 @@
 import { Timestamp } from 'firebase-admin/firestore'
 import { logger } from 'firebase-functions'
-import { ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk'
 
-import { Request, firestore, isLocalEnvironment, onAIToolRequest, onCallWithSecretKey } from '../FirebaseInit'
+import { Request, firestore, onAIToolRequest, onCallWithSecretKey } from '../FirebaseInit'
 import { CreateRecipeRequest, CreateRecipeResponse } from '../types/CreateRecipe.d'
 import { CreateRecipeRequestSchema } from '../types/CreateRecipeRequestSchema'
 import { UpdateRecipeRequest } from '../types/UpdateRecipe'
@@ -33,7 +32,7 @@ const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredientDBModel>): Re
     }
 }
 
-const mapToRecipeDBModel = (recipeData: Partial<RecipeDBModel>): RecipeDBModel => {
+const mapToRecipeDBModel = (recipeData: CreateRecipeRequest['recipe']): RecipeDBModel => {
     // Define default values for required fields
     const createdAt = Timestamp.now()
     const recipe: RecipeDBModel = {
@@ -57,12 +56,8 @@ const mapToRecipeDBModel = (recipeData: Partial<RecipeDBModel>): RecipeDBModel =
 
     return recipe
 }
-export const trieve = new TrieveSDK({
-    apiKey: process.env.TRIEVE_API_KEY || '',
-    datasetId: isLocalEnvironment() ? 'c7b4534b-ed9b-40b7-8b20-268b76bf4217' : 'cd4edb52-2fcb-4e69-bd5a-8275b3a79eaa',
-})
 
-const createRecipeFunction = async (recipeData: RecipeDBModel) => {
+const createRecipeFunction = async (recipeData: CreateRecipeRequest['recipe']) => {
     // Map the input data to the database model
     const recipeToStore = mapToRecipeDBModel(recipeData)
 
@@ -70,19 +65,6 @@ const createRecipeFunction = async (recipeData: RecipeDBModel) => {
     const recipeRef = await firestore.collection('recipes').add(recipeToStore)
     const recipe = await recipeRef.get()
     const newRecipe = recipe.data() as RecipeDBModel
-
-    const response = await trieve.createChunk({
-        chunk_html: JSON.stringify({ id: recipeRef.id, ...newRecipe }),
-        metadata: {
-            recipeId: recipeRef.id,
-        },
-    })
-
-    await recipeRef.update({
-        chunkId: (response.chunk_metadata as ChunkMetadata).id,
-    })
-
-    console.log(response)
 
     return newRecipe
 }
@@ -139,6 +121,7 @@ const unifyIngredients = (
             ingredientsToStore.push(mapToRecipeIngredient(ingredient))
         }
     }
+    logger.info({ existingIngredients, ingredientsToRemove, newIngredients, ingredientsToStore })
     return ingredientsToStore
 }
 
@@ -172,14 +155,6 @@ const updateRecipeFunction = async (recipeData: UpdateRecipeRequest) => {
         ...newRecipe,
         updatedAt: Timestamp.now(),
     })
-
-    // store in trieve
-    const response = await trieve.updateChunk({
-        chunk_id: recipe.chunkId,
-        chunk_html: JSON.stringify(newRecipe),
-    })
-
-    console.log('Trieve recipe updated', response)
 
     return recipeRef
 }

@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import VapiWebClient from '@vapi-ai/web'
 
 const vapi = new VapiWebClient('27ed500b-e974-4805-89a5-76a7f7d70044')
-const INACTIVITY_TIMEOUT = 10000
+const INACTIVITY_TIMEOUT = 30000
 
 export function AssistantButton() {
     const [isLoading, setIsLoading] = useState(false)

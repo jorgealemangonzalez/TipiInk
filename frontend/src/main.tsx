@@ -6,6 +6,7 @@ import '@/api/tracking.ts'
 import { UnauthenticatedProviders } from '@/auth/providers.tsx'
 
 import { ErrorPage } from './ErrorPage.tsx'
+import { FloatingMicButton } from './features/floating-mic/ui/FloatingMicButton.tsx'
 import './i18n.ts'
 import './index.css'
 import { RoutingComponent } from './navigation/RoutingComponent.tsx'
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <UnauthenticatedProviders>
                 <BrowserRouter>
                     <RoutingComponent />
+                    <FloatingMicButton />
                 </BrowserRouter>
             </UnauthenticatedProviders>
         </Sentry.ErrorBoundary>

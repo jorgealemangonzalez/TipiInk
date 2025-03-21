@@ -17,35 +17,30 @@ export function AssistantButton() {
     const [assistantResponse, setAssistantResponse] = useState('')
     const inactivityTimer = useRef<NodeJS.Timeout>()
 
-    const resetInactivityTimer = () => {
-        if (inactivityTimer.current) {
-            clearTimeout(inactivityTimer.current)
-        }
-        inactivityTimer.current = setTimeout(() => {
-            console.log('Stopping due to inactivity')
-            stopListening()
-        }, INACTIVITY_TIMEOUT)
-    }
-
     useEffect(() => {
+        const resetInactivityTimer = () => {
+            if (inactivityTimer.current) {
+                clearTimeout(inactivityTimer.current)
+            }
+            inactivityTimer.current = setTimeout(() => {
+                stopListening()
+            }, INACTIVITY_TIMEOUT)
+        }
+        
         // Set up event listeners
-        vapi.on('message', message => {
-            console.log('Message:', message)
+        vapi.on('message', () => {
             resetInactivityTimer()
         })
 
         vapi.on('speech-start', () => {
-            console.log('Speech started')
             resetInactivityTimer()
         })
 
         vapi.on('speech-end', () => {
-            console.log('Speech ended')
             resetInactivityTimer()
         })
 
         vapi.on('call-start', () => {
-            console.log('Call started')
             setIsListening(true)
             setIsLoading(false)
             setCallInProgress(true)
@@ -53,7 +48,6 @@ export function AssistantButton() {
         })
 
         vapi.on('call-end', () => {
-            console.log('Call ended')
             setIsListening(false)
             setCallInProgress(false)
             if (inactivityTimer.current) {
@@ -62,7 +56,6 @@ export function AssistantButton() {
         })
 
         vapi.on('error', error => {
-            console.error('VAPI error:', error)
             setError(error.message || 'Error en la comunicación con el asistente')
             stopListening()
         })
@@ -78,7 +71,6 @@ export function AssistantButton() {
     }, [])
 
     const stopListening = () => {
-        console.log('Stopping assistant')
         vapi.stop()
         setIsLoading(false)
         setIsListening(false)
@@ -101,11 +93,8 @@ export function AssistantButton() {
             setAssistantResponse('')
 
             try {
-                const assistant = await vapi.start('d92417fe-3a9d-4a90-8741-ab7c312be2f2')
-
-                console.log('Assistant started:', assistant)
+                await vapi.start('d92417fe-3a9d-4a90-8741-ab7c312be2f2')
             } catch (error) {
-                console.error('Error iniciando VAPI:', error)
                 setError(error instanceof Error ? error.message : 'Error desconocido')
                 stopListening()
             }

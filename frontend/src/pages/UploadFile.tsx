@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 
 import { extractInvoice } from '@/api/clients'
-import { useUser } from '@/auth/auth.tsx'
+import { useUser } from '@/auth'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'

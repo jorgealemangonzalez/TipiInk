@@ -1,6 +1,6 @@
 import { ArrowLeft, Eye } from 'lucide-react'
 
-import { useUser } from '@/auth/auth.tsx'
+import { useUser } from '@/auth'
 import { Button } from '@/components/ui/button.tsx'
 import { Input } from '@/components/ui/input.tsx'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx'

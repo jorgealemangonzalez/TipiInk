@@ -1,6 +1,5 @@
 import { FC } from 'react'
 
-import { FloatingMicButton } from '@/features/floating-mic'
 import { ActiveOrders } from '@/widgets/active-orders'
 import { Header } from '@/widgets/header/ui/Header'
 import { PendingOrders } from '@/widgets/pending-orders'
@@ -17,7 +16,6 @@ export const Home: FC = () => {
                     <ActiveOrders collapsed />
                 </div>
             </div>
-            <FloatingMicButton />
         </div>
     )
 }

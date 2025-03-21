@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
-import { Route, Routes, useLocation } from 'react-router-dom'
+import { Outlet, Route, Routes, useLocation } from 'react-router-dom'
 
 import mixpanel from 'mixpanel-browser'
 
+import { FloatingMicButton } from '@/features/floating-mic'
 import { WithAnonymousUser } from '@/navigation/WithAnonymousUser'
 import { ActiveOrdersPage } from '@/pages/ActiveOrders'
 import { AddInvoicePage } from '@/pages/AddInvoice/ui/AddInvoicePage'
@@ -34,21 +35,34 @@ export const RoutingComponent = () => {
                 element={
                     <WithAnonymousUser userType='anonymous'>
                         <Routes>
-                            <Route path='/' element={<Home />} />
-                            <Route path='/upload' element={<UploadFilePage />} />
-                            <Route path='/main' element={<MainComponent />} />
-                            <Route path='/assistant' element={<AssistantPage />} />
-                            <Route path='/pending-orders' element={<PendingOrdersPage />} />
-                            <Route path='/active-orders' element={<ActiveOrdersPage />} />
-                            <Route path='/recipes' element={<RecipesPage />} />
-                            <Route path='/recipes/:id' element={<RecipeDetailsPage />} />
-                            <Route path='/supplier-management' element={<SupplierManagementPage />} />
-                            <Route path='/supplier-management/:supplierId' element={<SupplierDetailsPage />} />
-                            <Route path='/supplier-management/:supplierId/addInvoice' element={<AddInvoicePage />} />
                             <Route
-                                path='/supplier-management/:supplierId/addInvoice/summary'
-                                element={<InvoiceSummaryPage />}
-                            />
+                                path='/'
+                                element={
+                                    <>
+                                        <FloatingMicButton />
+                                        <Outlet />
+                                    </>
+                                }
+                            >
+                                <Route path='/' element={<Home />} />
+                                <Route path='/upload' element={<UploadFilePage />} />
+                                <Route path='/main' element={<MainComponent />} />
+                                <Route path='/assistant' element={<AssistantPage />} />
+                                <Route path='/pending-orders' element={<PendingOrdersPage />} />
+                                <Route path='/active-orders' element={<ActiveOrdersPage />} />
+                                <Route path='/recipes' element={<RecipesPage />} />
+                                <Route path='/recipes/:id' element={<RecipeDetailsPage />} />
+                                <Route path='/supplier-management' element={<SupplierManagementPage />} />
+                                <Route path='/supplier-management/:supplierId' element={<SupplierDetailsPage />} />
+                                <Route
+                                    path='/supplier-management/:supplierId/addInvoice'
+                                    element={<AddInvoicePage />}
+                                />
+                                <Route
+                                    path='/supplier-management/:supplierId/addInvoice/summary'
+                                    element={<InvoiceSummaryPage />}
+                                />
+                            </Route>
                         </Routes>
                     </WithAnonymousUser>
                 }

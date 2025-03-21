@@ -2,7 +2,7 @@ import { ReactNode, useEffect } from 'react'
 
 import mixpanel from 'mixpanel-browser'
 
-import { useAuth } from '@/auth/auth.tsx'
+import { useAuth } from '@/auth'
 import { AuthenticatedProviders } from '@/auth/providers.tsx'
 
 import { Sentry } from '../sentry.ts'
@@ -25,7 +25,7 @@ export const WithAnonymousUser = ({ children, userType }: { children: ReactNode;
             }
         }
         signIn()
-    }, [isLoadingUser, anonymousSignIn, isLoggedIn])
+    }, [isLoadingUser, anonymousSignIn, isLoggedIn, userType])
 
     if (isLoggedIn) return <AuthenticatedProviders>{children}</AuthenticatedProviders>
 }

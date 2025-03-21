@@ -1,4 +1,5 @@
 import {
+    FirestoreDataConverter,
     Unsubscribe,
     collection,
     limit as fLimit,
@@ -8,7 +9,6 @@ import {
     where as fWhere,
     getDocs,
     onSnapshot,
-    FirestoreDataConverter,
 } from 'firebase/firestore'
 
 import { firestore } from './firebase.ts'
@@ -27,10 +27,8 @@ export const listenCollection = async <T extends FSDocument>(
     { path, orderBy, limit, startAfter, where, converter }: GetCollectionParams,
     onCollectionChange: (docs: T[]) => void,
 ): Promise<Unsubscribe> => {
-    const ref = converter 
-        ? collection(firestore, path).withConverter(converter)
-        : collection(firestore, path)
-        
+    const ref = converter ? collection(firestore, path).withConverter(converter) : collection(firestore, path)
+
     const query = fQuery(
         ref,
         ...[
@@ -47,13 +45,16 @@ export const listenCollection = async <T extends FSDocument>(
     })
 }
 
-export const getCollection = async <T extends FSDocument>(
-    { path, orderBy, limit, startAfter, where, converter }: GetCollectionParams,
-): Promise<T[]> => {
-    const ref = converter 
-        ? collection(firestore, path).withConverter(converter)
-        : collection(firestore, path)
-        
+export const getCollection = async <T extends FSDocument>({
+    path,
+    orderBy,
+    limit,
+    startAfter,
+    where,
+    converter,
+}: GetCollectionParams): Promise<T[]> => {
+    const ref = converter ? collection(firestore, path).withConverter(converter) : collection(firestore, path)
+
     const query = fQuery(
         ref,
         ...[

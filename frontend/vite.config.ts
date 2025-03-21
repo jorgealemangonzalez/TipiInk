@@ -1,8 +1,10 @@
-import {defineConfig} from 'vite'
+import path from 'path'
+import { defineConfig } from 'vite'
+
+import { sentryVitePlugin } from '@sentry/vite-plugin'
 import react from '@vitejs/plugin-react-swc'
-import {sentryVitePlugin} from '@sentry/vite-plugin'
-import {createTranslationsMiddleware} from "./vite.tools"
-import path from "path";
+
+import { createTranslationsMiddleware } from './vite.tools'
 
 // Vite configuration
 export default defineConfig({
@@ -24,7 +26,7 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            "@": path.resolve(__dirname, "./src"),
+            '@': path.resolve(__dirname, './src'),
         },
     },
 })

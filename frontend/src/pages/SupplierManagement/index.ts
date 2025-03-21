@@ -1,1 +1,1 @@
-export { SupplierManagementPage } from "./ui/SupplierManagementPage" 
+export { SupplierManagementPage } from './ui/SupplierManagementPage'

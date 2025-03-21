@@ -6,6 +6,8 @@
     display: none !important;
 }
 
-html, body, #root {
+html,
+body,
+#root {
     @apply h-full w-full bg-background text-foreground;
 }

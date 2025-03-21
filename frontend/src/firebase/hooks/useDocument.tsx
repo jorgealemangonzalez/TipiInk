@@ -1,7 +1,7 @@
 import { PropsWithChildren, createContext, useCallback, useContext, useEffect, useState } from 'react'
-import { debounce } from '../debounce'
 
 import { GetDocumentParams, listenDocument, setDocument as setDocumentInDb } from '../DocumentsDAO.ts'
+import { debounce } from '../debounce'
 import { FSDocument } from '../types.ts'
 
 interface BaseUseDocumentResponse<T> {

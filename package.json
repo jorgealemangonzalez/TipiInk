@@ -25,6 +25,7 @@
     "devDependencies": {
         "concurrently": "^8.2.2",
         "firebase-admin": "^13.2.0",
-        "firebase-tools": "^13.34.0"
+        "firebase-tools": "^13.34.0",
+        "lefthook": "^1.7.21"
     }
 }

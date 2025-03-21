@@ -1,7 +1,10 @@
-import { RecipeDBModel, RecipeIngredientDBModel } from "@monorepo/functions/src/types/recipe";
+import { RecipeDBModel, RecipeIngredientDBModel } from '@monorepo/functions/src/types/recipe'
 
 export const getProductionCost = (recipe: RecipeDBModel) => {
-    return recipe.ingredients.reduce((acc, ingredient) => acc + ingredient.pricePerUnit * ingredient.quantityPerProduction, 0)
+    return recipe.ingredients.reduce(
+        (acc, ingredient) => acc + ingredient.pricePerUnit * ingredient.quantityPerProduction,
+        0,
+    )
 }
 
 export const getCostPerServing = (recipe: RecipeDBModel, productionCost: number) => {

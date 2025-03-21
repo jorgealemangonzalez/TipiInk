@@ -46,12 +46,18 @@ export interface Request<P> extends functions.https.CallableRequest<P> {
     rawRequest: functions.https.Request;
 }
 
+const snakeCaseToCamelCase = (str: object) => {
+    return Object.fromEntries(
+        Object.entries(str).map(([key, value]) => [key.replace(/(_\w)/g, (_, letter) => letter.toUpperCase()), value])
+    )
+}
+
 export const onAIToolRequest = <P, R>(schema: ZodSchema, handler: (request: P) => Promise<R>) => {
     return functions.https.onRequest(async (request, response) => {
         logger.info({ body: request.body, headers: request.headers })
 
-        const body = request.body.message.toolCalls[0].function.arguments
-        const parsedBody = schema.parse(body)
+        const body: object = request.body.message.toolCalls[0].function.arguments
+        const parsedBody = schema.parse(snakeCaseToCamelCase(body))
         const result = await handler(parsedBody)
         response.send(result)
     })

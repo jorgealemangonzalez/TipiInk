@@ -1,555 +1,528 @@
-import {
-  Card,
-  CardContent,
-  CardHeader
-} from "@/components/ui/card"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { Badge } from "@/components/ui/badge"
-import { 
-  Command, 
-  CommandEmpty, 
-  CommandGroup, 
-  CommandInput, 
-  CommandItem, 
-  CommandList 
-} from "@/components/ui/command"
-import { 
-  Popover, 
-  PopoverContent, 
-  PopoverTrigger 
-} from "@/components/ui/popover"
-import { X, Check, ChevronsUpDown } from "lucide-react"
+import { ChangeEvent, FC, useRef, useState } from 'react'
+import { useParams } from 'react-router-dom'
+
+import { BookOpen, Check, ChevronsUpDown, Info, Loader2, Upload } from 'lucide-react'
+
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useRecipes } from '@/entities/recipe/model/recipeHooks'
 import { uploadFileToStorage } from '@/firebase/fileStorage'
 import { cn } from '@/shared/lib/utils'
-import { BackButton } from '@/shared/ui/back-button'
-import { BookOpen, Info, Loader2, Upload } from 'lucide-react'
-import { ChangeEvent, FC, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { AllergenIcon } from '@/shared/ui/allergen-icon'
+import { BackButton } from '@/shared/ui/back-button'
 import { Allergen } from '@monorepo/functions/src/types/recipe'
 
 // Recipe categories available
-const RECIPE_CATEGORIES = [
-  'Arroces',
-  'Pescados',
-  'Pasta',
-  'Carnes',
-  'Postres',
-  'Asiático',
-  'Otros'
-]
+const RECIPE_CATEGORIES = ['Arroces', 'Pescados', 'Pasta', 'Carnes', 'Postres', 'Asiático', 'Otros']
 
 // Allergens available with their display names
 const ALLERGENS = [
-  { value: 'gluten' as Allergen, label: 'Gluten' },
-  { value: 'crustaceans' as Allergen, label: 'Crustáceos' },
-  { value: 'eggs' as Allergen, label: 'Huevos' },
-  { value: 'fish' as Allergen, label: 'Pescado' },
-  { value: 'peanuts' as Allergen, label: 'Cacahuetes' },
-  { value: 'soy' as Allergen, label: 'Soja' },
-  { value: 'dairy' as Allergen, label: 'Lácteos' },
-  { value: 'nuts' as Allergen, label: 'Frutos secos' },
-  { value: 'celery' as Allergen, label: 'Apio' },
-  { value: 'mustard' as Allergen, label: 'Mostaza' },
-  { value: 'sesame' as Allergen, label: 'Sésamo' },
-  { value: 'sulphites' as Allergen, label: 'Sulfitos' },
-  { value: 'lupin' as Allergen, label: 'Altramuces' },
-  { value: 'molluscs' as Allergen, label: 'Moluscos' }
+    { value: 'gluten' as Allergen, label: 'Gluten' },
+    { value: 'crustaceans' as Allergen, label: 'Crustáceos' },
+    { value: 'eggs' as Allergen, label: 'Huevos' },
+    { value: 'fish' as Allergen, label: 'Pescado' },
+    { value: 'peanuts' as Allergen, label: 'Cacahuetes' },
+    { value: 'soy' as Allergen, label: 'Soja' },
+    { value: 'dairy' as Allergen, label: 'Lácteos' },
+    { value: 'nuts' as Allergen, label: 'Frutos secos' },
+    { value: 'celery' as Allergen, label: 'Apio' },
+    { value: 'mustard' as Allergen, label: 'Mostaza' },
+    { value: 'sesame' as Allergen, label: 'Sésamo' },
+    { value: 'sulphites' as Allergen, label: 'Sulfitos' },
+    { value: 'lupin' as Allergen, label: 'Altramuces' },
+    { value: 'molluscs' as Allergen, label: 'Moluscos' },
 ]
 
 const getPercentageColor = (percentage: number): string => {
-  if (percentage < 20) return 'text-emerald-500'
-  if (percentage <= 25) return 'text-green-400'
-  if (percentage <= 30) return 'text-yellow-400'
-  if (percentage <= 32) return 'text-orange-400'
-  return 'text-red-500'
+    if (percentage < 20) return 'text-emerald-500'
+    if (percentage <= 25) return 'text-green-400'
+    if (percentage <= 30) return 'text-yellow-400'
+    if (percentage <= 32) return 'text-orange-400'
+    return 'text-red-500'
 }
 
 const AllergenSelector: FC<{
-  selected: Allergen[]
-  onChange: (values: Allergen[]) => void
+    selected: Allergen[]
+    onChange: (values: Allergen[]) => void
 }> = ({ selected, onChange }) => {
-  const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(false)
 
-  return (
-    <div className="flex items-center gap-2">
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <div className="flex items-center gap-1 cursor-pointer group pr-1.5">
-            {selected.length > 0 ? (
-              <>
-                <div className="flex gap-1">
-                  {selected.map((allergen) => (
-                    <AllergenIcon key={allergen} allergen={allergen} />
-                  ))}
-                </div>
-                <ChevronsUpDown className="h-3 w-3 opacity-0 group-hover:opacity-50 transition-opacity" />
-              </>
-            ) : (
-              <>
-                <p className="text-xs text-primary/50 italic">
-                  Sin alérgenos
-                </p>
-                <ChevronsUpDown className="h-3 w-3 opacity-0 group-hover:opacity-50 transition-opacity" />
-              </>
-            )}
-          </div>
-        </PopoverTrigger>
-        <PopoverContent className="p-0 w-[280px]" align="end">
-          <Command>
-            <CommandInput placeholder="Buscar alérgeno..." />
-            <CommandList>
-              <CommandEmpty>No hay coincidencias.</CommandEmpty>
-              <CommandGroup>
-                {ALLERGENS.map((option) => {
-                  const isSelected = selected.includes(option.value)
-                  return (
-                    <CommandItem
-                      key={option.value}
-                      onSelect={() => {
-                        onChange(
-                          isSelected
-                            ? selected.filter((value) => value !== option.value)
-                            : [...selected, option.value]
-                        )
-                        setOpen(true)
-                      }}
-                    >
-                      <div
-                        className={cn(
-                          "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary/20",
-                          isSelected ? "bg-primary" : "opacity-50"
+    return (
+        <div className='flex items-center gap-2'>
+            <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                    <div className='group flex cursor-pointer items-center gap-1 pr-1.5'>
+                        {selected.length > 0 ? (
+                            <>
+                                <div className='flex gap-1'>
+                                    {selected.map(allergen => (
+                                        <AllergenIcon key={allergen} allergen={allergen} />
+                                    ))}
+                                </div>
+                                <ChevronsUpDown className='h-3 w-3 opacity-0 transition-opacity group-hover:opacity-50' />
+                            </>
+                        ) : (
+                            <>
+                                <p className='text-xs italic text-primary/50'>Sin alérgenos</p>
+                                <ChevronsUpDown className='h-3 w-3 opacity-0 transition-opacity group-hover:opacity-50' />
+                            </>
                         )}
-                      >
-                        {isSelected && <Check className="h-3 w-3 text-primary-foreground" />}
-                      </div>
-                      <span>{option.label}</span>
-                    </CommandItem>
-                  )
-                })}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
-    </div>
-  )
+                    </div>
+                </PopoverTrigger>
+                <PopoverContent className='w-[280px] p-0' align='end'>
+                    <Command>
+                        <CommandInput placeholder='Buscar alérgeno...' />
+                        <CommandList>
+                            <CommandEmpty>No hay coincidencias.</CommandEmpty>
+                            <CommandGroup>
+                                {ALLERGENS.map(option => {
+                                    const isSelected = selected.includes(option.value)
+                                    return (
+                                        <CommandItem
+                                            key={option.value}
+                                            onSelect={() => {
+                                                onChange(
+                                                    isSelected
+                                                        ? selected.filter(value => value !== option.value)
+                                                        : [...selected, option.value],
+                                                )
+                                                setOpen(true)
+                                            }}
+                                        >
+                                            <div
+                                                className={cn(
+                                                    'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary/20',
+                                                    isSelected ? 'bg-primary' : 'opacity-50',
+                                                )}
+                                            >
+                                                {isSelected && <Check className='h-3 w-3 text-primary-foreground' />}
+                                            </div>
+                                            <span>{option.label}</span>
+                                        </CommandItem>
+                                    )
+                                })}
+                            </CommandGroup>
+                        </CommandList>
+                    </Command>
+                </PopoverContent>
+            </Popover>
+        </div>
+    )
 }
 
 export const RecipeDetailsPage: FC = () => {
-  const { id } = useParams()
-  const { getRecipeById, toggleRecipeMenuStatus, updateRecipe, isLoading } = useRecipes()
-  const recipe = id ? getRecipeById(id) : undefined
-  const [showPerServing, setShowPerServing] = useState(false)
-  const processContainerRef = useRef<HTMLDivElement>(null)
-  const [isUploading, setIsUploading] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState(0)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [isEditingTime, setIsEditingTime] = useState(false)
+    const { id } = useParams()
+    const { getRecipeById, toggleRecipeMenuStatus, updateRecipe, isLoading } = useRecipes()
+    const recipe = id ? getRecipeById(id) : undefined
+    const [showPerServing, setShowPerServing] = useState(false)
+    const processContainerRef = useRef<HTMLDivElement>(null)
+    const [isUploading, setIsUploading] = useState(false)
+    const [uploadProgress, setUploadProgress] = useState(0)
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-primary text-xl">Cargando receta...</p>
-      </div>
-    )
-  }
-
-  if (!recipe) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-primary text-xl">Receta no encontrada</p>
-      </div>
-    )
-  }
-
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!recipe || !event.target.files || !event.target.files[0]) return
-    
-    try {
-      setIsUploading(true)
-      setUploadProgress(0)
-      const file = event.target.files[0]
-      const fileName = `${Date.now()}`
-      const filePath = `recipes/${recipe.id}/${fileName}`
-      
-      // Upload file and get download URL
-      const imageUrl = await uploadFileToStorage(filePath, file, (totalUploaded) => {
-        const percentage = Math.round((totalUploaded / file.size) * 100)
-        setUploadProgress(percentage)
-        console.log(`Upload progress: ${totalUploaded} bytes (${percentage}%)`)
-      })
-      
-      // Update recipe with new image URL
-      await updateRecipe(recipe.id, { image: imageUrl })
-      
-    } catch (error) {
-      console.error('Error uploading image:', error)
-    } finally {
-      setIsUploading(false)
-      setUploadProgress(0)
+    if (isLoading) {
+        return (
+            <div className='flex min-h-screen items-center justify-center'>
+                <p className='text-xl text-primary'>Cargando receta...</p>
+            </div>
+        )
     }
-  }
 
-  const handleCategoryChange = async (category: string) => {
-    if (!recipe) return
-    await updateRecipe(recipe.id, { category })
-  }
+    if (!recipe) {
+        return (
+            <div className='flex min-h-screen items-center justify-center'>
+                <p className='text-xl text-primary'>Receta no encontrada</p>
+            </div>
+        )
+    }
 
-  const handleAllergensChange = async (allergens: Allergen[]) => {
-    if (!recipe) return
-    await updateRecipe(recipe.id, { allergens })
-  }
+    const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (!recipe || !event.target.files || !event.target.files[0]) return
 
-  const handleProductionTimeChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (!recipe) return
-    const minutes = e.target.value
-    await updateRecipe(recipe.id, { productionTime: `${minutes} min` })
-  }
+        try {
+            setIsUploading(true)
+            setUploadProgress(0)
+            const file = event.target.files[0]
+            const fileName = `${Date.now()}`
+            const filePath = `recipes/${recipe.id}/${fileName}`
 
-  const extractMinutes = (timeString?: string): string => {
-    if (!timeString) return ''
-    const match = timeString.match(/(\d+)/)
-    return match ? match[1] : ''
-  }
+            // Upload file and get download URL
+            const imageUrl = await uploadFileToStorage(filePath, file, totalUploaded => {
+                const percentage = Math.round((totalUploaded / file.size) * 100)
+                setUploadProgress(percentage)
+                console.log(`Upload progress: ${totalUploaded} bytes (${percentage}%)`)
+            })
 
-  const triggerFileInput = () => {
-    fileInputRef.current?.click()
-  }
+            // Update recipe with new image URL
+            await updateRecipe(recipe.id, { image: imageUrl })
+        } catch (error) {
+            console.error('Error uploading image:', error)
+        } finally {
+            setIsUploading(false)
+            setUploadProgress(0)
+        }
+    }
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <div className="p-4 space-y-6">
-        {/* Header */}
-        <div className="relative flex justify-center items-center">
-          <BackButton className='absolute left-0'/>
-          <h1 className="text-2xl font-bold text-primary">
-            Receta
-          </h1>
-          <div 
-            onClick={() => toggleRecipeMenuStatus(recipe.id)}
-            className={cn(
-              "p-2 rounded-full flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity absolute right-0",
-              recipe.inMenu ? "bg-primary" : ""
-            )}
-          >
-            <BookOpen className={cn(
-              "h-7 w-7",
-              recipe.inMenu ? "text-black" : "text-primary"
-            )} />
-          </div>
+    const handleCategoryChange = async (category: string) => {
+        if (!recipe) return
+        await updateRecipe(recipe.id, { category })
+    }
+
+    const handleAllergensChange = async (allergens: Allergen[]) => {
+        if (!recipe) return
+        await updateRecipe(recipe.id, { allergens })
+    }
+
+    const handleProductionTimeChange = async (e: ChangeEvent<HTMLInputElement>) => {
+        if (!recipe) return
+        const minutes = e.target.value
+        await updateRecipe(recipe.id, { productionTime: `${minutes} min` })
+    }
+
+    const extractMinutes = (timeString?: string): string => {
+        if (!timeString) return ''
+        const match = timeString.match(/(\d+)/)
+        return match ? match[1] : ''
+    }
+
+    const triggerFileInput = () => {
+        fileInputRef.current?.click()
+    }
+
+    return (
+        <div className='flex min-h-screen flex-col'>
+            <div className='space-y-6 p-4'>
+                {/* Header */}
+                <div className='relative flex items-center justify-center'>
+                    <BackButton className='absolute left-0' />
+                    <h1 className='text-2xl font-bold text-primary'>Receta</h1>
+                    <div
+                        onClick={() => toggleRecipeMenuStatus(recipe.id)}
+                        className={cn(
+                            'absolute right-0 flex cursor-pointer items-center justify-center rounded-full p-2 transition-opacity hover:opacity-80',
+                            recipe.inMenu ? 'bg-primary' : '',
+                        )}
+                    >
+                        <BookOpen className={cn('h-7 w-7', recipe.inMenu ? 'text-black' : 'text-primary')} />
+                    </div>
+                </div>
+
+                {/* Initial Breakdown */}
+                <Card className='border-border bg-card'>
+                    <CardHeader>
+                        <div className='flex items-start justify-between'>
+                            <div className='flex flex-col space-y-1'>
+                                <div className='flex items-center gap-3'>
+                                    <h2 className='text-2xl font-bold text-primary'>{recipe.name}</h2>
+                                </div>
+                                <div>
+                                    <Select
+                                        defaultValue={recipe.category || undefined}
+                                        onValueChange={handleCategoryChange}
+                                    >
+                                        <SelectTrigger className='h-6 w-40 border-0 bg-transparent px-0 py-0 text-sm shadow-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0'>
+                                            <SelectValue
+                                                placeholder='Seleccionar categoría'
+                                                className='italic text-primary/50'
+                                            />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {RECIPE_CATEGORIES.map(category => (
+                                                <SelectItem key={category} value={category}>
+                                                    {category}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+                        </div>
+                        <div className='flex items-center gap-2'>
+                            <AllergenSelector selected={recipe.allergens} onChange={handleAllergensChange} />
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        {/* Pricing and Production Info */}
+                        <div className='grid grid-cols-2 gap-4 text-primary'>
+                            <div>
+                                <p className='text-sm text-primary/80'>PVP</p>
+                                <p className='text-xl font-semibold'>{recipe.pvp.toFixed(2)}€</p>
+                            </div>
+                            <div>
+                                <p className='flex items-center gap-1 text-sm text-primary/80'>
+                                    Coste por ración
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Info className='h-3.5 w-3.5 cursor-help text-primary/60' />
+                                            </TooltipTrigger>
+                                            <TooltipContent
+                                                side='top'
+                                                align='center'
+                                                className='border-gray-800 bg-gray-900 text-primary'
+                                            >
+                                                <p className='max-w-60 text-xs'>Suma de los costes de ingredientes</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                </p>
+                                <p className='text-xl font-semibold'>
+                                    <span className={getPercentageColor(recipe.costPercentage)}>
+                                        {recipe.costPerServing.toFixed(2)}€
+                                    </span>
+                                    <span className='ml-2 text-sm'>
+                                        (
+                                        <span className={getPercentageColor(recipe.costPercentage)}>
+                                            {recipe.costPercentage.toFixed(0)}% Coste
+                                        </span>
+                                        )
+                                    </span>
+                                </p>
+                            </div>
+                            <div>
+                                <p className='text-sm text-primary/80'>Raciones por producción</p>
+                                <p className='text-xl font-semibold'>{recipe.servingsPerProduction}</p>
+                            </div>
+                            <div>
+                                <p className='text-sm text-primary/80'>Coste por producción</p>
+                                <p className='text-xl font-semibold'>{recipe.productionCost.toFixed(2)}€</p>
+                            </div>
+                        </div>
+
+                        {/* Production Time */}
+                        <div className='mt-6 flex items-center justify-between border-t border-border pt-4'>
+                            <p className='text-sm text-primary/80'>Tiempo de producción</p>
+                            <div className='flex items-center gap-2'>
+                                <input
+                                    type='number'
+                                    className='h-8 w-16 border-none bg-transparent text-right text-xl font-semibold text-primary focus:outline-none'
+                                    value={extractMinutes(recipe.productionTime)}
+                                    onChange={handleProductionTimeChange}
+                                    placeholder='0'
+                                />
+                                <span className='text-xl font-semibold text-primary'>min</span>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Ingredients */}
+                <Card className='border-border bg-card'>
+                    <CardHeader className='flex flex-col gap-6'>
+                        <div className='flex items-center justify-between'>
+                            <h2 className='text-2xl font-bold text-primary'>Ingredientes</h2>
+                            <button
+                                onClick={() => setShowPerServing(!showPerServing)}
+                                className={cn(
+                                    'h-8 rounded-md transition-all duration-200',
+                                    'flex items-center gap-2',
+                                    'text-xs font-medium',
+                                    showPerServing
+                                        ? 'bg-primary px-3 text-primary-foreground'
+                                        : 'bg-gray-800 px-3 text-primary hover:bg-gray-700',
+                                )}
+                            >
+                                {showPerServing ? 'Por ración' : 'Por producción'}
+                            </button>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        {recipe.ingredients.length > 0 ? (
+                            <div className='space-y-4'>
+                                {recipe.ingredients.map((ingredient, index) => {
+                                    const cantidad = showPerServing
+                                        ? `${ingredient.quantityPerServing} ${ingredient.unit}`
+                                        : `${ingredient.quantityPerProduction} ${ingredient.unit}`
+
+                                    const precioTotal = showPerServing
+                                        ? (ingredient.pricePerProduction / recipe.servingsPerProduction).toFixed(2)
+                                        : ingredient.pricePerProduction.toFixed(2)
+
+                                    return (
+                                        <div key={index} className='flex flex-col space-y-2'>
+                                            <div className='flex items-center justify-between'>
+                                                <div className='flex-1'>
+                                                    <h3 className='text-lg font-medium text-primary'>
+                                                        {ingredient.name}
+                                                    </h3>
+                                                    <p className='text-sm text-primary/60'>
+                                                        {ingredient.pricePerUnit.toFixed(2)}€/{ingredient.unit}
+                                                    </p>
+                                                </div>
+                                                <div className='text-right'>
+                                                    <p className='text-lg font-medium text-primary'>{cantidad}</p>
+                                                    <p className='text-sm font-semibold text-primary'>{precioTotal}€</p>
+                                                </div>
+                                            </div>
+                                            {index < recipe.ingredients.length - 1 && (
+                                                <div className='h-px bg-border' />
+                                            )}
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        ) : (
+                            <div className='flex flex-col items-center justify-center py-8 text-primary/50'>
+                                <p>No hay ingredientes en esta receta</p>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* Process */}
+                <Card className='border-border bg-card'>
+                    <CardHeader>
+                        <h2 className='text-2xl font-bold text-primary'>Proceso de elaboración</h2>
+                    </CardHeader>
+                    <CardContent>
+                        <div className='relative flex gap-1' ref={processContainerRef}>
+                            {/* Pasos del proceso */}
+                            <div className='flex-1 space-y-16'>
+                                {/* Preelaboración */}
+                                {recipe.preparation.prePreparation.length > 0 && (
+                                    <div className='transition-all duration-300'>
+                                        <h4 className='mb-4 text-lg font-semibold text-primary'>Preelaboración</h4>
+                                        <ul className='list-none space-y-3'>
+                                            {recipe.preparation.prePreparation.map((step, index) => (
+                                                <li key={index} className='flex items-start gap-3 text-primary/80'>
+                                                    <span className='mt-1 text-primary'>•</span>
+                                                    <span>{step}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+
+                                {/* Elaboración */}
+                                {recipe.preparation.preparation.length > 0 && (
+                                    <div className='transition-all duration-300'>
+                                        <h4 className='mb-4 text-lg font-semibold text-primary'>Elaboración</h4>
+                                        <ul className='list-none space-y-3'>
+                                            {recipe.preparation.preparation.map((step, index) => (
+                                                <li key={index} className='flex items-start gap-3 text-primary/80'>
+                                                    <span className='mt-1 text-primary'>•</span>
+                                                    <span>{step}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+
+                                {/* Conservación */}
+                                {recipe.preparation.conservation.length > 0 && (
+                                    <div className='transition-all duration-300'>
+                                        <h4 className='mb-4 text-lg font-semibold text-primary'>Conservación</h4>
+                                        <ul className='list-none space-y-3'>
+                                            {recipe.preparation.conservation.map((step, index) => (
+                                                <li key={index} className='flex items-start gap-3 text-primary/80'>
+                                                    <span className='mt-1 text-primary'>•</span>
+                                                    <span>{step}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+
+                                {/* No process steps message */}
+                                {recipe.preparation.prePreparation.length === 0 &&
+                                    recipe.preparation.preparation.length === 0 &&
+                                    recipe.preparation.conservation.length === 0 && (
+                                        <div className='flex flex-col items-center justify-center py-8 text-primary/50'>
+                                            <p>No hay pasos de elaboración definidos</p>
+                                        </div>
+                                    )}
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Image */}
+                <Card className='border-border bg-card'>
+                    <CardHeader>
+                        <h2 className='text-2xl font-bold text-primary'>Foto del plato</h2>
+                    </CardHeader>
+                    <CardContent>
+                        {recipe.image ? (
+                            <div className='group relative'>
+                                <img
+                                    src={recipe.image}
+                                    alt={recipe.name}
+                                    className={cn(
+                                        'h-80 w-full rounded-lg object-cover transition-all duration-150',
+                                        isUploading && 'opacity-60',
+                                    )}
+                                />
+                                {/* Hover overlay with upload button */}
+                                <div
+                                    onClick={triggerFileInput}
+                                    className={cn(
+                                        'absolute inset-0 flex cursor-pointer flex-col items-center justify-center rounded-lg transition-all duration-150 active:scale-95',
+                                        isUploading ? 'bg-black/50' : 'bg-black/30 opacity-0 group-hover:opacity-100',
+                                    )}
+                                >
+                                    <input
+                                        type='file'
+                                        ref={fileInputRef}
+                                        className='hidden'
+                                        accept='image/*'
+                                        onChange={handleImageUpload}
+                                    />
+                                    {isUploading ? (
+                                        <div className='flex flex-col items-center gap-2'>
+                                            <div className='relative'>
+                                                <Loader2 className='size-20 animate-spin text-white' />
+                                                <div className='absolute inset-0 flex items-center justify-center'>
+                                                    <span className='text-xs font-medium text-white'>
+                                                        {uploadProgress}%
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <Upload className='h-12 w-12 text-white' />
+                                    )}
+                                </div>
+                            </div>
+                        ) : (
+                            <div
+                                onClick={triggerFileInput}
+                                className='flex h-80 w-full cursor-pointer flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-primary/30 bg-black/5 transition-all duration-150 active:scale-[0.98] active:border-primary/60 active:bg-black/10'
+                            >
+                                <input
+                                    type='file'
+                                    ref={fileInputRef}
+                                    className='hidden'
+                                    accept='image/*'
+                                    onChange={handleImageUpload}
+                                />
+                                {isUploading ? (
+                                    <div className='flex flex-col items-center gap-2'>
+                                        <div className='relative'>
+                                            <Loader2 className='h-12 w-12 animate-spin text-primary/60' />
+                                            <div className='absolute inset-0 flex items-center justify-center'>
+                                                <span className='text-xs font-medium text-primary/90'>
+                                                    {uploadProgress}%
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <p className='text-primary/70'>Subiendo imagen... ({uploadProgress}%)</p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <Upload className='h-12 w-12 text-primary/60' />
+                                        <p className='max-w-sm text-center text-primary/70'>
+                                            Sube una foto del plato terminado.
+                                        </p>
+                                    </>
+                                )}
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
         </div>
-
-        {/* Initial Breakdown */}
-        <Card className="bg-card border-border">
-          <CardHeader>
-            <div className="flex justify-between items-start">
-              <div className="flex flex-col space-y-1">
-                <div className="flex items-center gap-3">
-                  <h2 className="text-2xl font-bold text-primary">{recipe.name}</h2>
-                </div>
-                <div>
-                  <Select
-                    defaultValue={recipe.category || undefined}
-                    onValueChange={handleCategoryChange}
-                  >
-                    <SelectTrigger className="w-40 h-6 text-sm py-0 px-0 border-0 bg-transparent focus:ring-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0">
-                      <SelectValue placeholder="Seleccionar categoría" className="text-primary/50 italic" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {RECIPE_CATEGORIES.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-              <div className="flex gap-2 items-center">
-                <AllergenSelector 
-                  selected={recipe.allergens}
-                  onChange={handleAllergensChange}
-                />
-              </div>
-          </CardHeader>
-          <CardContent>
-            {/* Pricing and Production Info */}
-            <div className="grid grid-cols-2 gap-4 text-primary">
-              <div>
-                <p className="text-sm text-primary/80">PVP</p>
-                <p className="text-xl font-semibold">{recipe.pvp.toFixed(2)}€</p>
-              </div>
-              <div>
-                <p className="text-sm text-primary/80 flex items-center gap-1">
-                  Coste por ración
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="h-3.5 w-3.5 text-primary/60 cursor-help" />
-                      </TooltipTrigger>
-                      <TooltipContent 
-                        side="top" 
-                        align="center" 
-                        className="bg-gray-900 border-gray-800 text-primary"
-                      >
-                        <p className="max-w-60 text-xs">Suma de los costes de ingredientes</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </p>
-                <p className="text-xl font-semibold">
-                  <span className={getPercentageColor(recipe.costPercentage)}>{recipe.costPerServing.toFixed(2)}€</span>
-                  <span className="text-sm ml-2">
-                    (<span className={getPercentageColor(recipe.costPercentage)}>{recipe.costPercentage.toFixed(0)}% Coste</span>)
-                  </span>
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-primary/80">Raciones por producción</p>
-                <p className="text-xl font-semibold">{recipe.servingsPerProduction}</p>
-              </div>
-              <div>
-                <p className="text-sm text-primary/80">Coste por producción</p>
-                <p className="text-xl font-semibold">{recipe.productionCost.toFixed(2)}€</p>
-              </div>
-            </div>
-            
-            {/* Production Time */}
-            <div className="flex justify-between items-center border-t border-border mt-6 pt-4">
-              <p className="text-sm text-primary/80">Tiempo de producción</p>
-              <div className="flex items-center gap-2">
-                <input 
-                  type="number" 
-                  className="w-16 h-8 bg-transparent border-none text-xl font-semibold text-primary text-right focus:outline-none" 
-                  value={extractMinutes(recipe.productionTime)}
-                  onChange={handleProductionTimeChange}
-                  placeholder="0"
-                />
-                <span className="text-xl text-primary font-semibold">min</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Ingredients */}
-        <Card className="bg-card border-border">
-          <CardHeader className="flex flex-col gap-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-primary">Ingredientes</h2>
-              <button
-                onClick={() => setShowPerServing(!showPerServing)}
-                className={cn(
-                  "h-8 rounded-md transition-all duration-200",
-                  "flex items-center gap-2",
-                  "text-xs font-medium",
-                  showPerServing 
-                    ? "bg-primary text-primary-foreground px-3" 
-                    : "bg-gray-800 text-primary px-3 hover:bg-gray-700"
-                )}
-              >
-                {showPerServing ? "Por ración" : "Por producción"}
-              </button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {recipe.ingredients.length > 0 ? (
-              <div className="space-y-4">
-                {recipe.ingredients.map((ingredient, index) => {
-                  const cantidad = showPerServing
-                    ? `${ingredient.quantityPerServing} ${ingredient.unit}`
-                    : `${ingredient.quantityPerProduction} ${ingredient.unit}`
-
-                  const precioTotal = showPerServing
-                    ? (ingredient.pricePerProduction / recipe.servingsPerProduction).toFixed(2)
-                    : ingredient.pricePerProduction.toFixed(2)
-
-                  return (
-                    <div key={index} className="flex flex-col space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-medium text-primary">{ingredient.name}</h3>
-                          <p className="text-sm text-primary/60">{ingredient.pricePerUnit.toFixed(2)}€/{ingredient.unit}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-lg font-medium text-primary">{cantidad}</p>
-                          <p className="text-sm font-semibold text-primary">{precioTotal}€</p>
-                        </div>
-                      </div>
-                      {index < recipe.ingredients.length - 1 && (
-                        <div className="h-px bg-border" />
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-            ) : (
-              <div className="py-8 flex flex-col items-center justify-center text-primary/50">
-                <p>No hay ingredientes en esta receta</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Process */}
-        <Card className="bg-card border-border">
-          <CardHeader>
-            <h2 className="text-2xl font-bold text-primary">Proceso de elaboración</h2>
-          </CardHeader>
-          <CardContent>
-            <div className="relative flex gap-1" ref={processContainerRef}>
-              {/* Pasos del proceso */}
-              <div className="flex-1 space-y-16">
-                {/* Preelaboración */}
-                {recipe.preparation.prePreparation.length > 0 && (
-                  <div className="transition-all duration-300">
-                    <h4 className="text-lg font-semibold text-primary mb-4">Preelaboración</h4>
-                    <ul className="list-none space-y-3">
-                      {recipe.preparation.prePreparation.map((step, index) => (
-                        <li key={index} className="text-primary/80 flex items-start gap-3">
-                          <span className="text-primary mt-1">•</span>
-                          <span>{step}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Elaboración */}
-                {recipe.preparation.preparation.length > 0 && (
-                  <div className="transition-all duration-300">
-                    <h4 className="text-lg font-semibold text-primary mb-4">Elaboración</h4>
-                    <ul className="list-none space-y-3">
-                      {recipe.preparation.preparation.map((step, index) => (
-                        <li key={index} className="text-primary/80 flex items-start gap-3">
-                          <span className="text-primary mt-1">•</span>
-                          <span>{step}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Conservación */}
-                {recipe.preparation.conservation.length > 0 && (
-                  <div className="transition-all duration-300">
-                    <h4 className="text-lg font-semibold text-primary mb-4">Conservación</h4>
-                    <ul className="list-none space-y-3">
-                      {recipe.preparation.conservation.map((step, index) => (
-                        <li key={index} className="text-primary/80 flex items-start gap-3">
-                          <span className="text-primary mt-1">•</span>
-                          <span>{step}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* No process steps message */}
-                {recipe.preparation.prePreparation.length === 0 && 
-                 recipe.preparation.preparation.length === 0 && 
-                 recipe.preparation.conservation.length === 0 && (
-                  <div className="py-8 flex flex-col items-center justify-center text-primary/50">
-                    <p>No hay pasos de elaboración definidos</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Image */}
-        <Card className="bg-card border-border">
-          <CardHeader>
-            <h2 className="text-2xl font-bold text-primary">Foto del plato</h2>
-          </CardHeader>
-          <CardContent>
-            {recipe.image ? (
-              <div className="relative group">
-                <img 
-                  src={recipe.image} 
-                  alt={recipe.name}
-                  className={cn(
-                    "w-full h-80 object-cover rounded-lg transition-all duration-150",
-                    isUploading && "opacity-60"
-                  )}
-                />
-                {/* Hover overlay with upload button */}
-                <div 
-                  onClick={triggerFileInput} 
-                  className={cn(
-                    "absolute inset-0 rounded-lg flex flex-col items-center justify-center active:scale-95 transition-all duration-150 cursor-pointer",
-                    isUploading ? "bg-black/50" : "opacity-0 group-hover:opacity-100 bg-black/30"
-                  )}
-                >
-                  <input 
-                    type="file" 
-                    ref={fileInputRef}
-                    className="hidden" 
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                  />
-                  {isUploading ? (
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="relative">
-                        <Loader2 className="size-20 text-white animate-spin" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-white text-xs font-medium">{uploadProgress}%</span>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <Upload className="h-12 w-12 text-white" />
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div 
-                onClick={triggerFileInput} 
-                className="w-full h-80 flex flex-col items-center justify-center gap-4 border-2 border-dashed border-primary/30 rounded-lg bg-black/5 active:scale-[0.98] active:border-primary/60 active:bg-black/10 transition-all duration-150 cursor-pointer"
-              >
-                <input 
-                  type="file" 
-                  ref={fileInputRef}
-                  className="hidden" 
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                />
-                {isUploading ? (
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="relative">
-                      <Loader2 className="h-12 w-12 text-primary/60 animate-spin" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-primary/90 text-xs font-medium">{uploadProgress}%</span>
-                      </div>
-                    </div>
-                    <p className="text-primary/70">Subiendo imagen... ({uploadProgress}%)</p>
-                  </div>
-                ) : (
-                  <>
-                    <Upload className="h-12 w-12 text-primary/60" />
-                    <p className="text-primary/70 text-center max-w-sm">Sube una foto del plato terminado.</p>
-                  </>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  )
+    )
 }

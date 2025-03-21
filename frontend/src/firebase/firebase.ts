@@ -18,13 +18,13 @@ import { isLocalEnvironment } from '@/environment'
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyDsYrBS4X0C36ThgIfyj-AOcG7pq_oSk7s",
-    authDomain: "tipi-ink.firebaseapp.com",
-    projectId: "tipi-ink",
-    storageBucket: "tipi-ink.appspot.com",
-    messagingSenderId: "634165171036",
-    appId: "1:634165171036:web:981e4bbbd6e5d568f3e799",
-    measurementId: "G-CQ57GQBLGJ"
+    apiKey: 'AIzaSyDsYrBS4X0C36ThgIfyj-AOcG7pq_oSk7s',
+    authDomain: 'tipi-ink.firebaseapp.com',
+    projectId: 'tipi-ink',
+    storageBucket: 'tipi-ink.appspot.com',
+    messagingSenderId: '634165171036',
+    appId: '1:634165171036:web:981e4bbbd6e5d568f3e799',
+    measurementId: 'G-CQ57GQBLGJ',
 }
 
 // Initialize Firebase

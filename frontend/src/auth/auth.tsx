@@ -1,13 +1,16 @@
-import React, {createContext, useContext, useEffect, useState} from 'react'
-import {signInAnonymously, User as FUser} from 'firebase/auth'
-import {auth, firestore, GoogleAuthProvider, onAuthStateChanged, signInWithPopup} from '@/firebase/firebase.ts'
-import mixpanel from 'mixpanel-browser'
-import {Sentry} from '../sentry.ts'
-import {isLocalEnvironment} from "@/environment.ts"
-import {User as UserDbModel} from '@monorepo/functions/src/types/User'
-import {doc, getDoc} from "firebase/firestore"
+import React, { createContext, useContext, useEffect, useState } from 'react'
 
-type User = FUser & { isAdmin: boolean } & UserDbModel;
+import { User as FUser, signInAnonymously } from 'firebase/auth'
+import { doc, getDoc } from 'firebase/firestore'
+import mixpanel from 'mixpanel-browser'
+
+import { isLocalEnvironment } from '@/environment.ts'
+import { GoogleAuthProvider, auth, firestore, onAuthStateChanged, signInWithPopup } from '@/firebase/firebase.ts'
+import { User as UserDbModel } from '@monorepo/functions/src/types/User'
+
+import { Sentry } from '../sentry.ts'
+
+type User = FUser & { isAdmin: boolean } & UserDbModel
 
 interface AuthContextType {
     user?: User
@@ -21,7 +24,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const useAuth = () => {
     const context = useContext(AuthContext)
-    if (context===undefined) {
+    if (context === undefined) {
         throw new Error('useAuth must be used within a UserProvider')
     }
     return context
@@ -29,7 +32,7 @@ export const useAuth = () => {
 
 export const useUser = () => {
     const context = useAuth()
-    if (context.user===undefined) {
+    if (context.user === undefined) {
         throw new Error('useUser must be used when authenticated')
     }
     return context.user
@@ -49,68 +52,72 @@ export const useUser = () => {
 //     })
 // }
 
-export const AuthProvider = ({children}: { children: React.ReactNode }) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User>()
     const [isLoading, setIsLoading] = useState<boolean>(true) // TODO MAYBE HAVING 2 SEPARATE STATES GENERATES RACE CONDITIONS
-    const isLoggedIn = user!==undefined
+    const isLoggedIn = user !== undefined
 
-    console.log({user})
+    console.log({ user })
 
-    useEffect(() => onAuthStateChanged(async (newUser) => {
-        if (newUser) {
-            console.log('User logging in: ', {newUser})
-            const token = await newUser.getIdTokenResult()
-            // @ts-expect-error adding custom property to user.
-            //  Using it this way to avoid losing the methods of the user object
-            newUser.isAdmin = !!token.claims.admin
+    useEffect(
+        () =>
+            onAuthStateChanged(async newUser => {
+                if (newUser) {
+                    console.log('User logging in: ', { newUser })
+                    const token = await newUser.getIdTokenResult()
+                    // @ts-expect-error adding custom property to user.
+                    //  Using it this way to avoid losing the methods of the user object
+                    newUser.isAdmin = !!token.claims.admin
 
-            const userSnapshot = await getDoc(doc(firestore, 'users', newUser.uid))
-            // @ts-expect-error adding custom property to user.
-            //  Using it this way to avoid losing the methods of the user object
-            newUser.companyId = userSnapshot.exists() ? userSnapshot.data()!.companyId : 'default'
+                    const userSnapshot = await getDoc(doc(firestore, 'users', newUser.uid))
+                    // @ts-expect-error adding custom property to user.
+                    //  Using it this way to avoid losing the methods of the user object
+                    newUser.companyId = userSnapshot.exists() ? userSnapshot.data()!.companyId : 'default'
 
-            // await waitForGoogleApiToBeReady()
-            // @ts-expect-error access token is available
-            // const accessToken = newUser.accessToken
-            // gapi.client.setToken({access_token: accessToken})
+                    // await waitForGoogleApiToBeReady()
+                    // @ts-expect-error access token is available
+                    // const accessToken = newUser.accessToken
+                    // gapi.client.setToken({access_token: accessToken})
 
-            setUser(newUser as User)
-            mixpanel.identify(newUser.uid)
-            mixpanel.people.set({
-                'User ID': newUser.uid,
-                'type': 'customer',
-                '$email': newUser.email,
-                '$name': newUser.displayName,
-                '$phone': newUser.phoneNumber,
-                '$avatar': newUser.photoURL,
-                '$created': new Date(),
-            })
-            Sentry.setUser({
-                id: newUser.uid,
-                email: newUser.email || undefined,
-                username: newUser.displayName || undefined,
-            })
-            console.log('User logged in: ', {authData: await newUser.getIdTokenResult(true)})
-        } else setUser(undefined)
-        if (isLoading)
-            setIsLoading(false)
-    }), [])
+                    setUser(newUser as User)
+                    mixpanel.identify(newUser.uid)
+                    mixpanel.people.set({
+                        'User ID': newUser.uid,
+                        type: 'customer',
+                        $email: newUser.email,
+                        $name: newUser.displayName,
+                        $phone: newUser.phoneNumber,
+                        $avatar: newUser.photoURL,
+                        $created: new Date(),
+                    })
+                    Sentry.setUser({
+                        id: newUser.uid,
+                        email: newUser.email || undefined,
+                        username: newUser.displayName || undefined,
+                    })
+                    console.log('User logged in: ', { authData: await newUser.getIdTokenResult(true) })
+                } else setUser(undefined)
+                if (isLoading) setIsLoading(false)
+            }),
+        [],
+    )
 
     const anonymousSignIn = async (): Promise<User> => {
         setIsLoading(true)
         return await signInAnonymously(auth)
-            .then((credentials): User => ({
-                ...credentials.user,
-                isAdmin: false,
-                companyId: 'default'
-            }))
+            .then(
+                (credentials): User => ({
+                    ...credentials.user,
+                    isAdmin: false,
+                    companyId: 'default',
+                }),
+            )
             .finally(() => setIsLoading(false))
     }
 
     const googleSignIn = async () => {
         const googleAuthProvider = new GoogleAuthProvider()
-        if (!isLocalEnvironment)
-            googleAuthProvider.addScope('https://www.googleapis.com/auth/spreadsheets')
+        if (!isLocalEnvironment) googleAuthProvider.addScope('https://www.googleapis.com/auth/spreadsheets')
         await signInWithPopup(auth, googleAuthProvider)
         console.log('Google sign in successful')
         // console.log('credential', {credential})
@@ -134,7 +141,7 @@ export const AuthProvider = ({children}: { children: React.ReactNode }) => {
         googleSignIn,
         user,
         isLoggedIn,
-        isLoadingUser: isLoading
+        isLoadingUser: isLoading,
     }
 
     return <AuthContext.Provider value={value}> {children} </AuthContext.Provider>

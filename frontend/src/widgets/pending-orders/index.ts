@@ -1,1 +1,1 @@
-export { PendingOrders } from './ui/PendingOrders' 
+export { PendingOrders } from './ui/PendingOrders'

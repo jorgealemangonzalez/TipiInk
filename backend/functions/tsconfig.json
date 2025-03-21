@@ -1,26 +1,20 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "outDir": "lib",
-    "sourceMap": true,
-    "inlineSources": true,
-    "strict": true,
-    "target": "es2017",
-    "skipLibCheck": true
-  },
-  "compileOnSave": true,
-  "include": [
-    "src"
-  ],
-  "baseUrl": ".",
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "outDir": "lib",
+        "sourceMap": true,
+        "inlineSources": true,
+        "strict": true,
+        "target": "es2017",
+        "skipLibCheck": true
+    },
+    "compileOnSave": true,
+    "include": ["src"],
+    "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-    ]
-  },
-  "exclude": [
-    "node_modules"
-  ],
+        "@/*": ["./src/*"]
+    },
+    "exclude": ["node_modules"]
 }

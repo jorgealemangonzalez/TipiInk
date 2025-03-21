@@ -38,7 +38,7 @@ export const PreparationSchema = z.object({
 
 // Base schema for recipe fields
 export const BaseRecipeSchema = z.object({
-    name: z.string().describe('Name of the recipe'),
+    name: z.string().describe('Name of the recipe, first letter uppercase'),
     category: z.string().optional().describe('Category of the recipe'),
     allergens: z.array(AllergenEnum).optional().describe('Allergens of the recipe'),
     productionTime: z.string().optional().describe('Production time of the recipe'),

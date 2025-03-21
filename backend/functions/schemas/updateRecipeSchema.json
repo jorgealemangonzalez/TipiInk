@@ -14,7 +14,7 @@
     },
     "name": {
       "type": "string",
-      "description": "Name of the recipe"
+      "description": "Name of the recipe, first letter uppercase"
     },
     "category": {
       "type": "string",

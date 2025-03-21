@@ -66,7 +66,7 @@ const AllergenSelector: FC<{
                             </>
                         ) : (
                             <>
-                                <p className='text-xs italic text-primary/50'>Sin alérgenos</p>
+                                <p className='text-primary/50 text-xs italic'>Sin alérgenos</p>
                                 <ChevronsUpDown className='h-3 w-3 opacity-0 transition-opacity group-hover:opacity-50' />
                             </>
                         )}
@@ -94,11 +94,11 @@ const AllergenSelector: FC<{
                                         >
                                             <div
                                                 className={cn(
-                                                    'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary/20',
+                                                    'border-primary/20 mr-2 flex h-4 w-4 items-center justify-center rounded-sm border',
                                                     isSelected ? 'bg-primary' : 'opacity-50',
                                                 )}
                                             >
-                                                {isSelected && <Check className='h-3 w-3 text-primary-foreground' />}
+                                                {isSelected && <Check className='text-primary-foreground h-3 w-3' />}
                                             </div>
                                             <span>{option.label}</span>
                                         </CommandItem>
@@ -126,7 +126,7 @@ export const RecipeDetailsPage: FC = () => {
     if (isLoading) {
         return (
             <div className='flex min-h-screen items-center justify-center'>
-                <p className='text-xl text-primary'>Cargando receta...</p>
+                <p className='text-primary text-xl'>Cargando receta...</p>
             </div>
         )
     }
@@ -134,7 +134,7 @@ export const RecipeDetailsPage: FC = () => {
     if (!recipe) {
         return (
             <div className='flex min-h-screen items-center justify-center'>
-                <p className='text-xl text-primary'>Receta no encontrada</p>
+                <p className='text-primary text-xl'>Receta no encontrada</p>
             </div>
         )
     }
@@ -198,7 +198,7 @@ export const RecipeDetailsPage: FC = () => {
                 {/* Header */}
                 <div className='relative flex items-center justify-center'>
                     <BackButton className='absolute left-0' />
-                    <h1 className='text-2xl font-bold text-primary'>Receta</h1>
+                    <h1 className='text-primary text-2xl font-bold'>Receta</h1>
                     <div
                         onClick={() => toggleRecipeMenuStatus(recipe.id)}
                         className={cn(
@@ -216,7 +216,7 @@ export const RecipeDetailsPage: FC = () => {
                         <div className='flex items-start justify-between'>
                             <div className='flex flex-col space-y-1'>
                                 <div className='flex items-center gap-3'>
-                                    <h2 className='text-2xl font-bold text-primary'>{recipe.name}</h2>
+                                    <h2 className='text-primary text-2xl font-bold'>{recipe.name}</h2>
                                 </div>
                                 <div>
                                     <Select
@@ -226,7 +226,7 @@ export const RecipeDetailsPage: FC = () => {
                                         <SelectTrigger className='h-6 w-40 border-0 bg-transparent px-0 py-0 text-sm shadow-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0'>
                                             <SelectValue
                                                 placeholder='Seleccionar categoría'
-                                                className='italic text-primary/50'
+                                                className='text-primary/50 italic'
                                             />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -246,23 +246,23 @@ export const RecipeDetailsPage: FC = () => {
                     </CardHeader>
                     <CardContent>
                         {/* Pricing and Production Info */}
-                        <div className='grid grid-cols-2 gap-4 text-primary'>
+                        <div className='text-primary grid grid-cols-2 gap-4'>
                             <div>
-                                <p className='text-sm text-primary/80'>PVP</p>
+                                <p className='text-primary/80 text-sm'>PVP</p>
                                 <p className='text-xl font-semibold'>{recipe.pvp.toFixed(2)}€</p>
                             </div>
                             <div>
-                                <p className='flex items-center gap-1 text-sm text-primary/80'>
+                                <p className='text-primary/80 flex items-center gap-1 text-sm'>
                                     Coste por ración
                                     <TooltipProvider>
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <Info className='h-3.5 w-3.5 cursor-help text-primary/60' />
+                                                <Info className='text-primary/60 h-3.5 w-3.5 cursor-help' />
                                             </TooltipTrigger>
                                             <TooltipContent
                                                 side='top'
                                                 align='center'
-                                                className='border-gray-800 bg-gray-900 text-primary'
+                                                className='text-primary border-gray-800 bg-gray-900'
                                             >
                                                 <p className='max-w-60 text-xs'>Suma de los costes de ingredientes</p>
                                             </TooltipContent>
@@ -283,27 +283,27 @@ export const RecipeDetailsPage: FC = () => {
                                 </p>
                             </div>
                             <div>
-                                <p className='text-sm text-primary/80'>Raciones por producción</p>
+                                <p className='text-primary/80 text-sm'>Raciones por producción</p>
                                 <p className='text-xl font-semibold'>{recipe.servingsPerProduction}</p>
                             </div>
                             <div>
-                                <p className='text-sm text-primary/80'>Coste por producción</p>
+                                <p className='text-primary/80 text-sm'>Coste por producción</p>
                                 <p className='text-xl font-semibold'>{recipe.productionCost.toFixed(2)}€</p>
                             </div>
                         </div>
 
                         {/* Production Time */}
-                        <div className='mt-6 flex items-center justify-between border-t border-border pt-4'>
-                            <p className='text-sm text-primary/80'>Tiempo de producción</p>
+                        <div className='border-border mt-6 flex items-center justify-between border-t pt-4'>
+                            <p className='text-primary/80 text-sm'>Tiempo de producción</p>
                             <div className='flex items-center gap-2'>
                                 <input
                                     type='number'
-                                    className='h-8 w-16 border-none bg-transparent text-right text-xl font-semibold text-primary focus:outline-none'
+                                    className='text-primary h-8 w-16 border-none bg-transparent text-right text-xl font-semibold focus:outline-none'
                                     value={extractMinutes(recipe.productionTime)}
                                     onChange={handleProductionTimeChange}
                                     placeholder='0'
                                 />
-                                <span className='text-xl font-semibold text-primary'>min</span>
+                                <span className='text-primary text-xl font-semibold'>min</span>
                             </div>
                         </div>
                     </CardContent>
@@ -313,7 +313,7 @@ export const RecipeDetailsPage: FC = () => {
                 <Card className='border-border bg-card'>
                     <CardHeader className='flex flex-col gap-6'>
                         <div className='flex items-center justify-between'>
-                            <h2 className='text-2xl font-bold text-primary'>Ingredientes</h2>
+                            <h2 className='text-primary text-2xl font-bold'>Ingredientes</h2>
                             <button
                                 onClick={() => setShowPerServing(!showPerServing)}
                                 className={cn(
@@ -321,8 +321,8 @@ export const RecipeDetailsPage: FC = () => {
                                     'flex items-center gap-2',
                                     'text-xs font-medium',
                                     showPerServing
-                                        ? 'bg-primary px-3 text-primary-foreground'
-                                        : 'bg-gray-800 px-3 text-primary hover:bg-gray-700',
+                                        ? 'bg-primary text-primary-foreground px-3'
+                                        : 'text-primary bg-gray-800 px-3 hover:bg-gray-700',
                                 )}
                             >
                                 {showPerServing ? 'Por ración' : 'Por producción'}
@@ -345,27 +345,27 @@ export const RecipeDetailsPage: FC = () => {
                                         <div key={index} className='flex flex-col space-y-2'>
                                             <div className='flex items-center justify-between'>
                                                 <div className='flex-1'>
-                                                    <h3 className='text-lg font-medium text-primary'>
+                                                    <h3 className='text-primary text-lg font-medium'>
                                                         {ingredient.name}
                                                     </h3>
-                                                    <p className='text-sm text-primary/60'>
+                                                    <p className='text-primary/60 text-sm'>
                                                         {ingredient.pricePerUnit.toFixed(2)}€/{ingredient.unit}
                                                     </p>
                                                 </div>
                                                 <div className='text-right'>
-                                                    <p className='text-lg font-medium text-primary'>{cantidad}</p>
-                                                    <p className='text-sm font-semibold text-primary'>{precioTotal}€</p>
+                                                    <p className='text-primary text-lg font-medium'>{cantidad}</p>
+                                                    <p className='text-primary text-sm font-semibold'>{precioTotal}€</p>
                                                 </div>
                                             </div>
                                             {index < recipe.ingredients.length - 1 && (
-                                                <div className='h-px bg-border' />
+                                                <div className='bg-border h-px' />
                                             )}
                                         </div>
                                     )
                                 })}
                             </div>
                         ) : (
-                            <div className='flex flex-col items-center justify-center py-8 text-primary/50'>
+                            <div className='text-primary/50 flex flex-col items-center justify-center py-8'>
                                 <p>No hay ingredientes en esta receta</p>
                             </div>
                         )}
@@ -375,7 +375,7 @@ export const RecipeDetailsPage: FC = () => {
                 {/* Process */}
                 <Card className='border-border bg-card'>
                     <CardHeader>
-                        <h2 className='text-2xl font-bold text-primary'>Proceso de elaboración</h2>
+                        <h2 className='text-primary text-2xl font-bold'>Proceso de elaboración</h2>
                     </CardHeader>
                     <CardContent>
                         <div className='relative flex gap-1' ref={processContainerRef}>
@@ -384,11 +384,11 @@ export const RecipeDetailsPage: FC = () => {
                                 {/* Preelaboración */}
                                 {recipe.preparation.prePreparation.length > 0 && (
                                     <div className='transition-all duration-300'>
-                                        <h4 className='mb-4 text-lg font-semibold text-primary'>Preelaboración</h4>
+                                        <h4 className='text-primary mb-4 text-lg font-semibold'>Preelaboración</h4>
                                         <ul className='list-none space-y-3'>
                                             {recipe.preparation.prePreparation.map((step, index) => (
-                                                <li key={index} className='flex items-start gap-3 text-primary/80'>
-                                                    <span className='mt-1 text-primary'>•</span>
+                                                <li key={index} className='text-primary/80 flex items-start gap-3'>
+                                                    <span className='text-primary mt-1'>•</span>
                                                     <span>{step}</span>
                                                 </li>
                                             ))}
@@ -399,11 +399,11 @@ export const RecipeDetailsPage: FC = () => {
                                 {/* Elaboración */}
                                 {recipe.preparation.preparation.length > 0 && (
                                     <div className='transition-all duration-300'>
-                                        <h4 className='mb-4 text-lg font-semibold text-primary'>Elaboración</h4>
+                                        <h4 className='text-primary mb-4 text-lg font-semibold'>Elaboración</h4>
                                         <ul className='list-none space-y-3'>
                                             {recipe.preparation.preparation.map((step, index) => (
-                                                <li key={index} className='flex items-start gap-3 text-primary/80'>
-                                                    <span className='mt-1 text-primary'>•</span>
+                                                <li key={index} className='text-primary/80 flex items-start gap-3'>
+                                                    <span className='text-primary mt-1'>•</span>
                                                     <span>{step}</span>
                                                 </li>
                                             ))}
@@ -414,11 +414,11 @@ export const RecipeDetailsPage: FC = () => {
                                 {/* Conservación */}
                                 {recipe.preparation.conservation.length > 0 && (
                                     <div className='transition-all duration-300'>
-                                        <h4 className='mb-4 text-lg font-semibold text-primary'>Conservación</h4>
+                                        <h4 className='text-primary mb-4 text-lg font-semibold'>Conservación</h4>
                                         <ul className='list-none space-y-3'>
                                             {recipe.preparation.conservation.map((step, index) => (
-                                                <li key={index} className='flex items-start gap-3 text-primary/80'>
-                                                    <span className='mt-1 text-primary'>•</span>
+                                                <li key={index} className='text-primary/80 flex items-start gap-3'>
+                                                    <span className='text-primary mt-1'>•</span>
                                                     <span>{step}</span>
                                                 </li>
                                             ))}
@@ -430,7 +430,7 @@ export const RecipeDetailsPage: FC = () => {
                                 {recipe.preparation.prePreparation.length === 0 &&
                                     recipe.preparation.preparation.length === 0 &&
                                     recipe.preparation.conservation.length === 0 && (
-                                        <div className='flex flex-col items-center justify-center py-8 text-primary/50'>
+                                        <div className='text-primary/50 flex flex-col items-center justify-center py-8'>
                                             <p>No hay pasos de elaboración definidos</p>
                                         </div>
                                     )}
@@ -442,7 +442,7 @@ export const RecipeDetailsPage: FC = () => {
                 {/* Image */}
                 <Card className='border-border bg-card'>
                     <CardHeader>
-                        <h2 className='text-2xl font-bold text-primary'>Foto del plato</h2>
+                        <h2 className='text-primary text-2xl font-bold'>Foto del plato</h2>
                     </CardHeader>
                     <CardContent>
                         {recipe.image ? (
@@ -489,7 +489,7 @@ export const RecipeDetailsPage: FC = () => {
                         ) : (
                             <div
                                 onClick={triggerFileInput}
-                                className='flex h-80 w-full cursor-pointer flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-primary/30 bg-black/5 transition-all duration-150 active:scale-[0.98] active:border-primary/60 active:bg-black/10'
+                                className='border-primary/30 active:border-primary/60 flex h-80 w-full cursor-pointer flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed bg-black/5 transition-all duration-150 active:scale-[0.98] active:bg-black/10'
                             >
                                 <input
                                     type='file'
@@ -501,9 +501,9 @@ export const RecipeDetailsPage: FC = () => {
                                 {isUploading ? (
                                     <div className='flex flex-col items-center gap-2'>
                                         <div className='relative'>
-                                            <Loader2 className='h-12 w-12 animate-spin text-primary/60' />
+                                            <Loader2 className='text-primary/60 h-12 w-12 animate-spin' />
                                             <div className='absolute inset-0 flex items-center justify-center'>
-                                                <span className='text-xs font-medium text-primary/90'>
+                                                <span className='text-primary/90 text-xs font-medium'>
                                                     {uploadProgress}%
                                                 </span>
                                             </div>
@@ -512,8 +512,8 @@ export const RecipeDetailsPage: FC = () => {
                                     </div>
                                 ) : (
                                     <>
-                                        <Upload className='h-12 w-12 text-primary/60' />
-                                        <p className='max-w-sm text-center text-primary/70'>
+                                        <Upload className='text-primary/60 h-12 w-12' />
+                                        <p className='text-primary/70 max-w-sm text-center'>
                                             Sube una foto del plato terminado.
                                         </p>
                                     </>

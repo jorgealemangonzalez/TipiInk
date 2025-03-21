@@ -6,7 +6,6 @@ export const onFunctionsInit = (callback: () => void) => {
     initialisationFunctions.push(callback)
 }
 
-
 onInit(() => {
     initialisationFunctions.forEach(callback => callback())
 })

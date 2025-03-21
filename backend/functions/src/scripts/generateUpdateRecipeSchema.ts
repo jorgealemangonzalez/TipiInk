@@ -1,6 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import { zodToJsonSchema } from 'zod-to-json-schema'
+
 import { UpdateRecipeRequestSchema } from '../types/UpdateRecipeRequestSchema'
 
 // Generate JSON Schema

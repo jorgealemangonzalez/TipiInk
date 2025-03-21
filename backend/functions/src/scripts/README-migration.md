@@ -68,9 +68,9 @@ pnpm run migrate:recipes -- --dry-run --batch-size 5
 2. Fetches all recipes from the `recipes` collection
 3. Processes recipes in configurable batches
 4. For each recipe:
-   - Skips recipes that already have a `chunkId` (already indexed in Trieve)
-   - Creates a new chunk in Trieve with the recipe data
-   - Updates the recipe in Firestore with the new `chunkId` (unless in dry run mode)
+    - Skips recipes that already have a `chunkId` (already indexed in Trieve)
+    - Creates a new chunk in Trieve with the recipe data
+    - Updates the recipe in Firestore with the new `chunkId` (unless in dry run mode)
 5. Provides progress updates for each batch
 6. Provides a summary of the migration process at the end
 
@@ -85,4 +85,3 @@ pnpm run migrate:recipes -- --dry-run --batch-size 5
 - This script is idempotent - running it multiple times won't create duplicate entries in Trieve
 - Any recipes that fail to migrate will be listed in the error summary
 - Use the dry run option to test the migration without updating Firestore
-

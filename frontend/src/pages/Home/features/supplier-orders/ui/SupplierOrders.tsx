@@ -54,15 +54,15 @@ interface OrderCardProps {
 
 const OrderCard: FC<OrderCardProps> = ({ order }) => {
     return (
-        <Card className='mb-3 border border-border/40 bg-transparent'>
+        <Card className='border-border/40 mb-3 border bg-transparent'>
             <CardContent className='p-4'>
                 <div className='mb-2 flex items-start justify-between'>
-                    <h3 className='text-2xl font-bold text-primary'>{order.id}</h3>
+                    <h3 className='text-primary text-2xl font-bold'>{order.id}</h3>
                     <Badge variant='outline' className='border-primary/40 text-primary'>
                         {order.status === 'delivered' ? 'Entregado' : 'En Tránsito'}
                     </Badge>
                 </div>
-                <div className='flex items-center text-sm text-primary/70'>
+                <div className='text-primary/70 flex items-center text-sm'>
                     <span>{order.origin}</span>
                     <ArrowRight className='mx-2 h-4 w-4' />
                     <span>{order.destination}</span>
@@ -74,13 +74,13 @@ const OrderCard: FC<OrderCardProps> = ({ order }) => {
 
 export const SupplierOrders: FC = () => {
     return (
-        <Card className='border border-border/40 bg-transparent shadow-md'>
+        <Card className='border-border/40 border bg-transparent shadow-md'>
             <CardHeader>
                 <div className='flex items-center justify-between'>
                     <div>
-                        <CardTitle className='mb-4 text-xl font-medium text-primary'>Seleccionar Proveedor</CardTitle>
+                        <CardTitle className='text-primary mb-4 text-xl font-medium'>Seleccionar Proveedor</CardTitle>
                         <Select>
-                            <SelectTrigger className='w-[280px] border-border/40 bg-transparent'>
+                            <SelectTrigger className='border-border/40 w-[280px] bg-transparent'>
                                 <SelectValue placeholder='Selecciona un proveedor' />
                             </SelectTrigger>
                             <SelectContent>
@@ -99,7 +99,7 @@ export const SupplierOrders: FC = () => {
             <CardContent>
                 {/* Progress Bar */}
                 <div className='mb-6'>
-                    <div className='mb-2 flex justify-between text-sm text-primary/70'>
+                    <div className='text-primary/70 mb-2 flex justify-between text-sm'>
                         <div>
                             <p>{mockOrders[0].orderDate}</p>
                             <p>{mockOrders[0].origin}</p>
@@ -109,19 +109,19 @@ export const SupplierOrders: FC = () => {
                             <p>{mockOrders[0].destination}</p>
                         </div>
                     </div>
-                    <div className='relative h-1 rounded-full bg-primary/20'>
-                        <div className='absolute left-0 top-0 h-full w-1/3 rounded-full bg-primary/40' />
-                        <div className='absolute left-0 top-0 h-3 w-3 -translate-y-1 rounded-full bg-primary' />
-                        <div className='absolute left-1/3 top-0 h-3 w-3 -translate-y-1 rounded-full bg-primary' />
-                        <div className='absolute right-0 top-0 h-3 w-3 -translate-y-1 rounded-full bg-primary/20' />
+                    <div className='bg-primary/20 relative h-1 rounded-full'>
+                        <div className='bg-primary/40 absolute left-0 top-0 h-full w-1/3 rounded-full' />
+                        <div className='bg-primary absolute left-0 top-0 h-3 w-3 -translate-y-1 rounded-full' />
+                        <div className='bg-primary absolute left-1/3 top-0 h-3 w-3 -translate-y-1 rounded-full' />
+                        <div className='bg-primary/20 absolute right-0 top-0 h-3 w-3 -translate-y-1 rounded-full' />
                     </div>
                 </div>
 
                 {/* Recent Shipping */}
                 <div>
                     <div className='mb-4 flex items-center justify-between'>
-                        <h3 className='text-lg font-medium text-primary'>Pedidos Recientes</h3>
-                        <button className='text-sm text-primary/70 hover:text-primary'>Ver Todos</button>
+                        <h3 className='text-primary text-lg font-medium'>Pedidos Recientes</h3>
+                        <button className='text-primary/70 hover:text-primary text-sm'>Ver Todos</button>
                     </div>
                     <div>
                         {mockOrders.slice(1).map(order => (

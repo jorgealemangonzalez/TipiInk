@@ -1,12 +1,13 @@
 import { Timestamp } from 'firebase-admin/firestore'
 import { logger } from 'firebase-functions'
-import { firestore, isLocalEnvironment, onAIToolRequest, onCallWithSecretKey, Request } from '../FirebaseInit'
+import { ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk'
+
+import { Request, firestore, isLocalEnvironment, onAIToolRequest, onCallWithSecretKey } from '../FirebaseInit'
 import { CreateRecipeRequest, CreateRecipeResponse } from '../types/CreateRecipe.d'
 import { CreateRecipeRequestSchema } from '../types/CreateRecipeRequestSchema'
-import { RecipeDBModel, RecipeIngredientDBModel, RecipePreparation } from '../types/recipe.d'
-import { ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk'
-import { UpdateRecipeRequestSchema } from '../types/UpdateRecipeRequestSchema'
 import { UpdateRecipeRequest } from '../types/UpdateRecipe'
+import { UpdateRecipeRequestSchema } from '../types/UpdateRecipeRequestSchema'
+import { RecipeDBModel, RecipeIngredientDBModel, RecipePreparation } from '../types/recipe.d'
 
 const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredientDBModel>): RecipeIngredientDBModel => {
     // Define default values for required fields
@@ -100,9 +101,9 @@ export const createRecipe = onCallWithSecretKey(
             return {
                 success: false,
                 error: error instanceof Error ? error.message : 'Unknown error occurred',
+            }
         }
-        }
-    }
+    },
 )
 
 export const createRecipeTool = onAIToolRequest(CreateRecipeRequestSchema, async (request: CreateRecipeRequest) => {
@@ -113,18 +114,17 @@ export const createRecipeTool = onAIToolRequest(CreateRecipeRequestSchema, async
 const unifyIngredients = (
     existingIngredients: RecipeIngredientDBModel[],
     ingredientsToRemove: string[],
-    newIngredients: Partial<RecipeIngredientDBModel>[]
+    newIngredients: Partial<RecipeIngredientDBModel>[],
 ) => {
     if (!newIngredients) {
         return existingIngredients
     }
-    const ingredientsToStore = existingIngredients.filter(
-        ingredient => !ingredientsToRemove.includes(ingredient.name)
-    )
+    const ingredientsToStore = existingIngredients.filter(ingredient => !ingredientsToRemove.includes(ingredient.name))
     for (const ingredient of newIngredients) {
         const existingIngredient = ingredientsToStore.find(i => i.name === ingredient.name)
         if (existingIngredient) {
-            const updatedIngredient: RecipeIngredientDBModel = { // Just to get the help of the type checker
+            const updatedIngredient: RecipeIngredientDBModel = {
+                // Just to get the help of the type checker
                 name: ingredient.name ?? existingIngredient.name,
                 unit: ingredient.unit ?? existingIngredient.unit,
                 quantityPerProduction: ingredient.quantityPerProduction ?? existingIngredient.quantityPerProduction,
@@ -138,7 +138,6 @@ const unifyIngredients = (
         } else {
             ingredientsToStore.push(mapToRecipeIngredient(ingredient))
         }
-
     }
     return ingredientsToStore
 }
@@ -164,7 +163,7 @@ const updateRecipeFunction = async (recipeData: UpdateRecipeRequest) => {
         ingredients: unifyIngredients(
             recipe.ingredients,
             recipeData.ingredientsToRemove || [],
-            recipeData.ingredients || []
+            recipeData.ingredients || [],
         ),
         preparation: unifyPreparation(recipe.preparation, recipeData.preparation || {}),
     }

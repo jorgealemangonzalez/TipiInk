@@ -35,7 +35,7 @@ function DeliveryInfo({ deliveryDays, orderAdvanceHours }: DeliveryInfoProps) {
                 <h4 className='mb-1 text-sm font-medium text-gray-400'>Días de Reparto</h4>
                 <div className='flex flex-wrap gap-2'>
                     {deliveryDays.map(day => (
-                        <span key={day} className='rounded-full bg-primary/10 px-3 py-1 text-sm text-primary'>
+                        <span key={day} className='bg-primary/10 text-primary rounded-full px-3 py-1 text-sm'>
                             {day}
                         </span>
                     ))}
@@ -68,7 +68,7 @@ function IncidentDialog({ incidentDetails, noteId }: IncidentDialogProps) {
             <DialogTrigger asChild>
                 <Button
                     variant='ghost'
-                    className='h-8 px-2 text-destructive hover:bg-destructive/10 hover:text-destructive'
+                    className='text-destructive hover:bg-destructive/10 hover:text-destructive h-8 px-2'
                 >
                     <AlertTriangle className='mr-2 h-4 w-4' />
                     Incidencia
@@ -76,7 +76,7 @@ function IncidentDialog({ incidentDetails, noteId }: IncidentDialogProps) {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle className='flex items-center gap-2 text-destructive'>
+                    <DialogTitle className='text-destructive flex items-center gap-2'>
                         <AlertTriangle className='h-5 w-5' />
                         Detalles de la Incidencia
                     </DialogTitle>
@@ -130,7 +130,7 @@ function PendingDeliveryNotesTable({ deliveryNotes }: PendingDeliveryNotesTableP
     const pendingDeliveryNotes = deliveryNotes.filter(note => !note.invoiceId)
 
     if (pendingDeliveryNotes.length === 0) {
-        return <div className='py-8 text-center text-muted-foreground'>No hay albaranes pendientes</div>
+        return <div className='text-muted-foreground py-8 text-center'>No hay albaranes pendientes</div>
     }
 
     return (
@@ -138,7 +138,7 @@ function PendingDeliveryNotesTable({ deliveryNotes }: PendingDeliveryNotesTableP
             <div className='space-y-1'>
                 {pendingDeliveryNotes.map((note, index) => (
                     <div key={note.id}>
-                        <div className='flex items-center justify-between bg-background px-2 py-4 transition-colors hover:bg-gray-700/30'>
+                        <div className='bg-background flex items-center justify-between px-2 py-4 transition-colors hover:bg-gray-700/30'>
                             <div className='space-y-1'>
                                 <div className='flex items-center gap-2'>
                                     <span className='font-medium'>{note.id}</span>
@@ -166,7 +166,7 @@ type InvoicesTableProps = {
 
 function InvoicesTable({ invoices }: InvoicesTableProps) {
     if (invoices.length === 0) {
-        return <div className='py-8 text-center text-muted-foreground'>No hay facturas disponibles</div>
+        return <div className='text-muted-foreground py-8 text-center'>No hay facturas disponibles</div>
     }
 
     return (

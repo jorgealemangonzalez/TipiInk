@@ -1,7 +1,9 @@
-import * as functions from 'firebase-functions'
 import * as admin from 'firebase-admin'
+import * as functions from 'firebase-functions'
+
+import { Request, onCallUnauthenticated } from '../FirebaseInit'
 import { CreateLeadRequest, Lead } from '../types/Lead'
-import { onCallUnauthenticated, Request } from '../FirebaseInit'
+
 /**
  * Creates a new lead in the database
  * This function is public and doesn't require authentication
@@ -13,7 +15,7 @@ export const createLead = onCallUnauthenticated(async (request: Request<CreateLe
         if (!data.name || !data.phone || !data.weeklyOrders) {
             throw new functions.https.HttpsError(
                 'invalid-argument',
-                'The function must be called with name, phone and weeklyOrders.'
+                'The function must be called with name, phone and weeklyOrders.',
             )
         }
 

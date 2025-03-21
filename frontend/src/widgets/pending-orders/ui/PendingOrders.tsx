@@ -21,7 +21,7 @@ const Header: FC = () => {
     return (
         <div className='px-6 py-5'>
             <div className='flex items-center gap-3'>
-                <h2 className='text-2xl font-bold text-primary'>Pedidos a Enviar</h2>
+                <h2 className='text-primary text-2xl font-bold'>Pedidos a Enviar</h2>
             </div>
         </div>
     )
@@ -75,7 +75,7 @@ export const PendingOrders: FC<PendingOrdersProps> = ({ className, collapsed = f
 
     return (
         <div className={cn('h-screen', className)}>
-            <div className='h-full rounded-t-[35px] bg-muted'>
+            <div className='bg-muted h-full rounded-t-[35px]'>
                 <Header />
                 <OrdersList orders={sortedOrders} collapsed={collapsed} />
             </div>

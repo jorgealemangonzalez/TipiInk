@@ -14,8 +14,8 @@ export const PendingOrdersPage: FC = () => {
     )
 
     return (
-        <div className='flex min-h-screen flex-col bg-background'>
-            <div className='fixed left-0 right-0 top-0 z-50 bg-background shadow-md'>
+        <div className='bg-background flex min-h-screen flex-col'>
+            <div className='bg-background fixed left-0 right-0 top-0 z-50 shadow-md'>
                 <div className='flex items-center justify-between px-4 py-6'>
                     <button
                         onClick={() => navigate(-1)}

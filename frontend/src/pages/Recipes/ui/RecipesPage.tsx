@@ -51,7 +51,7 @@ export const RecipesPage: FC = () => {
     if (isLoading) {
         return (
             <div className='flex min-h-screen items-center justify-center'>
-                <p className='text-xl text-primary'>Cargando recetas...</p>
+                <p className='text-primary text-xl'>Cargando recetas...</p>
             </div>
         )
     }
@@ -61,7 +61,7 @@ export const RecipesPage: FC = () => {
             <div className='space-y-4 p-4'>
                 <div className='flex items-center gap-4'>
                     <BackButton />
-                    <h1 className='absolute left-1/2 -translate-x-1/2 text-2xl font-bold text-primary'>Recetario</h1>
+                    <h1 className='text-primary absolute left-1/2 -translate-x-1/2 text-2xl font-bold'>Recetario</h1>
                     <div
                         onClick={() => setShowOnlyMenu(!showOnlyMenu)}
                         className={cn(
@@ -76,7 +76,7 @@ export const RecipesPage: FC = () => {
                 <div className='flex items-center justify-between'>
                     <div className='flex h-[60px] items-center gap-3 rounded-full border border-gray-700 pl-1 pr-7'>
                         <div className='flex h-[44px] w-[44px] items-center justify-center rounded-full border-r border-gray-700'>
-                            <Euro className='h-6 w-6 text-primary' />
+                            <Euro className='text-primary h-6 w-6' />
                         </div>
                         <div className='flex flex-col'>
                             <span className={cn('text-xl font-bold', getPercentageColor(totalAverageCost))}>
@@ -94,7 +94,7 @@ export const RecipesPage: FC = () => {
                                 onClick={() => handleRecipeClick(recipe.id)}
                                 className='flex cursor-pointer items-center justify-between px-2 py-4 transition-colors hover:bg-gray-700/30'
                             >
-                                <h3 className='text-xl font-semibold text-primary'>{recipe.name}</h3>
+                                <h3 className='text-primary text-xl font-semibold'>{recipe.name}</h3>
                                 <div className='flex items-center gap-3'>
                                     <div className='flex items-center gap-1'>
                                         {recipe.priceVariation > 0 ? (

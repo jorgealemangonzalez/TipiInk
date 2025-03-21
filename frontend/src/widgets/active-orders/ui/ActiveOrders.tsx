@@ -21,7 +21,7 @@ const Header: FC = () => {
     return (
         <div className='px-6 py-5'>
             <div className='flex items-center gap-3'>
-                <h2 className='text-2xl font-bold text-primary'>Pedidos a Recibir</h2>
+                <h2 className='text-primary text-2xl font-bold'>Pedidos a Recibir</h2>
             </div>
         </div>
     )
@@ -75,7 +75,7 @@ export const ActiveOrders: FC<ActiveOrdersProps> = ({ className, collapsed = fal
 
     return (
         <div className={cn('h-screen', className)}>
-            <div className='h-full rounded-t-[35px] bg-muted shadow-[0_-1px_20px_rgba(0,0,0,0.25)]'>
+            <div className='bg-muted h-full rounded-t-[35px] shadow-[0_-1px_20px_rgba(0,0,0,0.25)]'>
                 <Header />
                 <OrdersList orders={sortedOrders} collapsed={collapsed} />
             </div>

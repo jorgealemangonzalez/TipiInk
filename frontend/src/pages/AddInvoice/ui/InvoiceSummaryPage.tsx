@@ -33,7 +33,7 @@ export function InvoiceSummaryPage() {
                                 <div className='flex items-center justify-between'>
                                     <div>
                                         <h4 className='font-medium'>{note.id}</h4>
-                                        <p className='text-sm text-muted-foreground'>
+                                        <p className='text-muted-foreground text-sm'>
                                             Fecha: {new Date(note.date).toLocaleDateString()}
                                         </p>
                                     </div>

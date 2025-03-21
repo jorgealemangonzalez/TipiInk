@@ -1,5 +1,4 @@
 #!/usr/bin/env ts-node
-
 import * as admin from 'firebase-admin'
 import { ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk'
 
@@ -26,11 +25,11 @@ const trieve = new TrieveSDK({
 
 // Interface to track migration stats
 interface MigrationStats {
-    total: number;
-    success: number;
-    skipped: number;
-    error: number;
-    errors: Array<{ id: string; error: string }>;
+    total: number
+    success: number
+    skipped: number
+    error: number
+    errors: Array<{ id: string; error: string }>
 }
 
 // Function to migrate recipes from Firestore to Trieve
@@ -71,7 +70,7 @@ async function migrateRecipesToTrieve() {
             console.log(
                 `Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(recipes.length / batchSize)} (${
                     batch.length
-                } recipes)`
+                } recipes)`,
             )
 
             // Process each recipe in the current batch
@@ -125,8 +124,8 @@ async function migrateRecipesToTrieve() {
             console.log(`Batch ${Math.floor(i / batchSize) + 1} completed.`)
             console.log(
                 `Progress: ${Math.min(i + batchSize, recipes.length)}/${recipes.length} recipes processed (${Math.round(
-                    (Math.min(i + batchSize, recipes.length) / recipes.length) * 100
-                )}%)`
+                    (Math.min(i + batchSize, recipes.length) / recipes.length) * 100,
+                )}%)`,
             )
             console.log(`Current stats: Success=${stats.success}, Skipped=${stats.skipped}, Errors=${stats.error}`)
             console.log('-----------------------------------')

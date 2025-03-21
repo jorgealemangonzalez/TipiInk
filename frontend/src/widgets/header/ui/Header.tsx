@@ -14,7 +14,7 @@ const NavigationCard: FC<{
     onClick?: () => void
 }> = ({ icon, label, onClick }) => (
     <div
-        className='flex h-[60px] cursor-pointer flex-row items-center gap-1.5 rounded-full bg-muted pl-1 pr-7 shadow-[0_4px_12px_rgba(0,0,0,0.25)] transition-opacity hover:opacity-80'
+        className='bg-muted flex h-[60px] cursor-pointer flex-row items-center gap-1.5 rounded-full pl-1 pr-7 shadow-[0_4px_12px_rgba(0,0,0,0.25)] transition-opacity hover:opacity-80'
         onClick={onClick}
     >
         <div className='flex h-[54px] min-w-[54px] items-center justify-center rounded-full bg-gray-700'>
@@ -23,7 +23,7 @@ const NavigationCard: FC<{
             })}
         </div>
         <div className='w-full flex-1 text-center'>
-            <p className='text-sm font-medium leading-tight text-primary'>{label}</p>
+            <p className='text-primary text-sm font-medium leading-tight'>{label}</p>
         </div>
     </div>
 )

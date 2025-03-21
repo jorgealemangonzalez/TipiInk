@@ -9,5 +9,5 @@
 html,
 body,
 #root {
-    @apply h-full w-full bg-background text-foreground;
+    @apply bg-background text-foreground h-full w-full;
 }

@@ -43,12 +43,12 @@ export const onCallUnauthenticated = <P, R>(handler: (request: functions.https.C
 }
 
 export interface Request<P> extends functions.https.CallableRequest<P> {
-    rawRequest: functions.https.Request;
+    rawRequest: functions.https.Request
 }
 
 const snakeCaseToCamelCase = (str: object) => {
     return Object.fromEntries(
-        Object.entries(str).map(([key, value]) => [key.replace(/(_\w)/g, (_, letter) => letter.toUpperCase()), value])
+        Object.entries(str).map(([key, value]) => [key.replace(/(_\w)/g, (_, letter) => letter.toUpperCase()), value]),
     )
 }
 

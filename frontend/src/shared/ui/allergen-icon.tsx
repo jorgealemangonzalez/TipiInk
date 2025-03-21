@@ -50,8 +50,8 @@ export const AllergenIcon: FC<AllergenIconProps> = ({ allergen, className }) => 
     const Icon = allergenIcons[allergen]
     return (
         <div className={cn('group relative flex h-8 w-8 items-center justify-center rounded-full', className)}>
-            <Icon className='h-5 w-5 text-primary/80 transition-colors hover:text-primary' />
-            <div className='absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-primary opacity-0 transition-opacity group-hover:opacity-100'>
+            <Icon className='text-primary/80 hover:text-primary h-5 w-5 transition-colors' />
+            <div className='text-primary absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs opacity-0 transition-opacity group-hover:opacity-100'>
                 {allergenNames[allergen]}
             </div>
         </div>

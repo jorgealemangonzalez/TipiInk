@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { Allergen } from './recipe'
+import { Allergen } from '../recipes/recipe'
 
 // Define Zod schemas based on the existing types
 export const AllergenEnum = z.enum<Allergen, [Allergen, ...Allergen[]]>([

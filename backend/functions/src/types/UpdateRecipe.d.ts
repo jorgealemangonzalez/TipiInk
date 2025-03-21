@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
+import { RecipeDBModel } from '../recipes/recipe'
 import { UpdateRecipeRequestSchema } from './UpdateRecipeRequestSchema'
-import { RecipeDBModel } from './recipe'
 
 export type UpdateRecipeRequest = z.infer<typeof UpdateRecipeRequestSchema>
 

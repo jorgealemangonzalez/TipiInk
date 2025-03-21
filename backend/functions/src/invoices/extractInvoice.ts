@@ -8,10 +8,10 @@ import { z } from 'zod'
 
 import { firestore, isLocalEnvironment, storage } from '../FirebaseInit'
 import { throwIfUnauthenticated } from '../auth/throwIfUnauthenticated'
+import { onFunctionsInit } from '../firebase/OnFunctionsInit'
 import { ExtractInvoiceRequest, ExtractInvoiceResponse, Invoice } from '../types/ExtractInvoice'
 import { User } from '../types/User'
-import { onFunctionsInit } from './OnFunctionsInit'
-import { extractInvoicePrompt } from './prompts'
+import { extractInvoicePrompt } from './extractInvoicePrompt'
 
 let openai: OpenAI
 

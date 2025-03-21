@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 import { FirestoreDataConverter } from 'firebase/firestore'
 
-import { Recipe, RecipeDBModel } from '@monorepo/functions/src/types/recipe'
+import { Recipe, RecipeDBModel } from '@monorepo/functions/src/recipes/recipe'
 
 import { useCollection } from '../../../firebase/hooks/useCollection'
 import {

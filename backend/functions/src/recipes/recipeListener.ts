@@ -1,10 +1,9 @@
-import { Timestamp } from 'firebase-admin/firestore'
 import * as functions from 'firebase-functions'
 import { logger } from 'firebase-functions'
 import { ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk'
 
 import { firestore, isLocalEnvironment } from '../FirebaseInit'
-import { RecipeDBModel } from '../types/recipe.d'
+import { RecipeDBModel } from './recipe'
 
 const trDataset = isLocalEnvironment() ? 'c7b4534b-ed9b-40b7-8b20-268b76bf4217' : 'cd4edb52-2fcb-4e69-bd5a-8275b3a79eaa'
 

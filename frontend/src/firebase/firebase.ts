@@ -39,7 +39,7 @@ const storage = getStorage(firebaseApp)
 if (isLocalEnvironment) {
     console.log('Connecting to the emulator')
     connectAuthEmulator(auth, `http://${window.location.hostname}:5004`)
-    connectFunctionsEmulator(functions, window.location.hostname, 5001)
+    connectFunctionsEmulator(functions, window.location.hostname, 5008)
     connectFirestoreEmulator(firestore, window.location.hostname, 5003)
     connectStorageEmulator(storage, window.location.hostname, 5005)
 }

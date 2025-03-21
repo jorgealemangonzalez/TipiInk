@@ -66,3 +66,4 @@ backend/emulator-data/
 firebase-export-*
 
 scripts/admin-sdk-service-account.json
+.qodo

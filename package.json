@@ -6,6 +6,7 @@
     "scripts": {
         "set-admin": "node scripts/designateAsAdmin.js",
         "list-admins": "node scripts/listAdminUsers.js",
+        "prettier": "prettier frontend/src backend/functions/src -w -c --config .prettierrc",
         "frontend:deploy": "cd frontend && pnpm run deploy",
         "landing:deploy": "cd landing && pnpm run deploy",
         "functions:deploy": "pnpm firebase deploy --only=functions",
@@ -26,6 +27,8 @@
         "concurrently": "^8.2.2",
         "firebase-admin": "^13.2.0",
         "firebase-tools": "^13.34.0",
-        "lefthook": "^1.7.21"
+        "lefthook": "^1.7.21",
+        "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+        "prettier-plugin-tailwindcss": "^0.6.8"
     }
 }

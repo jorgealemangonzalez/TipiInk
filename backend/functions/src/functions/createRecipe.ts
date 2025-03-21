@@ -100,7 +100,7 @@ export const createRecipe = onCallWithSecretKey(
             return {
                 success: false,
                 error: error instanceof Error ? error.message : 'Unknown error occurred',
-            }
+        }
         }
     }
 )
@@ -138,6 +138,7 @@ const unifyIngredients = (
         } else {
             ingredientsToStore.push(mapToRecipeIngredient(ingredient))
         }
+
     }
     return ingredientsToStore
 }

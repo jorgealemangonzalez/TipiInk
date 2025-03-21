@@ -8,7 +8,6 @@
         "build": "vite build",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 1000 --fix",
         "preview": "vite preview",
-        "prettier": "prettier src -w -c --config .prettierrc",
         "deploy": "vite build && pnpm firebase deploy --only hosting:tipi-ink",
         "deploy:breaking": "IS_BREAKING_CHANGE=true pnpm run deploy"
     },
@@ -64,7 +63,6 @@
     "devDependencies": {
         "@google-cloud/translate": "^8.5.0",
         "@monorepo/functions": "workspace:*",
-        "@trivago/prettier-plugin-sort-imports": "^4.3.0",
         "@types/firebase": "^3.2.1",
         "@types/fs-extra": "^11.0.4",
         "@types/mixpanel-browser": "^2.49.1",
@@ -82,7 +80,6 @@
         "firebase-tools": "^13.11.4",
         "fs-extra": "^11.2.0",
         "postcss": "^8.4.39",
-        "prettier-plugin-tailwindcss": "^0.6.8",
         "tailwindcss": "^3.4.4",
         "typescript": "^5.2.2",
         "vite": "^5.3.1"

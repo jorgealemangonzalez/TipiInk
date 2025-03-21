@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@trivago/prettier-plugin-sort-imports':
+        specifier: ^4.3.0
+        version: 4.3.0(prettier@3.5.3)
       concurrently:
         specifier: ^8.2.2
         version: 8.2.2
@@ -20,6 +23,9 @@ importers:
       lefthook:
         specifier: ^1.7.21
         version: 1.11.3
+      prettier-plugin-tailwindcss:
+        specifier: ^0.6.8
+        version: 0.6.11(@trivago/prettier-plugin-sort-imports@4.3.0(prettier@3.5.3))(prettier@3.5.3)
 
   backend/functions:
     dependencies:
@@ -244,9 +250,6 @@ importers:
       '@monorepo/functions':
         specifier: workspace:*
         version: link:../backend/functions
-      '@trivago/prettier-plugin-sort-imports':
-        specifier: ^4.3.0
-        version: 4.3.0(prettier@3.5.3)
       '@types/firebase':
         specifier: ^3.2.1
         version: 3.2.1
@@ -298,9 +301,6 @@ importers:
       postcss:
         specifier: ^8.4.39
         version: 8.4.39
-      prettier-plugin-tailwindcss:
-        specifier: ^0.6.8
-        version: 0.6.11(@trivago/prettier-plugin-sort-imports@4.3.0(prettier@3.5.3))(prettier@3.5.3)
       tailwindcss:
         specifier: ^3.4.4
         version: 3.4.4(ts-node@10.9.2(@swc/core@1.6.3(@swc/helpers@0.5.5))(@types/node@22.13.10)(typescript@5.8.2))

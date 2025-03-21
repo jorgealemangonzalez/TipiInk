@@ -2,7 +2,7 @@ import { Recipe, RecipeDBModel } from '@monorepo/functions/src/types/recipe'
 import { FirestoreDataConverter } from 'firebase/firestore'
 import { useEffect } from 'react'
 import { useCollection } from '../../../firebase/hooks/useCollection'
-import { getCostPercentage, getCostPerServing, getPricePerProduction, getQuantityPerServing } from './recipeModelServices'
+import { getCostPercentage, getCostPerServing, getPricePerProduction, getQuantityPerServing, getProductionCost } from './recipeModelServices'
 import { mockRecipes } from './recipesMock'
 
 const recipeConverter: FirestoreDataConverter<Recipe, RecipeDBModel> = { // TODO MOVE TO BACKEND AND IMPORT FROM @MONOREPO/FUNCTIONS
@@ -29,16 +29,20 @@ const recipeConverter: FirestoreDataConverter<Recipe, RecipeDBModel> = { // TODO
   },
   fromFirestore: (snapshot, options) => {
     console.log('fromFirestore', snapshot)
-    const data = snapshot.data(options) as RecipeDBModel
+    const recipe = snapshot.data(options) as RecipeDBModel
+    const productionCost = getProductionCost(recipe)
+    const costPerServing = getCostPerServing(recipe, productionCost)
+    const costPercentage = getCostPercentage(recipe, costPerServing)
     return {
-      ...data,
+      ...recipe,
       id: snapshot.id,
-      costPercentage: getCostPercentage(data),
-      costPerServing: getCostPerServing(data),
-      ingredients: data.ingredients.map((ingredient) => ({
+      costPercentage,
+      costPerServing,
+      productionCost,
+      ingredients: recipe.ingredients.map((ingredient) => ({
         ...ingredient,
         pricePerProduction: getPricePerProduction(ingredient),
-        quantityPerServing: getQuantityPerServing(data, ingredient),
+        quantityPerServing: getQuantityPerServing(recipe, ingredient),
       })),
     } as Recipe
   },

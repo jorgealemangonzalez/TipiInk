@@ -40,7 +40,6 @@ export interface RecipeDBModel {
     productionTime?: string;
     pvp: number;
     servingsPerProduction: number;
-    productionCost: number;
     priceVariation: number;
     inMenu: boolean;
     ingredients: RecipeIngredientDBModel[];
@@ -53,6 +52,7 @@ export interface RecipeDBModel {
 
 export interface Recipe extends Omit<RecipeDBModel, 'ingredients'> {
     id: string;
+    productionCost: number;
     costPercentage: number;
     costPerServing: number;
     ingredients: RecipeIngredient[];

@@ -37,10 +37,11 @@ const mapToRecipeDBModel = (recipeData: Partial<RecipeDBModel>): RecipeDBModel =
     const createdAt = Timestamp.now()
     const recipe: RecipeDBModel = {
         name: recipeData.name || '',
+        category: recipeData.category,
         allergens: recipeData.allergens ?? [],
+        productionTime: recipeData.productionTime,
         pvp: recipeData.pvp ?? 0,
         servingsPerProduction: recipeData.servingsPerProduction ?? 1,
-        productionCost: recipeData.productionCost ?? 0,
         priceVariation: recipeData.priceVariation ?? 0,
         inMenu: recipeData.inMenu ?? false,
         ingredients: recipeData.ingredients?.map(mapToRecipeIngredient) ?? [],

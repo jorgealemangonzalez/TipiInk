@@ -43,10 +43,8 @@ export const BaseRecipeSchema = z.object({
     productionTime: z.string().optional().describe('Production time of the recipe'),
     pvp: z.number().optional().describe('Sell price per unit of the recipe'),
     servingsPerProduction: z.number().optional().describe('Number of servings per production'),
-    productionCost: z.number().optional().describe('Ingredients cost per production'),
     priceVariation: z.number().optional().describe('Price variation of the recipe'),
     inMenu: z.boolean().optional().describe('If the recipe is in the menu'),
     ingredients: z.array(RecipeIngredientSchema).optional().describe('Ingredients of the recipe'),
     preparation: PreparationSchema.optional().describe('Preparation steps of the recipe'),
-    image: z.string().optional().describe('Image of the recipe'),
 })

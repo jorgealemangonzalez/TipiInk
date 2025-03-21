@@ -51,17 +51,9 @@
       "type": "number",
       "description": "Sell price per unit of the recipe"
     },
-    "costPerServing": {
-      "type": "number",
-      "description": "Ingredients cost per serving of the recipe"
-    },
     "servingsPerProduction": {
       "type": "number",
       "description": "Number of servings per production"
-    },
-    "productionCost": {
-      "type": "number",
-      "description": "Ingredients cost per production"
     },
     "priceVariation": {
       "type": "number",
@@ -88,17 +80,9 @@
             "type": "string",
             "description": "Unit of the ingredient"
           },
-          "quantityPerServing": {
-            "type": "number",
-            "description": "Quantity per serving"
-          },
           "pricePerUnit": {
             "type": "number",
             "description": "Price per unit"
-          },
-          "pricePerProduction": {
-            "type": "number",
-            "description": "Price per production"
           }
         },
         "required": [
@@ -135,10 +119,6 @@
       },
       "additionalProperties": false,
       "description": "Preparation steps of the recipe"
-    },
-    "image": {
-      "type": "string",
-      "description": "Image of the recipe"
     }
   },
   "required": [

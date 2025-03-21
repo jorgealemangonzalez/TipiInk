@@ -1,20 +1,21 @@
 import { RecipeDBModel, RecipeIngredientDBModel } from "@monorepo/functions/src/types/recipe";
 
-export const getCostPercentage = (recipe: RecipeDBModel) => {
+export const getProductionCost = (recipe: RecipeDBModel) => {
+    return recipe.ingredients.reduce((acc, ingredient) => acc + ingredient.pricePerUnit * ingredient.quantityPerProduction, 0)
+}
+
+export const getCostPerServing = (recipe: RecipeDBModel, productionCost: number) => {
+    if (!recipe.servingsPerProduction) {
+        return 0
+    }
+    return productionCost / recipe.servingsPerProduction
+}
+
+export const getCostPercentage = (recipe: RecipeDBModel, costPerServing: number) => {
     if (!recipe.servingsPerProduction || !recipe.pvp) {
         return 0
     }
-    const totalCost = recipe.ingredients.reduce((acc, ingredient) => acc + ingredient.pricePerProduction, 0) / recipe.servingsPerProduction
-    const costPercentage = (totalCost / recipe.pvp) * 100
-    console.log('costPercentage', {totalCost, pvp: recipe.pvp, costPercentage, recipe})
-    return costPercentage
-}
-
-export const getCostPerServing = (recipe: RecipeDBModel) => {
-    if (!recipe.servingsPerProduction || !recipe.productionCost) {
-        return 0
-    }
-    return recipe.productionCost / recipe.servingsPerProduction
+    return (costPerServing / recipe.pvp) * 100
 }
 
 export const getPricePerProduction = (ingredient: RecipeIngredientDBModel) => {

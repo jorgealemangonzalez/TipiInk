@@ -2,7 +2,9 @@ pre-commit:
     commands:
         lint-frontend:
             run: cd frontend && pnpm run lint $(echo "{staged_files}" | sed 's/ /\n/g' | grep "^frontend/" | sed 's/^frontend\///')
-        prettier-frontend:
+        lint-functions:
+            run: cd backend/functions && pnpm run lint $(echo "{staged_files}" | sed 's/ /\n/g' | grep "^backend/" | sed 's/^backend\///')
+        prettier-frontend-and-functions:
             run: pnpm run prettier
 
 # commit-msg:

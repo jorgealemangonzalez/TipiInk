@@ -1,7 +1,7 @@
 pre-commit:
     commands:
         run-hooks:
-            run: ./run-hooks.sh "{staged_files}"
+            run: ./run-hooks.sh {staged_files}
 # commit-msg:
 #     commands:
 #         lint:

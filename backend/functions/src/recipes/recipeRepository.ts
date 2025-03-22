@@ -7,6 +7,7 @@ export const getRecipeRefById = (id: string) =>
 
 export const getRecipeById = async (id: string) => {
     const snapshot = (await getRecipeRefById(id).get()).data()
+
     if (!snapshot) {
         throw new Error(`Recipe not found id: ${id}`)
     }

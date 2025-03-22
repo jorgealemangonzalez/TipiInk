@@ -4,18 +4,15 @@
 run_safely() {
   local folder="$1"
   local command_type="$2"
-  local path_prefix="$3"
-  local command="$4"
-  local file_pattern="$5"
-
-  echo "Running $command_type for $folder..."
   
   # Check if there are any staged files in the specified folder
-  local staged_files=$(echo "$STAGED_FILES" | grep -E "^$path_prefix/")
+  local staged_files=$(echo "$STAGED_FILES" | tr ' ' '\n' | grep -E "^$folder/")
   
   if [ -n "$staged_files" ]; then
+
+    echo "========================= Running $command_type for $folder =========================="
     # Get relative paths
-    local relative_files=$(echo "$staged_files" | sed "s|^$path_prefix/||g")
+    local relative_files=$(echo "$staged_files" | sed "s|^$folder/||g")
     
     # Change to the folder and run the command
     cd "$folder" || { echo "Failed to change directory to $folder"; return 1; }
@@ -23,7 +20,7 @@ run_safely() {
     if [ "$command_type" = "lint" ]; then
       pnpm run lint $relative_files || { echo "$command_type failed for $folder"; cd - > /dev/null; return 1; }
     elif [ "$command_type" = "prettier" ]; then
-      pnpm run prettier "$file_pattern" -w -c --config .prettierrc || { echo "$command_type failed for $folder"; cd - > /dev/null; return 1; }
+      pnpm run -w prettier $staged_files || { echo "$command_type failed for $folder"; cd - > /dev/null; return 1; }
     fi
     
     # Return to the original directory
@@ -32,32 +29,44 @@ run_safely() {
     echo "$command_type for $folder completed successfully!"
   else
     echo "No staged files in $folder, skipping $command_type"
+    echo "STAGED_FILES: $STAGED_FILES"
   fi
   
   return 0
 }
 
-# Fetch staged files
-STAGED_FILES="$1"
+# Combine all arguments into a single space-separated string of staged files
+STAGED_FILES="$*"
 if [ -z "$STAGED_FILES" ]; then
   echo "No staged files provided!"
   exit 0
 fi
 
+echo "Processing staged files: $STAGED_FILES"
+
 # Store the original directory
 ORIGINAL_DIR=$(pwd)
 
+# Track if any command failed
+ERRORS=0
+
 # Run lint commands
-run_safely "frontend" "lint" "frontend" "pnpm run lint" ""
-run_safely "backend/functions" "lint" "backend" "pnpm run lint" ""
-run_safely "landing" "lint" "landing" "pnpm run lint" ""
-run_safely "shared" "lint" "shared" "pnpm run lint" ""
+run_safely "frontend" "lint" || ERRORS=$((ERRORS + 1))
+run_safely "backend/functions" "lint" || ERRORS=$((ERRORS + 1))
+run_safely "landing" "lint" || ERRORS=$((ERRORS + 1))
+run_safely "shared" "lint" || ERRORS=$((ERRORS + 1))
 
 # Run prettier commands
-run_safely "frontend" "prettier" "frontend" "pnpm run prettier" "frontend/src"
-run_safely "backend/functions" "prettier" "backend" "pnpm run prettier" "backend/functions/src"
-run_safely "landing" "prettier" "landing" "pnpm run prettier" "landing/src"
-run_safely "shared" "prettier" "shared" "pnpm run prettier" "shared/src"
+run_safely "frontend" "prettier" || ERRORS=$((ERRORS + 1))
+run_safely "backend/functions" "prettier" || ERRORS=$((ERRORS + 1))
+run_safely "landing" "prettier" || ERRORS=$((ERRORS + 1))
+run_safely "shared" "prettier" || ERRORS=$((ERRORS + 1))
+
+# Check if there were any errors
+if [ $ERRORS -gt 0 ]; then
+  echo "Pre-commit hooks failed with $ERRORS error(s). Commit aborted."
+  exit 1
+fi
 
 echo "All pre-commit hooks completed successfully!"
 exit 0 

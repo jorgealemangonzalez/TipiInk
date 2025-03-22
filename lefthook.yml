@@ -1,15 +1,7 @@
 pre-commit:
     commands:
-        lint-frontend:
-            run: cd frontend && pnpm run lint $(echo "{staged_files}" | sed 's/ /\n/g' | grep "^frontend/" | sed 's/^frontend\///')
-        lint-functions:
-            run: cd backend/functions && pnpm run lint $(echo "{staged_files}" | sed 's/ /\n/g' | grep "^backend/" | sed 's/^backend\/functions\///')
-        lint-landing:
-            run: cd landing && pnpm run lint $(echo "{staged_files}" | sed 's/ /\n/g' | grep "^landing/" | sed 's/^landing\///')
-        lint-shared:
-            run: cd shared && pnpm run lint $(echo "{staged_files}" | sed 's/ /\n/g' | grep "^shared/" | sed 's/^shared\///')
-        prettier-frontend-and-functions:
-            run: pnpm run prettier
+        run-hooks:
+            run: ./run-hooks.sh "{staged_files}"
 # commit-msg:
 #     commands:
 #         lint:

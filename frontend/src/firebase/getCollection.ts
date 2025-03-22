@@ -20,7 +20,7 @@ export interface GetCollectionParams {
     limit?: number
     startAfter?: number
     where?: Parameters<typeof fWhere>[]
-    converter?: FirestoreDataConverter<any>
+    converter?: FirestoreDataConverter<any, any>
 }
 
 export const listenCollection = async <T extends FSDocument>(

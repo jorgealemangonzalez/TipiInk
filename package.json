@@ -6,7 +6,7 @@
     "scripts": {
         "set-admin": "node scripts/designateAsAdmin.js",
         "list-admins": "node scripts/listAdminUsers.js",
-        "prettier": "prettier frontend/src backend/functions/src landing/src -w -c --config .prettierrc",
+        "prettier": "prettier frontend/src backend/functions/src landing/src shared/src -w -c --config .prettierrc",
         "frontend:deploy": "cd frontend && pnpm run deploy",
         "landing:deploy": "cd landing && pnpm run deploy",
         "functions:deploy": "pnpm firebase deploy --only=functions",

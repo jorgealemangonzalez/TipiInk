@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "module": "CommonJS",
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "outDir": "dist/commonjs",
+        "sourceMap": true,
+        "inlineSources": true,
+        "strict": true,
+        "target": "ES2020",
+        "skipLibCheck": true,
+        "baseUrl": ".",
+        "declaration": true,
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "paths": {
+            "@/*": ["./src/*"]
+        }
+    },
+    "compileOnSave": true,
+    "include": ["src"],
+    "exclude": ["node_modules", "dist"]
+}

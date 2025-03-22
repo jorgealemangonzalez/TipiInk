@@ -1,8 +1,9 @@
 import * as functions from 'firebase-functions'
 import { logger } from 'firebase-functions'
-import { ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk'
+import { TrieveSDK } from 'trieve-ts-sdk'
 
-import { firestore, isLocalEnvironment } from '../FirebaseInit'
+import { isLocalEnvironment } from '../FirebaseInit'
+import { createRecipeInTrieveById } from '../trieve/trieveService'
 import { RecipeDBModel } from './recipe'
 
 const trDataset = isLocalEnvironment() ? 'c7b4534b-ed9b-40b7-8b20-268b76bf4217' : 'cd4edb52-2fcb-4e69-bd5a-8275b3a79eaa'
@@ -21,19 +22,8 @@ export const onRecipeCreated = functions.firestore.onDocumentCreated('recipes/{r
             return
         }
         const recipeData = snapshot.data() as RecipeDBModel
-        const response = await trieve.createChunk({
-            chunk_html: JSON.stringify({ id: recipeId, ...recipeData }),
-            metadata: {
-                recipeId,
-            },
-        })
 
-        await firestore
-            .collection('recipes')
-            .doc(recipeId)
-            .update({
-                chunkId: (response.chunk_metadata as ChunkMetadata).id,
-            })
+        await createRecipeInTrieveById(recipeId)
 
         logger.info(`Created new Trieve chunk for recipe ${recipeId} : ${recipeData.name}`)
     } catch (error) {
@@ -51,15 +41,7 @@ export const onRecipeUpdated = functions.firestore.onDocumentUpdated('recipes/{r
         }
         if (!recipeData.chunkId) {
             logger.error(`No chunkId associated with the recipe to update ${recipeId} : ${recipeData.name}`)
-            const response = await trieve.createChunk({
-                chunk_html: JSON.stringify({ id: recipeId, ...recipeData }),
-                metadata: {
-                    recipeId,
-                },
-            })
-            await event.data?.after.ref.update({
-                chunkId: (response.chunk_metadata as ChunkMetadata).id,
-            })
+            await createRecipeInTrieveById(recipeId)
         } else {
             await trieve.updateChunk({
                 chunk_id: recipeData.chunkId,

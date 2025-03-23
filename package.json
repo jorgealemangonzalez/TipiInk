@@ -15,10 +15,11 @@
         "deploy:breaking": "IS_BREAKING_CHANGE=true pnpm run deploy",
         "postDeployHook": "node scripts/writeVersion.js",
         "backend:watch": "cd backend/functions && pnpm run build:watch",
+        "shared:watch": "cd backend/functions/shared && pnpm run build:watch",
         "backend:emulate": "pnpm firebase emulators:start --import=backend/emulator-data --export-on-exit=backend/emulator-data --inspect-functions",
         "frontend:dev": "cd frontend && pnpm run dev",
         "stripe:listen": "stripe listen  --forward-to http://localhost:5001/tipi-ink/us-central1/ext-firestore-stripe-payments-handleWebhookEvents --forward-connect-to http://localhost:5001/tipi-ink/us-central1/stripeWebhookEvents",
-        "start": "concurrently \"pnpm backend:watch\" \"pnpm backend:emulate\" \"pnpm frontend:dev\""
+        "start": "concurrently \"pnpm shared:watch\" \"pnpm backend:watch\" \"pnpm backend:emulate\" \"pnpm frontend:dev\""
     },
     "keywords": [],
     "author": "",

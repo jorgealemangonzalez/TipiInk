@@ -7,7 +7,7 @@
     "module": "dist/esm/index.js",
     "scripts": {
         "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json && tsc -p tsconfig.esm.json",
-        "dev": "tsc-watch -p tsconfig.json --onSuccess \"pnpm build\"",
+        "build:watch": "tsc-watch -p tsconfig.json --onSuccess \"pnpm build\"",
         "lint": "eslint . --ext .ts,.tsx --fix"
     },
     "devDependencies": {

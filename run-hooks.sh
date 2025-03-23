@@ -8,6 +8,11 @@ run_safely() {
   # Check if there are any staged files in the specified folder
   local staged_files=$(echo "$STAGED_FILES" | tr ' ' '\n' | grep -E "^$folder/")
   
+  # Special case: if folder is backend/functions, remove files starting with shared/
+  if [ "$folder" = "backend/functions" ]; then
+    staged_files=$(echo "$staged_files" | grep -v "^backend/functions/shared/")
+  fi
+  
   if [ -n "$staged_files" ]; then
 
     echo "========================= Running $command_type for $folder =========================="
@@ -54,13 +59,13 @@ ERRORS=0
 run_safely "frontend" "lint" || ERRORS=$((ERRORS + 1))
 run_safely "backend/functions" "lint" || ERRORS=$((ERRORS + 1))
 run_safely "landing" "lint" || ERRORS=$((ERRORS + 1))
-run_safely "shared" "lint" || ERRORS=$((ERRORS + 1))
+run_safely "backend/functions/shared" "lint" || ERRORS=$((ERRORS + 1))
 
 # Run prettier commands
 run_safely "frontend" "prettier" || ERRORS=$((ERRORS + 1))
 run_safely "backend/functions" "prettier" || ERRORS=$((ERRORS + 1))
 run_safely "landing" "prettier" || ERRORS=$((ERRORS + 1))
-run_safely "shared" "prettier" || ERRORS=$((ERRORS + 1))
+run_safely "backend/functions/shared" "prettier" || ERRORS=$((ERRORS + 1))
 
 # Check if there were any errors
 if [ $ERRORS -gt 0 ]; then

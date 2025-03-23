@@ -3,4 +3,4 @@ const transformer = require('ts-transform-paths').default
 
 module.exports = transformer({
     afterDeclarations: true,
-}) 
+})

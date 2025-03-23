@@ -13,14 +13,7 @@ module.exports = {
         'plugin:import/typescript',
     ],
     parser: '@typescript-eslint/parser',
-    ignorePatterns: [
-        'dist',
-        'lib',
-        '.eslintrc.cjs',
-        'node_modules',
-        '**/*.md',
-        '**/*.json',
-    ],
+    ignorePatterns: ['dist', 'lib', '.eslintrc.cjs', 'node_modules', '**/*.md', '**/*.json', '.gitignore'],
     plugins: ['@typescript-eslint', 'import'],
     settings: {
         'import/resolver': {

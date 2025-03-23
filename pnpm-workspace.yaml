@@ -2,4 +2,4 @@ packages:
   - 'frontend'
   - 'backend/functions'
   - 'landing'
-  - 'shared'
+  - 'backend/functions/shared'

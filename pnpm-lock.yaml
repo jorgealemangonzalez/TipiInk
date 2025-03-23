@@ -30,8 +30,8 @@ importers:
   backend/functions:
     dependencies:
       '@tipi/shared':
-        specifier: workspace:*
-        version: link:../../shared
+        specifier: file:shared
+        version: link:shared
       axios:
         specifier: ^1.7.2
         version: 1.7.2
@@ -103,6 +103,45 @@ importers:
         specifier: ^3.24.4
         version: 3.24.4(zod@3.24.2)
 
+  backend/functions/shared:
+    devDependencies:
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^6.21.0
+        version: 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.8.2))(eslint@8.57.0)(typescript@5.8.2)
+      '@typescript-eslint/parser':
+        specifier: ^6.21.0
+        version: 6.21.0(eslint@8.57.0)(typescript@5.8.2)
+      eslint:
+        specifier: ^8.56.0
+        version: 8.57.0
+      eslint-import-resolver-typescript:
+        specifier: ^4.2.2
+        version: 4.2.2(eslint-plugin-import@2.29.1)(eslint@8.57.0)
+      eslint-plugin-import:
+        specifier: ^2.29.1
+        version: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.8.2))(eslint-import-resolver-typescript@4.2.2)(eslint@8.57.0)
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@swc/core@1.6.3(@swc/helpers@0.5.5))(@types/node@22.13.10)(typescript@5.8.2)
+      ts-transform-paths:
+        specifier: ^3.0.0
+        version: 3.0.0
+      tsc-alias:
+        specifier: ^1.8.11
+        version: 1.8.11
+      tsc-watch:
+        specifier: ^6.2.1
+        version: 6.2.1(typescript@5.8.2)
+      tsconfig-paths:
+        specifier: ^4.2.0
+        version: 4.2.0
+      ttypescript:
+        specifier: ^1.5.15
+        version: 1.5.15(ts-node@10.9.2(@swc/core@1.6.3(@swc/helpers@0.5.5))(@types/node@22.13.10)(typescript@5.8.2))(typescript@5.8.2)
+      typescript:
+        specifier: ^5.0.0
+        version: 5.8.2
+
   frontend:
     dependencies:
       '@dotlottie/react-player':
@@ -173,7 +212,7 @@ importers:
         version: 3.26.0(encoding@0.1.13)
       '@tipi/shared':
         specifier: workspace:*
-        version: link:../shared
+        version: link:../backend/functions/shared
       '@types/gapi':
         specifier: ^0.0.47
         version: 0.0.47
@@ -419,45 +458,6 @@ importers:
       vite:
         specifier: ^5.3.1
         version: 5.3.1(@types/node@22.13.10)
-
-  shared:
-    devDependencies:
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^6.21.0
-        version: 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.8.2))(eslint@8.57.0)(typescript@5.8.2)
-      '@typescript-eslint/parser':
-        specifier: ^6.21.0
-        version: 6.21.0(eslint@8.57.0)(typescript@5.8.2)
-      eslint:
-        specifier: ^8.56.0
-        version: 8.57.0
-      eslint-import-resolver-typescript:
-        specifier: ^4.2.2
-        version: 4.2.2(eslint-plugin-import@2.29.1)(eslint@8.57.0)
-      eslint-plugin-import:
-        specifier: ^2.29.1
-        version: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.8.2))(eslint-import-resolver-typescript@4.2.2)(eslint@8.57.0)
-      ts-node:
-        specifier: ^10.9.2
-        version: 10.9.2(@swc/core@1.6.3(@swc/helpers@0.5.5))(@types/node@22.13.10)(typescript@5.8.2)
-      ts-transform-paths:
-        specifier: ^3.0.0
-        version: 3.0.0
-      tsc-alias:
-        specifier: ^1.8.11
-        version: 1.8.11
-      tsc-watch:
-        specifier: ^6.2.1
-        version: 6.2.1(typescript@5.8.2)
-      tsconfig-paths:
-        specifier: ^4.2.0
-        version: 4.2.0
-      ttypescript:
-        specifier: ^1.5.15
-        version: 1.5.15(ts-node@10.9.2(@swc/core@1.6.3(@swc/helpers@0.5.5))(@types/node@22.13.10)(typescript@5.8.2))(typescript@5.8.2)
-      typescript:
-        specifier: ^5.0.0
-        version: 5.8.2
 
 packages:
 
@@ -7072,7 +7072,7 @@ snapshots:
       '@babel/traverse': 7.24.7
       '@babel/types': 7.24.7
       convert-source-map: 2.0.0
-      debug: 4.3.5
+      debug: 4.4.0
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -7203,7 +7203,7 @@ snapshots:
       '@babel/helper-split-export-declaration': 7.24.7
       '@babel/parser': 7.24.7
       '@babel/types': 7.24.7
-      debug: 4.3.5
+      debug: 4.4.0
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -9508,7 +9508,7 @@ snapshots:
       '@typescript-eslint/type-utils': 6.21.0(eslint@8.57.0)(typescript@5.8.2)
       '@typescript-eslint/utils': 6.21.0(eslint@8.57.0)(typescript@5.8.2)
       '@typescript-eslint/visitor-keys': 6.21.0
-      debug: 4.3.5
+      debug: 4.4.0
       eslint: 8.57.0
       graphemer: 1.4.0
       ignore: 5.3.1
@@ -9556,7 +9556,7 @@ snapshots:
       '@typescript-eslint/types': 6.21.0
       '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.8.2)
       '@typescript-eslint/visitor-keys': 6.21.0
-      debug: 4.3.5
+      debug: 4.4.0
       eslint: 8.57.0
     optionalDependencies:
       typescript: 5.8.2
@@ -9607,7 +9607,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.8.2)
       '@typescript-eslint/utils': 6.21.0(eslint@8.57.0)(typescript@5.8.2)
-      debug: 4.3.5
+      debug: 4.4.0
       eslint: 8.57.0
       ts-api-utils: 1.3.0(typescript@5.8.2)
     optionalDependencies:
@@ -9651,7 +9651,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 6.21.0
       '@typescript-eslint/visitor-keys': 6.21.0
-      debug: 4.3.5
+      debug: 4.4.0
       globby: 11.1.0
       is-glob: 4.0.3
       minimatch: 9.0.3
@@ -9809,13 +9809,13 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.3.5
+      debug: 4.4.0
     transitivePeerDependencies:
       - supports-color
 
   agent-base@7.1.1:
     dependencies:
-      debug: 4.3.5
+      debug: 4.4.0
     transitivePeerDependencies:
       - supports-color
 
@@ -11676,7 +11676,7 @@ snapshots:
     dependencies:
       basic-ftp: 5.0.5
       data-uri-to-buffer: 6.0.2
-      debug: 4.3.5
+      debug: 4.4.0
       fs-extra: 11.2.0
     transitivePeerDependencies:
       - supports-color
@@ -11889,14 +11889,14 @@ snapshots:
     dependencies:
       '@tootallnate/once': 2.0.0
       agent-base: 6.0.2
-      debug: 4.3.5
+      debug: 4.4.0
     transitivePeerDependencies:
       - supports-color
 
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.3.5
+      debug: 4.4.0
     transitivePeerDependencies:
       - supports-color
 
@@ -11910,14 +11910,14 @@ snapshots:
   https-proxy-agent@5.0.1:
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.5
+      debug: 4.4.0
     transitivePeerDependencies:
       - supports-color
 
   https-proxy-agent@7.0.4:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.3.5
+      debug: 4.4.0
     transitivePeerDependencies:
       - supports-color
 
@@ -12921,7 +12921,7 @@ snapshots:
     dependencies:
       '@tootallnate/quickjs-emscripten': 0.23.0
       agent-base: 7.1.1
-      debug: 4.3.5
+      debug: 4.4.0
       get-uri: 6.0.3
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.4
@@ -13793,7 +13793,7 @@ snapshots:
   socks-proxy-agent@8.0.3:
     dependencies:
       agent-base: 7.1.1
-      debug: 4.3.5
+      debug: 4.4.0
       socks: 2.8.3
     transitivePeerDependencies:
       - supports-color

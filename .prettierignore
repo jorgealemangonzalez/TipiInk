@@ -1,0 +1,16 @@
+# Ignore files starting with a dot
+.*
+!.prettierrc
+!.prettierignore
+
+# Common directories to ignore
+node_modules/
+dist/
+build/
+.next/
+.vercel/
+coverage/
+
+# Common files to ignore
+*.min.js
+*.bundle.js 

@@ -1,4 +1,3 @@
-import { logger } from 'firebase-functions/v2'
 import { ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk'
 
 import { isLocalEnvironment } from '../FirebaseInit'

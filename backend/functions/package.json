@@ -31,7 +31,7 @@
         "trieve-ts-sdk": "^0.0.62",
         "ws": "8.18.0",
         "zod": "^3.24.1",
-        "@tipi/shared": "workspace:*"
+        "@tipi/shared": "file:shared"
     },
     "devDependencies": {
         "@google-cloud/storage": "^7.15.2",

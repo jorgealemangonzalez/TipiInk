@@ -1,32 +1,33 @@
 module.exports = {
     root: true,
     env: {
-        es6: true,
+        es2020: true,
         node: true,
+        browser: false,
     },
     extends: [
         'eslint:recommended',
+        'plugin:@typescript-eslint/recommended',
         'plugin:import/errors',
         'plugin:import/warnings',
         'plugin:import/typescript',
-        'google',
-        'plugin:@typescript-eslint/recommended',
     ],
     parser: '@typescript-eslint/parser',
-    // parserOptions: {
-    //     project: ['tsconfig.json', 'tsconfig.dev.json'],
-    //     sourceType: 'module',
-    // },
-    ignorePatterns: ['/lib/**/*', '/generated/**/*', '**/*.md', '**/*.json', '/shared/**/*'],
+    ignorePatterns: ['dist', 'lib', '.eslintrc.cjs', 'node_modules', '**/*.md', '**/*.json', '.gitignore'],
     plugins: ['@typescript-eslint', 'import'],
+    settings: {
+        'import/resolver': {
+            typescript: {
+                alwaysTryTypes: true,
+                project: './tsconfig.json',
+            },
+        },
+    },
     rules: {
+        semi: ['error', 'never'],
         quotes: ['error', 'single', 'avoid-escape'],
         'quote-props': ['error', 'as-needed'],
         'operator-linebreak': ['error', 'after'],
-        'import/no-unresolved': 0,
-        indent: ['error', 4, { SwitchCase: 1 }],
-        semi: ['error', 'never'],
-        'require-jsdoc': 0,
         'max-len': [
             'error',
             {
@@ -39,8 +40,9 @@ module.exports = {
             },
         ],
         'object-curly-spacing': ['error', 'always'],
+        'arrow-parens': ['error', 'as-needed'],
+        indent: ['error', 4, { SwitchCase: 1 }],
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
-        'arrow-parens': ['error', 'as-needed'],
     },
 }

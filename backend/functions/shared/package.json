@@ -1,0 +1,27 @@
+{
+    "name": "@tipi/shared",
+    "version": "1.0.0",
+    "description": "Shared types and utilities for Tipi Ink",
+    "main": "dist/commonjs/index.js",
+    "types": "dist/commonjs/index.d.ts",
+    "module": "dist/esm/index.js",
+    "scripts": {
+        "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json && tsc -p tsconfig.esm.json",
+        "dev": "tsc-watch -p tsconfig.json --onSuccess \"pnpm build\"",
+        "lint": "eslint . --ext .ts,.tsx --fix"
+    },
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^6.21.0",
+        "@typescript-eslint/parser": "^6.21.0",
+        "eslint": "^8.56.0",
+        "eslint-import-resolver-typescript": "^4.2.2",
+        "eslint-plugin-import": "^2.29.1",
+        "ts-node": "^10.9.2",
+        "ts-transform-paths": "^3.0.0",
+        "tsc-alias": "^1.8.11",
+        "tsc-watch": "^6.2.1",
+        "tsconfig-paths": "^4.2.0",
+        "ttypescript": "^1.5.15",
+        "typescript": "^5.0.0"
+    }
+}

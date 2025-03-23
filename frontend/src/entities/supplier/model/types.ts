@@ -2,15 +2,16 @@ export interface Supplier {
     id: string
     name: string
     type: 'pescaderia' | 'fruteria' | 'carniceria'
-    totalOrders: number
-    lastMonthInvoiced: number
-    pendingIncidents: number
-    commercialPhone: string
-    deliveryPhone: string
-    deliveryDays: string[]
-    orderAdvanceHours: number
-    invoices: Invoice[]
+    totalOrders?: number
+    lastMonthInvoiced?: number
+    pendingIncidents?: number
+    commercialPhone?: string
+    deliveryPhone?: string
+    deliveryDays?: string[]
+    orderAdvanceHours?: number
+    invoices?: Invoice[]
     deliveryNotes: DeliveryNote[]
+    incidents?: Incident[]
     phone?: string
 }
 
@@ -48,4 +49,19 @@ export interface SupplierStats {
     totalOrders: number
     lastMonthInvoiced: number
     pendingIncidents: number
+}
+
+export interface Incident {
+    id: string
+    description: string
+    date: string
+    status: 'pending' | 'resolved'
+    type:
+        | 'albaran_missing'
+        | 'amount_correction'
+        | 'delivery_compensation'
+        | 'delivery_delay'
+        | 'quality_issue'
+        | 'price_discrepancy'
+        | 'missing_delivery'
 }

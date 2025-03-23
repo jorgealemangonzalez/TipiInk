@@ -1,4 +1,4 @@
-import { Timestamp } from '@/firebase/Timestamp'
+import { Timestamp } from '../firebase/Timestamp'
 
 export type Allergen =
     | 'gluten'

@@ -15,6 +15,7 @@ export type Allergen =
     | 'sulphites'
     | 'lupin'
     | 'molluscs'
+    | 'milk'
 
 export interface RecipeIngredientDBModel {
     name: string

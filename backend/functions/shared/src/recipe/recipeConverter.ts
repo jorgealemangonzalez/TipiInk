@@ -1,5 +1,4 @@
 import { FirestoreDataConverter } from '../firebase/FirestoreDataConverter'
-
 import { QueryDocumentSnapshot } from '../firebase/QueryDocumentSnapshot'
 import { Recipe, RecipeDBModel } from './recipeEntity'
 import {

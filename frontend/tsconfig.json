@@ -12,7 +12,8 @@
         "lib": ["ES2020", "DOM", "DOM.Iterable"],
         "moduleResolution": "bundler",
         "allowImportingTsExtensions": true,
-        "jsx": "react-jsx"
+        "jsx": "react-jsx",
     },
+    "references": [{ "path": "../backend/functions/shared" }],
     "include": ["src", "../backend/functions/src/recipes/recipe.d.ts"]
 }

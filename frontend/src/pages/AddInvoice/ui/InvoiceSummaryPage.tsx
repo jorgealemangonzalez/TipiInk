@@ -2,18 +2,33 @@ import { useParams } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { useSupplier } from '@/entities/supplier/model/hooks'
+import { useSuppliers } from '@/entities/supplier/model/supplierHooks'
 import { BackButton } from '@/shared/ui/back-button'
 
 export function InvoiceSummaryPage() {
     const { supplierId } = useParams()
-    const supplier = useSupplier(supplierId ?? '')
+    const { isLoading, getAllSuppliers } = useSuppliers()
 
-    if (!supplier) {
-        return <div>Supplier not found</div>
+    const supplier = supplierId ? getAllSuppliers().find(s => s.id === supplierId) : undefined
+
+    if (isLoading) {
+        return (
+            <div className='flex min-h-screen items-center justify-center'>
+                <p className='text-primary text-xl'>Cargando proveedor...</p>
+            </div>
+        )
     }
 
-    const pendingDeliveryNotes = supplier.deliveryNotes.filter(note => !note.invoiceId)
+    if (!supplier) {
+        return (
+            <div className='flex min-h-screen flex-col items-center justify-center'>
+                <h1 className='mb-4 text-xl font-bold'>Proveedor no encontrado</h1>
+                <Button onClick={() => window.history.back()}>Volver</Button>
+            </div>
+        )
+    }
+
+    const pendingDeliveryNotes = (supplier.deliveryNotes || []).filter(note => !note.invoiceId)
     const totalAmount = pendingDeliveryNotes.reduce((acc, note) => acc + note.total, 0)
 
     return (

@@ -33,6 +33,8 @@ export const useSuppliers = () => {
 
     const getAllSuppliers = () => suppliers
 
+    console.log('supplierstest', suppliers)
+
     return {
         suppliers,
         isLoading,

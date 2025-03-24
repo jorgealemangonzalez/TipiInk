@@ -1,4 +1,4 @@
-import { Timestamp } from '@/firebase/Timestamp'
+import { Timestamp } from '../firebase/Timestamp'
 
 /**
  * Copy of the QueryDocumentSnapshot type from firebase/firestore to avoid the dependency.

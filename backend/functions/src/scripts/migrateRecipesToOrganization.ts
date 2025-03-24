@@ -1,27 +1,47 @@
 #!/usr/bin/env ts-node
 import * as admin from 'firebase-admin'
-import { ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk'
 
 // Parse command line arguments
 const args = process.argv.slice(2)
 const isDryRun = args.includes('--dry-run')
 const batchSize = args.includes('--batch-size') ? parseInt(args[args.indexOf('--batch-size') + 1], 10) : 25 // Default batch size
+const organizationId = args.includes('--org-id') ? args[args.indexOf('--org-id') + 1] : 'demo' // Default organization ID
+const isProd = args.includes('--prod')
+const isLocal = args.includes('--local')
 
-// Initialize Firebase Admin SDK with service account
-admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-    projectId: 'tipi-ink',
+// Configuration helper
+const getConfig = () => ({
+    prod: isProd,
+    local: isLocal,
 })
+
+// Initialize Firebase Admin SDK
+let isAppInitialized = false
+
+const initializeApp = () => {
+    if (!isAppInitialized) {
+        console.log('Initializing Firebase app...')
+        if (!getConfig().prod) {
+            console.log('Using local emulators...')
+            process.env.FIRESTORE_EMULATOR_HOST = 'localhost:5003'
+            process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:5004'
+        } else {
+            console.log('Using production environment...')
+        }
+        admin.initializeApp({
+            projectId: 'tipi-ink',
+            credential: admin.credential.applicationDefault(), // To make it work: gcloud auth application-default login
+        })
+
+        isAppInitialized = true
+    }
+}
+
+// Initialize Firebase
+initializeApp()
 
 // Initialize Firestore
 const firestore = admin.firestore()
-
-// Initialize Trieve SDK
-const trieve = new TrieveSDK({
-    apiKey: 'tr-yEror1mDshxFW95Prl7cEQ6B4RFmiVcT',
-    // Use production dataset ID
-    datasetId: 'cd4edb52-2fcb-4e69-bd5a-8275b3a79eaa',
-})
 
 // Interface to track migration stats
 interface MigrationStats {
@@ -32,17 +52,17 @@ interface MigrationStats {
     errors: Array<{ id: string; error: string }>
 }
 
-// Function to migrate recipes from Firestore to Trieve
-async function migrateRecipesToTrieve() {
+// Function to migrate recipes from root collection to organization subcollection
+async function migrateRecipesToOrganization() {
     try {
-        console.log('Starting migration of recipes from Firestore to Trieve...')
+        console.log(`Starting migration of recipes from 'recipes' to 'organizations/${organizationId}/recipes'...`)
         if (isDryRun) {
             console.log('DRY RUN: No changes will be made to Firestore.')
         }
         console.log(`Batch size: ${batchSize}`)
 
         // Get all recipes from Firestore
-        const recipesSnapshot = await firestore.collection('organizations/demo/recipes').get()
+        const recipesSnapshot = await firestore.collection('recipes').get()
 
         if (recipesSnapshot.empty) {
             console.log('No recipes found in Firestore.')
@@ -73,6 +93,9 @@ async function migrateRecipesToTrieve() {
                 } recipes)`,
             )
 
+            // Create a Firestore batch for efficient writes
+            const writeBatch = firestore.batch()
+
             // Process each recipe in the current batch
             for (const doc of batch) {
                 const recipeId = doc.id
@@ -81,32 +104,29 @@ async function migrateRecipesToTrieve() {
                 try {
                     console.log(`Processing recipe: ${recipeData.name} (${recipeId})`)
 
-                    // Skip if recipe already has a chunkId (already in Trieve)
-                    if (recipeData.chunkId) {
-                        console.log(`Recipe ${recipeId} already has chunkId ${recipeData.chunkId}, skipping.`)
+                    // Reference to the new document location
+                    const targetDocRef = firestore
+                        .collection('organizations')
+                        .doc(organizationId)
+                        .collection('recipes')
+                        .doc(recipeId)
+
+                    // Check if the recipe already exists in the target location
+                    const existingDoc = await targetDocRef.get()
+
+                    if (existingDoc.exists) {
+                        console.log(`Recipe ${recipeId} already exists in target collection, skipping.`)
                         stats.skipped++
                         continue
                     }
 
-                    // Create chunk in Trieve
-                    const response = await trieve.createChunk({
-                        chunk_html: JSON.stringify({ id: recipeId, ...recipeData }),
-                        metadata: {
-                            recipeId: recipeId,
-                        },
-                    })
-
-                    const chunkId = (response.chunk_metadata as ChunkMetadata).id
-                    console.log(`Recipe ${recipeId} successfully indexed in Trieve with chunkId ${chunkId}`)
-
-                    // Update recipe in Firestore with the chunkId if not a dry run
+                    // Add set operation to batch
                     if (!isDryRun) {
-                        await firestore.collection('organizations/demo/recipes').doc(recipeId).update({
-                            chunkId: chunkId,
-                        })
-                        console.log('Updated Firestore document with chunkId')
+                        writeBatch.set(targetDocRef, recipeData)
                     } else {
-                        console.log(`DRY RUN: Would update recipe ${recipeId} with chunkId ${chunkId}`)
+                        console.log(
+                            `DRY RUN: Would copy recipe ${recipeId} to organizations/${organizationId}/recipes/${recipeId}`,
+                        )
                     }
 
                     stats.success++
@@ -118,6 +138,12 @@ async function migrateRecipesToTrieve() {
                         error: error instanceof Error ? error.message : 'Unknown error',
                     })
                 }
+            }
+
+            // Commit the batch write if not a dry run
+            if (!isDryRun && stats.success > 0) {
+                await writeBatch.commit()
+                console.log(`Committed batch of ${stats.success} recipes to Firestore.`)
             }
 
             // Print batch progress
@@ -135,7 +161,7 @@ async function migrateRecipesToTrieve() {
         console.log('\n==== Migration Summary ====')
         console.log(`Total recipes: ${stats.total}`)
         console.log(`Successfully migrated: ${stats.success}`)
-        console.log(`Skipped (already had chunkId): ${stats.skipped}`)
+        console.log(`Skipped (already existed in target): ${stats.skipped}`)
         console.log(`Failed migrations: ${stats.error}`)
 
         if (stats.errors.length > 0) {
@@ -155,7 +181,7 @@ async function migrateRecipesToTrieve() {
 }
 
 // Execute migration
-migrateRecipesToTrieve()
+migrateRecipesToOrganization()
     .then(() => process.exit(0))
     .catch(error => {
         console.error('Unhandled error during migration:', error)

@@ -13,7 +13,7 @@ export const useRecipes = () => {
         updateDocument,
         removeDocument,
     } = useCollection<Recipe>({
-        path: 'recipes',
+        path: 'organizations/demo/recipes',
         limit: 100,
         converter: recipeConverter,
     })

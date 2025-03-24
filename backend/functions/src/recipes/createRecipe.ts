@@ -62,7 +62,7 @@ const createRecipeFunction = async (recipeData: CreateRecipeRequest['recipe']) =
     const recipeToStore = mapToRecipeDBModel(recipeData)
 
     // Store in Firestore
-    const recipeRef = await firestore.collection('recipes').add(recipeToStore)
+    const recipeRef = await firestore.collection('organizations/demo/recipes').add(recipeToStore)
     const recipe = await recipeRef.get()
     const newRecipe = recipe.data() as RecipeDBModel
 
@@ -132,7 +132,7 @@ const unifyPreparation = (existingPreparation: RecipePreparation, newPreparation
     }
 }
 const updateRecipeFunction = async (recipeData: UpdateRecipeRequest) => {
-    const recipeRef = firestore.collection('recipes').doc(recipeData.id)
+    const recipeRef = firestore.collection('organizations/demo/recipes').doc(recipeData.id)
     const recipeRefData = await recipeRef.get()
     if (!recipeRefData.exists) {
         throw new Error('Recipe with id ' + recipeData.id + ' not found')

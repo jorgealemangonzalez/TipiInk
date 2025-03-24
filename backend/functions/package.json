@@ -12,6 +12,7 @@
         "logs": "firebase functions:log",
         "generate:schema": "ts-node src/scripts/generateCreateRecipeSchema.ts && ts-node src/scripts/generateUpdateRecipeSchema.ts",
         "migrate:recipes": "ts-node src/scripts/migrateRecipesToTrieve.ts",
+        "migrate:recipes:org": "ts-node src/scripts/migrateRecipesToOrganization.ts",
         "import:recipes": "ts-node src/scripts/createRecipesInProduction.ts"
     },
     "engines": {

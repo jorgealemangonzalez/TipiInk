@@ -12,8 +12,10 @@ service cloud.firestore {
       allow read: if request.auth.uid == uid;
     }
 
-    match /recipes/{recipeId} {
-      allow read, write: if isAuthenticated();
+    match /organizations/{organizationId} {
+      match /recipes/{recipeId} {
+        allow read, write: if isAuthenticated();
+      }
     }
 
     match /suppliers/{supplierId} {

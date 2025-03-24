@@ -5,16 +5,31 @@ import { AlertCircle } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { useSupplier } from '@/entities/supplier/model/hooks'
+import { useSuppliers } from '@/entities/supplier/model/supplierHooks'
 import { BackButton } from '@/shared/ui/back-button'
 
 export function AddInvoicePage() {
     const { supplierId } = useParams()
     const navigate = useNavigate()
-    const supplier = useSupplier(supplierId ?? '')
+    const { isLoading, getAllSuppliers } = useSuppliers()
+
+    const supplier = supplierId ? getAllSuppliers().find(s => s.id === supplierId) : undefined
+
+    if (isLoading) {
+        return (
+            <div className='flex min-h-screen items-center justify-center'>
+                <p className='text-primary text-xl'>Cargando proveedor...</p>
+            </div>
+        )
+    }
 
     if (!supplier) {
-        return <div>Supplier not found</div>
+        return (
+            <div className='flex min-h-screen flex-col items-center justify-center'>
+                <h1 className='mb-4 text-xl font-bold'>Proveedor no encontrado</h1>
+                <Button onClick={() => window.history.back()}>Volver</Button>
+            </div>
+        )
     }
 
     return (
@@ -28,7 +43,7 @@ export function AddInvoicePage() {
                 <Card className='p-6'>
                     <h3 className='mb-4 text-lg font-semibold'>Comprobación de Incidencias</h3>
 
-                    {supplier.pendingIncidents > 0 ? (
+                    {(supplier.pendingIncidents || 0) > 0 ? (
                         <Alert variant='destructive' className='mb-4'>
                             <AlertCircle className='h-4 w-4' />
                             <AlertTitle>Incidencias Pendientes</AlertTitle>
@@ -39,8 +54,8 @@ export function AddInvoicePage() {
                     ) : null}
 
                     <div className='space-y-4'>
-                        {supplier.deliveryNotes
-                            ?.filter(note => !note.invoiceId)
+                        {(supplier.deliveryNotes || [])
+                            .filter(note => !note.invoiceId)
                             .map(note => (
                                 <Card key={note.id} className='p-4'>
                                     <div className='flex items-center justify-between'>

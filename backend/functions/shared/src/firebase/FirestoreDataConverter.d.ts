@@ -1,4 +1,4 @@
-import { QueryDocumentSnapshot } from '@/firebase/QueryDocumentSnapshot'
+import { QueryDocumentSnapshot } from '../firebase/QueryDocumentSnapshot'
 
 /**
  * Copy of the FirestoreDataConverter type from firebase/firestore to avoid the dependency.

@@ -18,8 +18,8 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useSuppliers } from '@/entities/supplier/model/supplierHooks'
-import { Supplier } from '@tipi/shared'
 import { BackButton } from '@/shared/ui/back-button'
+import { Supplier } from '@tipi/shared'
 
 import { FloatingContactButtons } from '../features/contact-buttons'
 

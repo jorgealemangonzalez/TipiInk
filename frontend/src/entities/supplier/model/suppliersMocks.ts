@@ -1,4 +1,5 @@
 import { Timestamp } from 'firebase/firestore'
+
 import { Supplier } from '@tipi/shared'
 
 // Definimos un tipo parcial compatible con nuestros mocks

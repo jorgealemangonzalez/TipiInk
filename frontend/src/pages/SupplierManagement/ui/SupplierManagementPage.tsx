@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 // import { useSuppliers } from '@/entities/supplier/model/hooks'
 import { useSuppliers } from '@/entities/supplier/model/supplierHooks'
-import { Supplier } from '@tipi/shared'
 import { BackButton } from '@/shared/ui/back-button'
+import { Supplier } from '@tipi/shared'
 
 const SupplierIcon = ({ type }: { type: Supplier['type'] }) => {
     switch (type) {

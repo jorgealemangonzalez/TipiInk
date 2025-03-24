@@ -17,8 +17,8 @@ import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useSupplier } from '@/entities/supplier/model/hooks'
-import { Supplier } from '@/entities/supplier/model/types'
+import { useSuppliers } from '@/entities/supplier/model/supplierHooks'
+import { Supplier } from '@tipi/shared'
 import { BackButton } from '@/shared/ui/back-button'
 
 import { FloatingContactButtons } from '../features/contact-buttons'
@@ -127,7 +127,8 @@ type PendingDeliveryNotesTableProps = {
 }
 
 function PendingDeliveryNotesTable({ deliveryNotes }: PendingDeliveryNotesTableProps) {
-    const pendingDeliveryNotes = deliveryNotes.filter(note => !note.invoiceId)
+    const notes = deliveryNotes || []
+    const pendingDeliveryNotes = notes.filter(note => !note.invoiceId)
 
     if (pendingDeliveryNotes.length === 0) {
         return <div className='text-muted-foreground py-8 text-center'>No hay albaranes pendientes</div>
@@ -165,14 +166,16 @@ type InvoicesTableProps = {
 }
 
 function InvoicesTable({ invoices }: InvoicesTableProps) {
-    if (invoices.length === 0) {
+    const invoiceList = invoices || []
+
+    if (invoiceList.length === 0) {
         return <div className='text-muted-foreground py-8 text-center'>No hay facturas disponibles</div>
     }
 
     return (
         <ScrollArea className='h-[300px]'>
             <div className='space-y-1'>
-                {invoices.map((invoice, index) => (
+                {invoiceList.map((invoice, index) => (
                     <div key={invoice.id}>
                         <div className='flex items-center justify-between px-2 py-4 transition-colors hover:bg-gray-700/30'>
                             <div className='space-y-1'>
@@ -206,7 +209,7 @@ function InvoicesTable({ invoices }: InvoicesTableProps) {
                                 </Button>
                             )}
                         </div>
-                        {index < invoices.length - 1 && <Separator className='bg-gray-700/50' />}
+                        {index < invoiceList.length - 1 && <Separator className='bg-gray-700/50' />}
                     </div>
                 ))}
             </div>
@@ -261,7 +264,18 @@ function ActionButtons() {
 
 export function SupplierDetailsPage() {
     const { supplierId } = useParams()
-    const supplier = useSupplier(supplierId!)
+    const { isLoading, getAllSuppliers } = useSuppliers()
+
+    // Buscar el proveedor por ID desde todos los proveedores
+    const supplier = supplierId ? getAllSuppliers().find(s => s.id === supplierId) : undefined
+
+    if (isLoading) {
+        return (
+            <div className='flex min-h-screen items-center justify-center'>
+                <p className='text-primary text-xl'>Cargando proveedor...</p>
+            </div>
+        )
+    }
 
     if (!supplier) {
         return (
@@ -279,8 +293,8 @@ export function SupplierDetailsPage() {
                 <h1 className='flex-1 text-center text-xl font-bold text-white'>{supplier.name}</h1>
                 <div className='absolute right-4'>
                     <FloatingContactButtons
-                        commercialPhone={supplier.commercialPhone}
-                        deliveryPhone={supplier.deliveryPhone}
+                        commercialPhone={supplier.commercialPhone || ''}
+                        deliveryPhone={supplier.deliveryPhone || ''}
                     />
                 </div>
             </div>
@@ -295,8 +309,8 @@ export function SupplierDetailsPage() {
                     </CardHeader>
                     <CardContent>
                         <DeliveryInfo
-                            deliveryDays={supplier.deliveryDays}
-                            orderAdvanceHours={supplier.orderAdvanceHours}
+                            deliveryDays={supplier.deliveryDays || []}
+                            orderAdvanceHours={supplier.orderAdvanceHours || 0}
                         />
                     </CardContent>
                 </Card>

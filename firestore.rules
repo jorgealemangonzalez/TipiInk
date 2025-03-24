@@ -16,6 +16,10 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
 
+    match /suppliers/{supplierId} {
+      allow read, write: if isAuthenticated();
+    }
+
     match /app_versions/{versionId} {
       allow read: if true;
     }

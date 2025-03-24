@@ -4,8 +4,9 @@ import { Beef, Package, Phone, Truck } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { useSuppliers } from '@/entities/supplier/model/hooks'
-import { Supplier } from '@/entities/supplier/model/types'
+// import { useSuppliers } from '@/entities/supplier/model/hooks'
+import { useSuppliers } from '@/entities/supplier/model/supplierHooks'
+import { Supplier } from '@tipi/shared'
 import { BackButton } from '@/shared/ui/back-button'
 
 const SupplierIcon = ({ type }: { type: Supplier['type'] }) => {
@@ -21,10 +22,21 @@ const SupplierIcon = ({ type }: { type: Supplier['type'] }) => {
 
 export function SupplierManagementPage() {
     const navigate = useNavigate()
-    const suppliers = useSuppliers()
+    const { isLoading, getAllSuppliers } = useSuppliers()
+    const allSuppliers = getAllSuppliers()
 
     const handleSupplierClick = (supplierId: string) => {
         navigate(`/supplier-management/${supplierId}`)
+    }
+
+    console.log('allSuppliers', allSuppliers)
+
+    if (isLoading) {
+        return (
+            <div className='flex min-h-screen items-center justify-center'>
+                <p className='text-primary text-xl'>Cargando proveedores...</p>
+            </div>
+        )
     }
 
     return (
@@ -36,7 +48,7 @@ export function SupplierManagementPage() {
 
             <div className='max-w-3xl px-6'>
                 <div className='space-y-1'>
-                    {suppliers.map((supplier, index) => (
+                    {allSuppliers.map((supplier, index) => (
                         <div key={supplier.id}>
                             <div
                                 onClick={() => handleSupplierClick(supplier.id)}
@@ -63,7 +75,7 @@ export function SupplierManagementPage() {
                                     <Phone className='h-4 w-4' />
                                 </Button>
                             </div>
-                            {index < suppliers.length - 1 && <Separator className='bg-gray-700/50' />}
+                            {index < allSuppliers.length - 1 && <Separator className='bg-gray-700/50' />}
                         </div>
                     ))}
                 </div>

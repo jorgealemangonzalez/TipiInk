@@ -1,4 +1,12 @@
-import { Supplier } from './types'
+import { Timestamp } from 'firebase/firestore'
+import { Supplier } from '@tipi/shared'
+
+// Definimos un tipo parcial compatible con nuestros mocks
+// Omitimos el id de SupplierDBModel ya que lo añadiremos manualmente
+type SupplierMock = Omit<Supplier, 'createdAt' | 'updatedAt'> & {
+    createdAt: Timestamp
+    updatedAt: Timestamp
+}
 
 // export const SUPPLIERS: Record<string, Supplier> = {
 //     PESCADERIA: {
@@ -64,7 +72,8 @@ import { Supplier } from './types'
 //     },
 // }
 
-export const SUPPLIERS: Supplier[] = [
+// Creamos mocks con el tipo correcto
+export const SUPPLIERS: SupplierMock[] = [
     {
         id: '1',
         name: 'Pescaderia La Central',
@@ -97,6 +106,8 @@ export const SUPPLIERS: Supplier[] = [
             { id: 'ALB-002', date: '2024-03-18', total: 1200, hasIncidents: false },
             { id: 'ALB-003', date: '2024-03-15', total: 950, hasIncidents: false, invoiceId: 'INV-001' },
         ],
+        createdAt: Timestamp.fromDate(new Date('2024-01-01')),
+        updatedAt: Timestamp.fromDate(new Date('2024-03-01')),
     },
     {
         id: '2',
@@ -117,6 +128,8 @@ export const SUPPLIERS: Supplier[] = [
             { id: 'ALB-001', date: '2024-03-12', total: 950, hasIncidents: false, invoiceId: 'INV-001' },
             { id: 'ALB-002', date: '2024-02-27', total: 1150, hasIncidents: false, invoiceId: 'INV-002' },
         ],
+        createdAt: Timestamp.fromDate(new Date('2024-01-15')),
+        updatedAt: Timestamp.fromDate(new Date('2024-03-05')),
     },
     {
         id: '3',
@@ -148,13 +161,7 @@ export const SUPPLIERS: Supplier[] = [
             },
             { id: 'ALB-002', date: '2024-03-19', total: 2300, hasIncidents: false, invoiceId: 'INV-001' },
         ],
+        createdAt: Timestamp.fromDate(new Date('2024-02-01')),
+        updatedAt: Timestamp.fromDate(new Date('2024-03-10')),
     },
 ]
-
-export const useSuppliers = () => {
-    return Object.values(SUPPLIERS)
-}
-
-export const useSupplier = (id: string) => {
-    return useSuppliers().find(s => s.id === id)!
-}

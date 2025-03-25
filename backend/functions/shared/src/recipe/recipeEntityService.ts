@@ -1,4 +1,4 @@
-import { RecipeDBModel, RecipeIngredientDBModel } from './recipeEntity'
+import { RecipeDBModel, RecipeIngredientDBModel } from './RecipeEntity'
 
 export const getProductionCost = (recipe: RecipeDBModel) => {
     return recipe.ingredients.reduce(

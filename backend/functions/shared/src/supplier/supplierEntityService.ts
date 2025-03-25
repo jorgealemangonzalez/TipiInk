@@ -1,4 +1,4 @@
-import { DeliveryNote, SupplierDBModel } from './supplierEntity'
+import { DeliveryNote, SupplierDBModel } from './SupplierEntity'
 
 export const getTotalPendingInvoices = (supplier: SupplierDBModel) => {
     return supplier.invoices.filter(invoice => invoice.status === 'pending').length

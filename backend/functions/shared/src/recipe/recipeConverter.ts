@@ -1,13 +1,13 @@
 import { FirestoreDataConverter } from '../firebase/FirestoreDataConverter'
 import { QueryDocumentSnapshot } from '../firebase/QueryDocumentSnapshot'
-import { Recipe, RecipeDBModel } from './recipeEntity'
+import { Recipe, RecipeDBModel } from './RecipeEntity'
 import {
     getCostPerServing,
     getCostPercentage,
     getPricePerProduction,
     getProductionCost,
     getQuantityPerServing,
-} from './recipeEntityService'
+} from './RecipeEntityService'
 
 export const recipeConverter: FirestoreDataConverter<Recipe, RecipeDBModel> = {
     // TODO MOVE TO BACKEND AND IMPORT FROM @MONOREPO/FUNCTIONS

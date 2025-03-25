@@ -11,7 +11,7 @@
         "all:build": "cd frontend && pnpm run build && cd .. && cd backend/functions && pnpm run build && cd ../.. && cd landing && pnpm run build && cd ..",
         "deploy": "pnpm run all:build && pnpm firebase deploy",
         "deploy:breaking": "IS_BREAKING_CHANGE=true pnpm run deploy",
-        "postDeployHook": "node scripts/writeVersion.js",
+        "postDeployHook": "cd scripts && pnpm run write-version --prod",
         "backend:watch": "cd backend/functions && pnpm run build:watch",
         "shared:watch": "cd backend/functions/shared && pnpm run build:watch",
         "backend:emulate": "pnpm firebase emulators:start --import=backend/emulator-data --export-on-exit=backend/emulator-data --inspect-functions",

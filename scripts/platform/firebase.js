@@ -42,7 +42,6 @@ const getAuthInstance = () => {
     return auth
 }
 
-
 const getAccessToken = async () => {
     const googleAuth = new GoogleAuth({
         scopes: ['https://www.googleapis.com/auth/cloud-platform'], // Adjust the scope as needed

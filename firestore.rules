@@ -9,7 +9,7 @@ service cloud.firestore {
 
     function isAdmin() {
       return request.auth != null && 'admin' in request.auth.token && request.auth.token.admin == true;
-    }}
+    }
 
     // Allow read and write access to the entire events collection for all users
     match /users/{uid} {

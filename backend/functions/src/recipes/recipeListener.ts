@@ -5,7 +5,7 @@ import { TrieveSDK } from 'trieve-ts-sdk'
 import { RecipeDBModel } from '@tipi/shared'
 
 import { isLocalEnvironment } from '../FirebaseInit'
-import { createRecipeInTrieveById } from '../trieve/trieveService'
+import { createRecipeInTrieveById } from '../trieve/TrieveService'
 
 const trDataset = isLocalEnvironment() ? 'c7b4534b-ed9b-40b7-8b20-268b76bf4217' : 'cd4edb52-2fcb-4e69-bd5a-8275b3a79eaa'
 

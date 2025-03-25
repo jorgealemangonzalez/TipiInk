@@ -2,9 +2,9 @@
     "name": "@tipi/shared",
     "version": "1.0.0",
     "description": "Shared types and utilities for Tipi Ink",
-    "main": "dist/commonjs/index.js",
-    "types": "dist/commonjs/index.d.ts",
-    "module": "dist/esm/index.js",
+    "main": "dist/commonjs/src/index.js",
+    "types": "dist/commonjs/src/index.d.ts",
+    "module": "dist/esm/src/index.js",
     "scripts": {
         "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json && tsc -p tsconfig.esm.json && tsc-alias -p tsconfig.esm.json",
         "build:watch": "tsc-watch -p tsconfig.json --onSuccess \"pnpm build\"",

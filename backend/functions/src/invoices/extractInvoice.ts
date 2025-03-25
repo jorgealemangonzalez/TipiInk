@@ -7,11 +7,11 @@ import { zodResponseFormat } from 'openai/helpers/zod'
 import { z } from 'zod'
 
 import { firestore, isLocalEnvironment, storage } from '../FirebaseInit'
-import { throwIfUnauthenticated } from '../auth/throwIfUnauthenticated'
+import { throwIfUnauthenticated } from '../auth/ThrowIfUnauthenticated'
 import { onFunctionsInit } from '../firebase/OnFunctionsInit'
 import { ExtractInvoiceRequest, ExtractInvoiceResponse, Invoice } from '../types/ExtractInvoice'
 import { User } from '../types/User'
-import { extractInvoicePrompt } from './extractInvoicePrompt'
+import { extractInvoicePrompt } from './ExtractInvoicePrompt'
 
 let openai: OpenAI
 

@@ -1,12 +1,13 @@
 import { Timestamp } from 'firebase-admin/firestore'
 import { logger } from 'firebase-functions'
 
+import { RecipeDBModel, RecipeIngredientDBModel, RecipePreparation } from '@tipi/shared'
+
 import { Request, firestore, onAIToolRequest, onCallWithSecretKey } from '../FirebaseInit'
 import { CreateRecipeRequest, CreateRecipeResponse } from '../types/CreateRecipe'
 import { CreateRecipeRequestSchema } from '../types/CreateRecipeRequestSchema'
 import { UpdateRecipeRequest } from '../types/UpdateRecipe'
 import { UpdateRecipeRequestSchema } from '../types/UpdateRecipeRequestSchema'
-import { RecipeDBModel, RecipeIngredientDBModel, RecipePreparation } from './recipe'
 
 const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredientDBModel>): RecipeIngredientDBModel => {
     // Define default values for required fields

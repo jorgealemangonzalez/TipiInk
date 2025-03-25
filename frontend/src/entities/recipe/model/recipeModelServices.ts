@@ -1,4 +1,4 @@
-import { RecipeDBModel, RecipeIngredientDBModel } from '@monorepo/functions/src/recipes/recipe'
+import { RecipeDBModel, RecipeIngredientDBModel } from '@tipi/shared'
 
 export const getProductionCost = (recipe: RecipeDBModel) => {
     return recipe.ingredients.reduce(

@@ -100,7 +100,7 @@ export const extractInvoice = https.onCall(
             createdAt: Timestamp.now(),
         })
 
-        console.log('Invoice:', { invoice })
+        logger.log('Invoice:', { invoice })
         return { invoiceId: storedInvoiceRef.id }
     },
 )

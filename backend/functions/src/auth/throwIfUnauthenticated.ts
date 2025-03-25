@@ -12,7 +12,7 @@ export const throwIfUnauthenticated = (context: CallableContext): AuthData => {
     }
 }
 
-export const throwIfUnauthenticatedRequest = async (req: functions.https.Request): Promise<AuthData> => {
+export const throwIfUnauthenticatedRequest = async (req: any): Promise<AuthData> => {
     // Get the authorization header
     const authHeader = req.headers.authorization
 

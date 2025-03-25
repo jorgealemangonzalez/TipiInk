@@ -8,6 +8,7 @@
         "frontend:deploy": "cd frontend && pnpm run deploy",
         "landing:deploy": "cd landing && pnpm run deploy",
         "functions:deploy": "pnpm firebase deploy --only=functions",
+        "rules:deploy": "pnpm firebase deploy --only=firestore:rules",
         "all:build": "cd frontend && pnpm run build && cd .. && cd backend/functions && pnpm run build && cd ../.. && cd landing && pnpm run build && cd ..",
         "deploy": "pnpm run all:build && pnpm firebase deploy",
         "deploy:breaking": "IS_BREAKING_CHANGE=true pnpm run deploy",

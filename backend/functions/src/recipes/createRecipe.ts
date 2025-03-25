@@ -1,7 +1,7 @@
 import { Timestamp } from 'firebase-admin/firestore'
 import { logger } from 'firebase-functions'
 
-import { RecipeDBModel, RecipeIngredientDBModel, RecipePreparation } from '@tipi/shared'
+import { RecipeDBModel, RecipeIngredientDBModel, RecipePreparation, getProductionCost } from '@tipi/shared'
 
 import { Request, firestore, onAIToolRequest, onCallWithSecretKey } from '../FirebaseInit'
 import { CreateRecipeRequest, CreateRecipeResponse } from '../types/CreateRecipe'
@@ -36,6 +36,7 @@ const mapToRecipeIngredient = (ingredient: Partial<RecipeIngredientDBModel>): Re
 const mapToRecipeDBModel = (recipeData: CreateRecipeRequest['recipe']): RecipeDBModel => {
     // Define default values for required fields
     const createdAt = Timestamp.now()
+    const ingredients = recipeData.ingredients?.map(mapToRecipeIngredient)
     const recipe: RecipeDBModel = {
         name: recipeData.name || '',
         category: recipeData.category,
@@ -45,7 +46,7 @@ const mapToRecipeDBModel = (recipeData: CreateRecipeRequest['recipe']): RecipeDB
         servingsPerProduction: recipeData.servingsPerProduction ?? 1,
         priceVariation: recipeData.priceVariation ?? 0,
         inMenu: recipeData.inMenu ?? false,
-        ingredients: recipeData.ingredients?.map(mapToRecipeIngredient) ?? [],
+        ingredients: ingredients ?? [],
         preparation: {
             prePreparation: recipeData.preparation?.prePreparation ?? [],
             preparation: recipeData.preparation?.preparation ?? [],
@@ -53,6 +54,7 @@ const mapToRecipeDBModel = (recipeData: CreateRecipeRequest['recipe']): RecipeDB
         },
         createdAt,
         updatedAt: createdAt,
+        productionCost: getProductionCost(ingredients),
     }
 
     return recipe

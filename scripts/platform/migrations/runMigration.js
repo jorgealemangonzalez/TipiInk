@@ -4,10 +4,12 @@ const command = new Command('migrate')
 
 const availableMigrations = {
     'test-migration': require('./20250325-test-migration'),
+    'add-production-cost': require('./20240803-add-production-cost'),
 }
 
 const requiredArguments = {
     'test-migration': 'organizationId',
+    'add-production-cost': 'organizationId',
 }
 
 command

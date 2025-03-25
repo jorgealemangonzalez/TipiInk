@@ -49,11 +49,11 @@ export interface RecipeDBModel {
     createdAt: Timestamp
     updatedAt: Timestamp
     chunkId?: string // Trive Chunk ID
+    productionCost: number
 }
 
 export interface Recipe extends Omit<RecipeDBModel, 'ingredients'> {
     id: string
-    productionCost: number
     costPercentage: number
     costPerServing: number
     ingredients: RecipeIngredient[]

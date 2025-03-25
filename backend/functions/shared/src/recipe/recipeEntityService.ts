@@ -1,10 +1,10 @@
 import { RecipeDBModel, RecipeIngredientDBModel } from './RecipeEntity'
 
-export const getProductionCost = (recipe: RecipeDBModel) => {
-    return recipe.ingredients.reduce(
-        (acc, ingredient) => acc + ingredient.pricePerUnit * ingredient.quantityPerProduction,
-        0,
-    )
+export const getProductionCost = (ingredients?: RecipeIngredientDBModel[]) => {
+    if (!ingredients) {
+        return 0
+    }
+    return ingredients.reduce((acc, ingredient) => acc + ingredient.pricePerUnit * ingredient.quantityPerProduction, 0)
 }
 
 export const getCostPerServing = (recipe: RecipeDBModel, productionCost: number) => {

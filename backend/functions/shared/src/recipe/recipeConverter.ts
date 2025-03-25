@@ -5,7 +5,6 @@ import {
     getCostPerServing,
     getCostPercentage,
     getPricePerProduction,
-    getProductionCost,
     getQuantityPerServing,
 } from './RecipeEntityService'
 
@@ -33,15 +32,13 @@ export const recipeConverter: FirestoreDataConverter<Recipe, RecipeDBModel> = {
         } else {
             recipe = snapshot.data()
         }
-        const productionCost = getProductionCost(recipe)
-        const costPerServing = getCostPerServing(recipe, productionCost)
+        const costPerServing = getCostPerServing(recipe, recipe.productionCost)
         const costPercentage = getCostPercentage(recipe, costPerServing)
         return {
             ...recipe,
             id: snapshot.id,
             costPercentage,
             costPerServing,
-            productionCost,
             ingredients: recipe.ingredients.map(ingredient => ({
                 ...ingredient,
                 pricePerProduction: getPricePerProduction(ingredient),

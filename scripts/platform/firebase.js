@@ -15,7 +15,7 @@ const initializeApp = () => {
             process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:5004'
         }
         admin.initializeApp({
-            projectId: 'booth-bits',
+            projectId: 'tipi-ink',
             credential: admin.credential.applicationDefault(), // To make it work: gcloud auth application-default login
         })
 

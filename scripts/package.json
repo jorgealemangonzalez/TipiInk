@@ -1,0 +1,30 @@
+{
+    "name": "scripts",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "upload": "node index.js upload",
+        "download": "node index.js download",
+        "admin:set": "node index.js designate-as-admin",
+        "admin:list": "node index.js list-admin-users",
+        "revoke-user-token": "node index.js revoke-user-token",
+        "migrate": "node index.js migrate",
+        "write-version": "node index.js write-version"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "axios": "^1.7.2",
+        "commander": "^12.1.0",
+        "csv-parser": "^3.0.0",
+        "dotenv": "^16.4.7",
+        "firebase-admin": "^12.1.0",
+        "firebase-tools": "^13.11.4",
+        "google-auth-library": "^9.14.1",
+        "openai": "^4.67.0",
+        "xlsx": "^0.18.5",
+        "zod": "^3.23.8"
+    }
+}

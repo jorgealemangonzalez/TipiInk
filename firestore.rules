@@ -7,6 +7,10 @@ service cloud.firestore {
       return request.auth != null
     }
 
+    function isAdmin() {
+      return request.auth != null && 'admin' in request.auth.token && request.auth.token.admin == true;
+    }}
+
     // Allow read and write access to the entire events collection for all users
     match /users/{uid} {
       allow read: if request.auth.uid == uid;
@@ -24,6 +28,7 @@ service cloud.firestore {
 
     match /app_versions/{versionId} {
       allow read: if true;
+      allow write: if isAdmin();
     }
 
     match /companies/{companyId}/invoices/{invoiceId} {

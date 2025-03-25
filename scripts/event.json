@@ -1,0 +1,161 @@
+{
+    "language": "es",
+    "name": "Medio y Medio Festival",
+    "stats": {
+        "totalFeedbacks": 0,
+        "totalPeople": 0,
+        "averageRating": null,
+        "lastFeedbackAt": null,
+        "totalSliderResponses": 0,
+        "totalTextResponses": 0,
+        "totalYesNoResponses": 0
+    },
+    "authorizedUserEmails": [
+        "jignaciotemplado@gmail.com"
+    ],
+    "feedback": [],
+    "questions": [
+        {
+            "id": "default",
+            "questions": [
+                {
+                    "type": "SLIDER",
+                    "title": "¿Con qué probabilidad recomendarías este evento a tus amigos?",
+                    "departments": [
+                        "Otros"
+                    ],
+                    "categories": [
+                        "Fortalezas"
+                    ],
+                    "labels": {
+                        "min": "Poco probable",
+                        "max": "Muy probable"
+                    }
+                },
+                {
+                    "type": "SLIDER",
+                    "title": "¿Qué te han parecido los artistas?",
+                    "departments": [
+                        "Música"
+                    ],
+                    "categories": [
+                        "Fortalezas"
+                    ],
+                    "labels": {
+                        "min": "Muy mal",
+                        "max": "Muy bien"
+                    }
+                },
+                {
+                    "type": "SLIDER",
+                    "title": "¿Cómo calificarías la calidad del sonido en el evento?",
+                    "departments": [
+                        "Música"
+                    ],
+                    "categories": [
+                        "Fortalezas"
+                    ],
+                    "labels": {
+                        "min": "Muy mala",
+                        "max": "Excelente"
+                    }
+                },
+                {
+                    "type": "FREE_TEXT",
+                    "title": "¿Tienes alguna sugerencia respecto a la ambientación de la fiesta? Decoración, el público, espectáculo…",
+                    "departments": [
+                        "Ambiente"
+                    ],
+                    "categories": [
+                        "Peticiones"
+                    ]
+                },
+                {
+                    "type": "SLIDER",
+                    "title": "¿Cuánto mejoraron las luces y los efectos visuales tu experiencia?",
+                    "departments": [
+                        "Ambiente"
+                    ],
+                    "categories": [
+                        "Fortalezas"
+                    ],
+                    "labels": {
+                        "min": "Nada",
+                        "max": "Mucho"
+                    }
+                },
+                {
+                    "type": "SLIDER",
+                    "title": "¿Cómo de seguro te has sentido durante el evento?",
+                    "departments": [
+                        "Seguridad"
+                    ],
+                    "categories": [
+                        "Fortalezas"
+                    ],
+                    "labels": {
+                        "min": "Nada seguro",
+                        "max": "Muy seguro"
+                    }
+                },
+                {
+                    "type": "YES_NO",
+                    "title": "¿Entraste rápido al evento?",
+                    "departments": [
+                        "Personal"
+                    ],
+                    "categories": [
+                        "Fortalezas"
+                    ]
+                },
+                {
+                    "type": "FREE_TEXT",
+                    "title": "¿Qué te ha parecido el personal del evento?",
+                    "departments": [
+                        "Personal"
+                    ],
+                    "categories": [
+                        "Fortalezas",
+                        "Problemas"
+                    ]
+                },
+                {
+                    "type": "SLIDER",
+                    "title": "Del 1 al 5, ¿cómo calificarías la relación calidad-precio de tu entrada?",
+                    "departments": [
+                        "Pricing"
+                    ],
+                    "categories": [
+                        "Fortalezas"
+                    ],
+                    "labels": {
+                        "min": "Muy mala",
+                        "max": "Excelente"
+                    }
+                },
+                {
+                    "type": "FREE_TEXT",
+                    "title": "¿Qué mejorarías del evento?",
+                    "departments": [
+                        "Otros"
+                    ],
+                    "categories": [
+                        "Problemas",
+                        "Peticiones"
+                    ]
+                },
+                {
+                    "type": "FREE_TEXT",
+                    "title": "¿Qué es lo que más te ha gustado del evento?",
+                    "departments": [
+                        "Otros"
+                    ],
+                    "categories": [
+                        "Fortalezas"
+                    ]
+                }
+            ]
+        }
+    ],
+    "summaries": []
+}

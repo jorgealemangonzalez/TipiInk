@@ -3,3 +3,4 @@ packages:
   - 'backend/functions'
   - 'landing'
   - 'backend/functions/shared'
+  - 'scripts'

@@ -101,10 +101,11 @@ const unifyIngredients = (
     ingredientsToRemove: string[],
     newIngredients: Partial<RecipeIngredientDBModel>[],
 ) => {
-    if (!newIngredients) {
+    if (!newIngredients && !ingredientsToRemove) {
         return existingIngredients
     }
     const ingredientsToStore = existingIngredients.filter(ingredient => !ingredientsToRemove.includes(ingredient.name))
+    logger.info({ existingIngredients, ingredientsToRemove, newIngredients })
     for (const ingredient of newIngredients) {
         const existingIngredient = ingredientsToStore.find(i => i.name === ingredient.name)
         if (existingIngredient) {
@@ -124,7 +125,7 @@ const unifyIngredients = (
             ingredientsToStore.push(mapToRecipeIngredient(ingredient))
         }
     }
-    logger.info({ existingIngredients, ingredientsToRemove, newIngredients, ingredientsToStore })
+    logger.info({ ingredientsToStore })
     return ingredientsToStore
 }
 

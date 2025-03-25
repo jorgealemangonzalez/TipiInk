@@ -80,12 +80,15 @@ function snakeToCamel<T>(value: T): T {
 
 export const onAIToolRequest = <P, R>(schema: ZodSchema, handler: (request: P) => Promise<R>) => {
     return functions.https.onRequest(async (request, response) => {
-        logger.info({ body: request.body, headers: request.headers })
+        logger.debug({ body: request.body, headers: request.headers })
 
-        const body: object = request.body.message.toolCalls[0].function.arguments
-        const parsedBody = schema.parse(snakeToCamel(body))
-        logger.info({ body, parsedBody })
-        const result = await handler(parsedBody)
-        response.send(result)
+        const results = []
+        for (const toolCall of request.body.message.toolCalls) {
+            const parsedBody = schema.parse(snakeToCamel(toolCall.function.arguments))
+            logger.debug({ body: toolCall.function.arguments, parsedBody })
+            const result = await handler(parsedBody)
+            results.push(result)
+        }
+        response.send(results)
     })
 }

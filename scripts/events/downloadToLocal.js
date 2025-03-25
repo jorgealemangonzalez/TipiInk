@@ -29,6 +29,13 @@ const download = async organizationId => {
     const organizationDoc = await firestore.collection('organizations').doc(organizationId).get()
     const organizationData = organizationDoc.exists ? organizationDoc.data() : {}
 
+    const path = require('path')
+
+    const dir = path.dirname(ORGANIZATION_FILE_NAME)
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true })
+    }
+
     console.log(`Writing data to file ${ORGANIZATION_FILE_NAME}...`)
     fs.writeFileSync(
         `./${ORGANIZATION_FILE_NAME}`,

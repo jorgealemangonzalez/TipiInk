@@ -1,9 +1,9 @@
 import { ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk'
 
-import { Recipe } from '@tipi/shared'
+import { RecipeWithIngredients } from '@tipi/shared'
 
 import { isLocalEnvironment } from '../FirebaseInit'
-import { getRecipeById, getRecipeRefById } from '../recipes/RecipeRepository'
+import { getRecipeRefById, getRecipeWithIngredientsById } from '../recipes/RecipeRepository'
 
 const trDataset = isLocalEnvironment() ? 'c7b4534b-ed9b-40b7-8b20-268b76bf4217' : 'cd4edb52-2fcb-4e69-bd5a-8275b3a79eaa'
 
@@ -12,7 +12,7 @@ export const trieve = new TrieveSDK({
     datasetId: trDataset,
 })
 
-export const createRecipeInTrieve = async (recipe: Recipe) => {
+export const createRecipeInTrieve = async (recipe: RecipeWithIngredients) => {
     const response = await trieve.createChunk({
         chunk_html: JSON.stringify({ ...recipe }),
         metadata: {
@@ -28,6 +28,6 @@ export const createRecipeInTrieve = async (recipe: Recipe) => {
 }
 
 export const createRecipeInTrieveById = async (recipeId: string) => {
-    const recipe = await getRecipeById(recipeId)
+    const recipe = await getRecipeWithIngredientsById(recipeId)
     return createRecipeInTrieve(recipe)
 }

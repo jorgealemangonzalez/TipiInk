@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { Allergen } from '@tipi/shared'
+import { Allergen, IngredientUnit } from '@tipi/shared'
 
 // Define Zod schemas based on the existing types
 export const AllergenEnum = z.enum<Allergen, [Allergen, ...Allergen[]]>([
@@ -20,10 +20,13 @@ export const AllergenEnum = z.enum<Allergen, [Allergen, ...Allergen[]]>([
     'molluscs',
 ])
 
+export const IngredientUnitEnum = z.enum<IngredientUnit, [IngredientUnit, ...IngredientUnit[]]>(['kg', 'l', 'ud'])
+
 export const RecipeIngredientSchema = z.object({
+    id: z.string().describe('ID of the ingredient or "new" if it is a new ingredient'),
     name: z.string().describe('Name of the ingredient'),
     quantityPerProduction: z.number().optional().describe('Quantity per production'),
-    unit: z.string().optional().describe('Unit of the ingredient'),
+    unit: IngredientUnitEnum.optional().describe('Unit of the ingredient'),
     pricePerUnit: z.number().optional().describe('Price per unit'),
 })
 

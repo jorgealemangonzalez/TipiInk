@@ -14,9 +14,7 @@
         "declarationMap": true,
         "moduleResolution": "node",
         "esModuleInterop": true,
-        "paths": {
-            "@/*": ["./src/*"]
-        },
+        "paths": {},
         "composite": true,
         "preserveSymlinks": true
     },

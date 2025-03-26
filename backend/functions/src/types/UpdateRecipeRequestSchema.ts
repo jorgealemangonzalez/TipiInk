@@ -10,6 +10,6 @@ export const UpdateRecipeRequestSchema = z
         ingredientsToRemove: z
             .array(z.string())
             .optional()
-            .describe('List of ingredients names to remove from the recipe, exactly extracted from the knowledge base'), // Same name as in Trieve
+            .describe('List of ingredients IDs to remove from the recipe, exactly extracted from the knowledge base'), // Same name as in Trieve
     })
     .merge(BaseRecipeSchema.partial())

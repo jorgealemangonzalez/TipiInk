@@ -1,5 +1,3 @@
-import { Timestamp } from 'firebase-admin/firestore'
-
 export type SupplierType = 'pescaderia' | 'fruteria' | 'carniceria'
 
 export type IncidentStatus = 'pending' | 'resolved'
@@ -59,11 +57,11 @@ export interface SupplierDBModel {
     deliveryNotes: DeliveryNote[]
     incidents?: Incident[]
     phone?: string
-    createdAt: Timestamp
-    updatedAt: Timestamp
     chunkId?: string // Trive Chunk ID
 }
 
 export interface Supplier extends SupplierDBModel {
     id: string
+    createdAt: Date
+    updatedAt: Date
 }

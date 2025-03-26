@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
+import { EntityUpdate } from '@tipi/shared'
+
 import { deleteDocument, setDocument } from '../DocumentsDAO'
 import { GetCollectionParams, listenCollection } from '../getCollection'
 import { FSDocument } from '../types'
@@ -9,8 +11,8 @@ interface UseCollectionsResponse<T extends FSDocument> {
     hasReachedEnd: boolean
     loadMore: () => void
     isLoading: boolean
-    addDocument: (data: Omit<T, 'id' | keyof FSDocument>) => Promise<T>
-    updateDocument: (id: string, data: Partial<T>) => Promise<void>
+    addDocument: (data: EntityUpdate<T>) => Promise<T>
+    updateDocument: (id: string, data: EntityUpdate<T>) => Promise<void>
     removeDocument: (id: string) => Promise<void>
 }
 
@@ -69,39 +71,41 @@ export const useCollection = <T extends FSDocument>({
     }
 
     const addDocument = useCallback(
-        async (data: Omit<T, 'id' | keyof FSDocument>) => {
+        async (data: EntityUpdate<T>) => {
             const timestamp = Date.now()
             const docWithTimestamps = {
-                ...data,
+                ...(data as object),
                 createdAt: timestamp,
                 updatedAt: timestamp,
             }
             const newDoc = await setDocument<typeof docWithTimestamps>({
                 collectionName: path,
                 data: docWithTimestamps,
+                converter,
             })
             const typedDoc = newDoc as unknown as T
             setResults(prev => [...prev, typedDoc])
             return typedDoc
         },
-        [path],
+        [path, converter],
     )
 
     const updateDocument = useCallback(
-        async (id: string, data: Partial<T>) => {
+        async (id: string, data: EntityUpdate<T>) => {
             console.log('updateDocument', id, data)
             const updatedData = {
-                ...data,
+                ...(data as object),
                 updatedAt: Date.now(),
             }
-            await setDocument<Partial<T>>({
+            await setDocument<typeof updatedData>({
                 collectionName: path,
                 id,
                 data: updatedData,
+                converter,
             })
-            setResults(prev => prev?.map(doc => (doc.id === id ? ({ ...doc, ...updatedData } as T) : doc)) ?? null)
+            setResults(prev => prev?.map(doc => (doc.id === id ? ({ ...doc, ...updatedData } as T) : doc)) ?? [])
         },
-        [path],
+        [path, converter],
     )
 
     const removeDocument = useCallback(
@@ -109,10 +113,11 @@ export const useCollection = <T extends FSDocument>({
             await deleteDocument({
                 collectionName: path,
                 id,
+                converter,
             })
-            setResults(prev => prev?.filter(doc => doc.id !== id) ?? null)
+            setResults(prev => prev?.filter(doc => doc.id !== id) ?? [])
         },
-        [path],
+        [path, converter],
     )
 
     return {

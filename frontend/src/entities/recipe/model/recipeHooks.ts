@@ -14,7 +14,7 @@ export const useRecipes = () => {
         removeDocument,
     } = useCollection<Recipe>({
         path: 'organizations/demo/recipes',
-        limit: 100,
+        limit: 1000,
         converter: recipeConverter,
     })
     console.log('recipes', recipes)

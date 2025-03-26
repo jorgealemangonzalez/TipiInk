@@ -1,12 +1,16 @@
 import { PropsWithChildren, createContext, useCallback, useContext, useEffect, useState } from 'react'
 
+import { FirestoreDataConverter } from 'firebase/firestore'
+
+import { EntityUpdate } from '@tipi/shared'
+
 import { GetDocumentParams, listenDocument, setDocument as setDocumentInDb } from '../DocumentsDAO.ts'
 import { debounce } from '../debounce'
 import { FSDocument } from '../types.ts'
 
 interface BaseUseDocumentResponse<T> {
-    setDocument: (doc: Partial<T>) => Promise<void>
-    setDocumentSync: (doc: Partial<T>) => Promise<void>
+    setDocument: (doc: EntityUpdate<T>) => Promise<void>
+    setDocumentSync: (doc: EntityUpdate<T>) => Promise<void>
     isLoading: boolean
 }
 
@@ -20,10 +24,12 @@ interface UseDocumentResponseWithDefault<T> extends BaseUseDocumentResponse<T> {
 
 type UseDocumentPropsWithoutDefault<T> = GetDocumentParams<T> & {
     defaultValue?: undefined
+    converter?: FirestoreDataConverter<any, any>
 }
 
 type UseDocumentPropsWithDefault<T> = GetDocumentParams<T> & {
     defaultValue: T
+    converter?: FirestoreDataConverter<any, any>
 }
 
 type DocumentStore = Record<string, FSDocument | undefined>
@@ -47,17 +53,20 @@ export const DocumentsProvider = ({ children }: PropsWithChildren) => {
 export function useDocument<T extends FSDocument>({
     collectionName,
     id,
+    converter,
 }: UseDocumentPropsWithoutDefault<T>): UseDocumentResponseWithoutDefault<T>
 export function useDocument<T extends FSDocument>({
     collectionName,
     id,
     defaultValue,
+    converter,
 }: UseDocumentPropsWithDefault<T>): UseDocumentResponseWithDefault<T>
 
 export function useDocument<T extends FSDocument>({
     collectionName,
     id,
     defaultValue = undefined,
+    converter,
 }: UseDocumentPropsWithDefault<T> | UseDocumentPropsWithoutDefault<T>):
     | UseDocumentResponseWithoutDefault<T>
     | UseDocumentResponseWithDefault<T> {
@@ -80,6 +89,7 @@ export function useDocument<T extends FSDocument>({
                     collectionName,
                     id,
                     onDocumentChange: (doc: T) => setDocumentInStore(docPath, doc),
+                    converter,
                 })
                 if (doc === undefined && defaultValue !== undefined) {
                     setIsLoading(false)
@@ -91,18 +101,28 @@ export function useDocument<T extends FSDocument>({
         }
 
         fetchDoc()
-    }, [collectionName, id])
+    }, [collectionName, id, converter])
 
-    const setDocument = async (doc: Partial<T>) => {
-        const updatedDocument = { ...document, ...doc }
+    const setDocument = async (doc: EntityUpdate<T>) => {
+        const updatedDocument = { ...document, ...(doc as Partial<T>) }
         setDocumentInStore(docPath, updatedDocument)
-        setDocumentInDbDebounced({ collectionName, id: (updatedDocument.id ?? id)!, data: updatedDocument })
+        setDocumentInDbDebounced({
+            collectionName,
+            id: (updatedDocument.id ?? id)!,
+            data: updatedDocument,
+            converter,
+        })
     }
 
-    const setDocumentSync = async (doc: Partial<T>) => {
-        const updatedDocument = { ...document, ...doc }
+    const setDocumentSync = async (doc: EntityUpdate<T>) => {
+        const updatedDocument = { ...document, ...(doc as Partial<T>) }
         setDocumentInStore(docPath, updatedDocument)
-        await setDocumentInDb({ collectionName, id: id!, data: updatedDocument })
+        await setDocumentInDb({
+            collectionName,
+            id: id!,
+            data: updatedDocument,
+            converter,
+        })
     }
 
     return {

@@ -4,9 +4,7 @@
         "composite": true,
         "baseUrl": ".",
         "paths": {
-            "@/*": ["./src/*"],
-            "@tipi/shared": ["../backend/functions/shared/src"],
-            "@tipi/shared/*": ["../backend/functions/shared/src/*"]
+            "@/*": ["./src/*"]
         },
         "sourceMap": true,
         "inlineSources": true,

@@ -13,7 +13,7 @@ import { uploadFileToStorage } from '@/firebase/fileStorage'
 import { cn } from '@/shared/lib/utils'
 import { AllergenIcon } from '@/shared/ui/allergen-icon'
 import { BackButton } from '@/shared/ui/back-button'
-import { Allergen } from '@monorepo/functions/src/recipes/recipe'
+import { Allergen } from '@tipi/shared'
 
 // Recipe categories available
 const RECIPE_CATEGORIES = ['Arroces', 'Pescados', 'Pasta', 'Carnes', 'Postres', 'Asiático', 'Otros']

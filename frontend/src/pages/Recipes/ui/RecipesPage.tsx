@@ -28,12 +28,7 @@ export const RecipesPage: FC = () => {
     const filteredRecipes = useMemo(() => {
         const query = searchQuery.toLowerCase()
         return recipes
-            .filter(
-                recipe =>
-                    (showOnlyMenu ? recipe.inMenu : true) &&
-                    (recipe.name.toLowerCase().includes(query) ||
-                        recipe.ingredients.some(ingredient => ingredient.name.toLowerCase().includes(query))),
-            )
+            .filter(recipe => (showOnlyMenu ? recipe.inMenu : true) && recipe.name.toLowerCase().includes(query))
             .sort((a, b) => b.costPercentage - a.costPercentage)
     }, [searchQuery, recipes, showOnlyMenu])
 

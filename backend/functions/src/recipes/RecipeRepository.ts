@@ -1,6 +1,5 @@
 import { Timestamp } from 'firebase-admin/firestore'
 
-import { getIngredientsByIds } from '@/ingredients/IngredientsRepository'
 import {
     EntityUpdate,
     Recipe,
@@ -12,6 +11,7 @@ import {
 } from '@tipi/shared'
 
 import { firestore } from '../FirebaseInit'
+import { getIngredientsByIds } from '../ingredients/IngredientsRepository'
 
 export const getRecipesRef = () =>
     firestore.collection('organizations/demo/recipes').withConverter<Recipe, RecipeDBModel>(recipeConverter)

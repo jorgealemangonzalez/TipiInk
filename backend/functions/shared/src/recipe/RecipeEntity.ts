@@ -1,7 +1,6 @@
-import { Timestamp } from 'src/firebase/Timestamp'
-import { EntityUpdate } from 'src/typing'
-
+import { Timestamp } from '../firebase/Timestamp'
 import { Ingredient } from '../ingredients/IngredientEntity'
+import { EntityUpdate } from '../typing'
 
 export type Allergen =
     | 'gluten'

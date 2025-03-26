@@ -1,14 +1,15 @@
 import {
-    createOrUpdateIngredient,
-    getIngredientById,
-    updateIngredientByExistingIngredient as updateIngredientByExisting,
-} from '@/ingredients/IngredientsRepository'
-import {
     FullRecipeIngredient,
     getQuantityPerProduction,
     getQuantityPerServing,
     mergeFullRecipeIngredient,
 } from '@tipi/shared'
+
+import {
+    createOrUpdateIngredient,
+    getIngredientById,
+    updateIngredientByExistingIngredient as updateIngredientByExisting,
+} from '../ingredients/IngredientsRepository'
 
 export const mergeAndUpdateRecipeIngredient = async (
     existingIngredient: FullRecipeIngredient,

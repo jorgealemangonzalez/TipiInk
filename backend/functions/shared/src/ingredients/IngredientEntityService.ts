@@ -1,5 +1,4 @@
-import { EntityUpdate } from 'src/typing'
-
+import { EntityUpdate } from '../typing'
 import { Ingredient, IngredientDBModel, IngredientUnits } from './IngredientEntity'
 
 export const mergeIngredient = async (

@@ -10,11 +10,7 @@
         "target": "es2017",
         "skipLibCheck": true,
         "baseUrl": ".",
-        "paths": {
-            "@/*": ["./src/*"],
-            "@tipi/shared": ["./shared/src"],
-            "@tipi/shared/*": ["./shared/src/*"]
-        },
+        "paths": {},
         "preserveSymlinks": true
     },
     "compileOnSave": true,

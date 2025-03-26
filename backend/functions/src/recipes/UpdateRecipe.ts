@@ -1,10 +1,10 @@
 import { logger } from 'firebase-functions'
 
-import { onAIToolRequest } from '@/FirebaseInit'
-import { UpdateRecipeRequest } from '@/types/UpdateRecipe'
-import { UpdateRecipeRequestSchema } from '@/types/UpdateRecipeRequestSchema'
 import { Recipe, RecipeIngredient, RecipePreparation, RecipeWithIngredients, getProductionCost } from '@tipi/shared'
 
+import { onAIToolRequest } from '../FirebaseInit'
+import { UpdateRecipeRequest } from '../types/UpdateRecipe'
+import { UpdateRecipeRequestSchema } from '../types/UpdateRecipeRequestSchema'
 import { UpdateRecipeIngredientInput } from './CreateRecipe'
 import {
     createOrUpdateRecipeIngredient as buildRecipeIngredientCreatingIngredient,

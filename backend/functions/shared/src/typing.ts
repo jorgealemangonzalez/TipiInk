@@ -4,9 +4,8 @@
 export type ElementOf<T> = T extends (infer U)[] ? U : never
 
 /**
- * This type makes all properties of an object optional, including nested objects
+ * This type makes all properties and sub-properties of an object optional
  */
-
 type DeepPartial<T> = {
     [P in keyof T]?: T[P] extends (infer U)[]
         ? DeepPartial<U>[] // Make array optional, elements required but with DeepPartial applied
@@ -15,7 +14,7 @@ type DeepPartial<T> = {
             T[P] extends Function // Keep functions required
               ? T[P] // Don't make functions recursive
               : DeepPartial<T[P]> // Recursively apply DeepPartial to nested objects
-          : T[P]
+          : T[P] // Keep primitive types required
 }
 
 export type EntityUpdate<T> = DeepPartial<Omit<T, 'id' | 'createdAt' | 'updatedAt'>>

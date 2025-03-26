@@ -1,7 +1,8 @@
 import { DocumentSnapshot, Timestamp } from 'firebase-admin/firestore'
 
-import { firestore } from '@/FirebaseInit'
 import { Ingredient, IngredientDBModel, defaultIngredient, ingredientConverter } from '@tipi/shared'
+
+import { firestore } from '../FirebaseInit'
 
 export const getIngredientsRef = () =>
     firestore
@@ -30,7 +31,9 @@ export const getIngredientsByIds = async (ids: string[]): Promise<Ingredient[]> 
 export const createOrUpdateIngredient = async (
     ingredientData: Partial<Omit<Ingredient, 'createdAt' | 'updatedAt'>>,
 ): Promise<Ingredient['id']> => {
-    if (ingredientData.id) {
+    // new is a special id for ingredients that are not in the database,
+    // this is to help vapi always setting the id
+    if (ingredientData.id && ingredientData.id !== 'new') {
         // TODO SEARCH THE ID IN TRIEVE BY THE INGREDIENT NAME
         await updateIngredient(ingredientData.id, ingredientData)
         return ingredientData.id

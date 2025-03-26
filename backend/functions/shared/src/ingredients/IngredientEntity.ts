@@ -1,4 +1,4 @@
-import { Timestamp } from 'src/firebase/Timestamp'
+import { Timestamp } from '../firebase/Timestamp'
 
 export enum IngredientUnits {
     KG = 'kg',

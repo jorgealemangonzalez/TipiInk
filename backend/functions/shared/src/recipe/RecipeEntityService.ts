@@ -1,6 +1,5 @@
-import { Ingredient } from 'src/ingredients/IngredientEntity'
-import { mergeIngredient } from 'src/ingredients/IngredientEntityService'
-
+import { Ingredient } from '../ingredients/IngredientEntity'
+import { mergeIngredient } from '../ingredients/IngredientEntityService'
 import { FullRecipeIngredient, RecipeDBModel, RecipeIngredient } from './RecipeEntity'
 
 export const getProductionCost = (ingredients?: RecipeIngredient[]) => {

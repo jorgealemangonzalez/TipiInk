@@ -18,6 +18,12 @@ service cloud.firestore {
       }
     }
 
+    match /organizations/{organizationId} {
+      match /suppliers/{supplierId} {
+        allow read, write: if isAuthenticated();
+      }
+    }
+
     match /suppliers/{supplierId} {
       allow read, write: if isAuthenticated();
     }

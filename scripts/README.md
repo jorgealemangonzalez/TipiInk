@@ -171,3 +171,49 @@ pnpm run migrate delete-ai-event-resources <eventId>
 - Unlinks the files linked to the vector store of the event in OpenAI
 
 > The `<eventId>` of the event to delete the AI resources from.
+
+## Available Scripts
+
+### Events
+
+- `pnpm upload` - Upload data to Firestore
+- `pnpm download` - Download data from Firestore to local file system
+
+### Admin Operations
+
+- `pnpm admin:set` - Designate a user as admin
+- `pnpm admin:list` - List admin users
+- `pnpm revoke-user-token` - Revoke a user's token
+
+### Migrations and Versioning
+
+- `pnpm migrate` - Run a migration
+- `pnpm write-version` - Write version to Firebase
+
+### Recipe Operations
+
+- `pnpm sync-recipes` - Synchronize recipes from Firestore to Trieve search engine
+
+## Recipe Operations
+
+### Sync Recipes to Trieve
+
+This command synchronizes recipes from Firestore to the Trieve search engine for better search capabilities.
+
+```bash
+# Run sync with default settings
+pnpm sync-recipes
+
+# Run in dry-run mode (no changes to Firestore)
+pnpm sync-recipes --dry-run
+
+# Specify batch size
+pnpm sync-recipes --batch-size 50
+
+# Combine options
+pnpm sync-recipes --dry-run --batch-size 10
+```
+
+Options:
+- `--dry-run`: Run without making changes to Firestore (preview mode)
+- `--batch-size <size>`: Number of recipes to process in each batch (default: 25)

@@ -1,45 +1,49 @@
-#!/usr/bin/env ts-node
-import * as admin from 'firebase-admin'
-import { ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk'
+#!/usr/bin/env node
+const { Command } = require('commander')
+const { TrieveSDK } = require('trieve-ts-sdk')
+const { getFirestoreInstance } = require('../platform/firebase')
+const { getConfig } = require('../config')
 
-// Parse command line arguments
-const args = process.argv.slice(2)
-const isDryRun = args.includes('--dry-run')
-const batchSize = args.includes('--batch-size') ? parseInt(args[args.indexOf('--batch-size') + 1], 10) : 25 // Default batch size
+const command = new Command('sync-recipes-to-trieve')
 
-// Initialize Firebase Admin SDK with service account
-admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-    projectId: 'tipi-ink',
-})
-
-// Initialize Firestore
-const firestore = admin.firestore()
-
-// Initialize Trieve SDK
-const trieve = new TrieveSDK({
-    apiKey: 'tr-yEror1mDshxFW95Prl7cEQ6B4RFmiVcT',
-    // Use production dataset ID
-    datasetId: 'c7b4534b-ed9b-40b7-8b20-268b76bf4217',
-})
-
-// Interface to track migration stats
-interface MigrationStats {
-    total: number
-    success: number
-    skipped: number
-    error: number
-    errors: Array<{ id: string; error: string }>
-}
+command
+    .description('Synchronize recipes from Firestore to Trieve search engine')
+    .option('--dry-run', 'Run without making changes to Firestore', false)
+    .option('--batch-size <size>', 'Number of recipes to process in each batch', '25')
+    .action(async options => {
+        await syncRecipesToTrieve(options)
+    })
 
 // Function to migrate recipes from Firestore to Trieve
-async function migrateRecipesToTrieve() {
+async function syncRecipesToTrieve(options) {
+    const isDryRun = options.dryRun
+    const batchSize = parseInt(options.batchSize, 10)
+
     try {
-        console.log('Starting migration of recipes from Firestore to Trieve...')
+        console.log('Starting sync of recipes from Firestore to Trieve...')
         if (isDryRun) {
             console.log('DRY RUN: No changes will be made to Firestore.')
         }
         console.log(`Batch size: ${batchSize}`)
+
+        // Initialize Firestore
+        const firestore = getFirestoreInstance()
+
+        // Initialize Trieve SDK
+        const trieve = new TrieveSDK({
+            apiKey: 'tr-yEror1mDshxFW95Prl7cEQ6B4RFmiVcT',
+            // Use production dataset ID
+            datasetId: 'c7b4534b-ed9b-40b7-8b20-268b76bf4217',
+        })
+
+        // Interface to track migration stats
+        const stats = {
+            total: 0,
+            success: 0,
+            skipped: 0,
+            error: 0,
+            errors: [],
+        }
 
         // Get all recipes from Firestore
         const recipesSnapshot = await firestore.collection('organizations/demo/recipes').get()
@@ -53,13 +57,7 @@ async function migrateRecipesToTrieve() {
         console.log(`Found ${totalRecipes} recipes to process.`)
 
         // Initialize migration stats
-        const stats: MigrationStats = {
-            total: totalRecipes,
-            success: 0,
-            skipped: 0,
-            error: 0,
-            errors: [],
-        }
+        stats.total = totalRecipes
 
         // Convert docs to array for batch processing
         const recipes = recipesSnapshot.docs
@@ -80,13 +78,6 @@ async function migrateRecipesToTrieve() {
 
                 try {
                     console.log(`Processing recipe: ${recipeData.name} (${recipeId})`)
-
-                    // Skip if recipe already has a chunkId (already in Trieve)
-                    // if (recipeData.chunkId) {
-                    //     console.log(`Recipe ${recipeId} already has chunkId ${recipeData.chunkId}, skipping.`)
-                    //     stats.skipped++
-                    //     continue
-                    // }
 
                     if (recipeData.chunkId) {
                         console.log(`Recipe ${recipeId} already has chunkId ${recipeData.chunkId}, updating tag_set...`)
@@ -127,7 +118,8 @@ async function migrateRecipesToTrieve() {
                         tag_set: ['recipe'],
                     })
 
-                    const chunkId = (response.chunk_metadata as ChunkMetadata).id
+                    // In the new version of the SDK, the structure is different
+                    const chunkId = response.chunk_metadata.id
                     console.log(`Recipe ${recipeId} successfully indexed in Trieve with chunkId ${chunkId}`)
 
                     // Update recipe in Firestore with the chunkId if not a dry run
@@ -142,7 +134,7 @@ async function migrateRecipesToTrieve() {
 
                     stats.success++
                 } catch (error) {
-                    console.error(`Error migrating recipe ${recipeId}:`, error)
+                    console.error(`Error syncing recipe ${recipeId}:`, error)
                     stats.error++
                     stats.errors.push({
                         id: recipeId,
@@ -163,11 +155,11 @@ async function migrateRecipesToTrieve() {
         }
 
         // Print migration summary
-        console.log('\n==== Migration Summary ====')
+        console.log('\n==== Sync Summary ====')
         console.log(`Total recipes: ${stats.total}`)
-        console.log(`Successfully migrated: ${stats.success}`)
+        console.log(`Successfully synced: ${stats.success}`)
         console.log(`Skipped (already had chunkId): ${stats.skipped}`)
-        console.log(`Failed migrations: ${stats.error}`)
+        console.log(`Failed syncs: ${stats.error}`)
 
         if (stats.errors.length > 0) {
             console.log('\nErrors:')
@@ -176,19 +168,14 @@ async function migrateRecipesToTrieve() {
             })
         }
 
-        console.log('\nMigration completed.')
+        console.log('\nSync completed.')
         if (isDryRun) {
             console.log('This was a dry run. No changes were made to Firestore.')
         }
     } catch (error) {
-        console.error('Migration failed:', error)
+        console.error('Sync failed:', error)
+        process.exit(1)
     }
 }
 
-// Execute migration
-migrateRecipesToTrieve()
-    .then(() => process.exit(0))
-    .catch(error => {
-        console.error('Unhandled error during migration:', error)
-        process.exit(1)
-    })
+module.exports = command

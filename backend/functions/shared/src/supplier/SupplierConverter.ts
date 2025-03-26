@@ -2,7 +2,7 @@ import { FirestoreDataConverter } from '../firebase/FirestoreDataConverter'
 import { QueryDocumentSnapshot } from '../firebase/QueryDocumentSnapshot'
 import { Supplier, SupplierDBModel } from './SupplierEntity'
 
-export const supplierConverter: FirestoreDataConverter<Supplier, SupplierDBModel> = {
+export const SupplierConverter: FirestoreDataConverter<Supplier, SupplierDBModel> = {
     toFirestore: (supplier: Supplier) => ({
         name: supplier.name,
         type: supplier.type,

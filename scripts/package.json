@@ -10,7 +10,9 @@
         "admin:list": "node index.js list-admin-users",
         "revoke-user-token": "node index.js revoke-user-token",
         "migrate": "node index.js migrate",
-        "write-version": "node index.js write-version"
+        "write-version": "node index.js write-version",
+        "sync-recipes": "node index.js sync-recipes-to-trieve",
+        "sync-suppliers": "node index.js sync-suppliers-to-trieve"
     },
     "keywords": [],
     "author": "",
@@ -24,6 +26,7 @@
         "firebase-tools": "^13.11.4",
         "google-auth-library": "^9.14.1",
         "openai": "^4.67.0",
+        "trieve-ts-sdk": "^0.0.68",
         "xlsx": "^0.18.5",
         "zod": "^3.23.8"
     }

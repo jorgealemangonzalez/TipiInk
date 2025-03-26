@@ -8,6 +8,8 @@ const listAdminUsers = require('./admins/listAdminUsers')
 const revokeUserToken = require('./admins/revokeUserToken')
 const runMigration = require('./platform/migrations/runMigration')
 const writeVersion = require('./platform/writeVersion')
+const syncRecipesToTrieve = require('./recipeSync/syncRecipesToTrieve')
+const syncSuppliersToTrieve = require('./supplierSync/syncSuppliersToTrieve')
 
 program.option('--prod', 'Run in production mode', false)
 
@@ -18,6 +20,8 @@ program.addCommand(listAdminUsers)
 program.addCommand(revokeUserToken)
 program.addCommand(runMigration)
 program.addCommand(writeVersion)
+program.addCommand(syncRecipesToTrieve)
+program.addCommand(syncSuppliersToTrieve)
 
 program.hook('preAction', command => {
     console.log(`Running in ${command.opts().prod ? 'PROD' : 'LOCAL'} env`)

@@ -1,9 +1,28 @@
 import { useEffect } from 'react'
 
 import { useCollection } from '@/firebase/hooks/useCollection'
-import { Supplier, supplierConverter } from '@tipi/shared'
+import { Supplier, SupplierConverter } from '@tipi/shared'
 
 import { SUPPLIERS } from './suppliersMocks'
+
+// Helper function to sanitize supplier data for Firestore
+const sanitizeSupplierForFirestore = (supplier: any): Supplier => {
+    // Create a new object with all properties, replacing undefined with appropriate defaults
+    return {
+        ...supplier,
+        incidents: supplier.incidents || [],
+        phone: supplier.phone || null,
+        commercialPhone: supplier.commercialPhone || null,
+        deliveryPhone: supplier.deliveryPhone || null,
+        totalOrders: supplier.totalOrders || 0,
+        lastMonthInvoiced: supplier.lastMonthInvoiced || 0,
+        pendingIncidents: supplier.pendingIncidents || 0,
+        deliveryDays: supplier.deliveryDays || [],
+        orderAdvanceHours: supplier.orderAdvanceHours || 0,
+        invoices: supplier.invoices || [],
+        chunkId: supplier.chunkId || null,
+    }
+}
 
 export const useSuppliers = () => {
     const {
@@ -13,8 +32,8 @@ export const useSuppliers = () => {
         updateDocument,
         removeDocument,
     } = useCollection<Supplier>({
-        path: 'suppliers',
-        converter: supplierConverter,
+        path: 'organizations/demo/suppliers',
+        converter: SupplierConverter,
     })
 
     useEffect(() => {
@@ -23,7 +42,10 @@ export const useSuppliers = () => {
                 console.log('No suppliers found, initializing with mock data')
 
                 for (const supplier of SUPPLIERS) {
-                    await addDocument(supplier)
+                    console.log('supplier', supplier)
+                    // Sanitize supplier data to prevent Firestore errors from undefined values
+                    const sanitizedSupplier = sanitizeSupplierForFirestore(supplier)
+                    await addDocument(sanitizedSupplier)
                 }
             }
         }

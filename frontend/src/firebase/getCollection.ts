@@ -28,6 +28,7 @@ export const listenCollection = async <T extends FSDocument>(
     onCollectionChange: (docs: T[]) => void,
 ): Promise<Unsubscribe> => {
     const ref = converter ? collection(firestore, path).withConverter(converter) : collection(firestore, path)
+    console.log('listenCollection', path, where)
 
     const query = fQuery(
         ref,
@@ -38,6 +39,7 @@ export const listenCollection = async <T extends FSDocument>(
             ...(startAfter ? [fStartAfter(startAfter)] : []),
         ],
     )
+    console.log('query', query)
 
     return onSnapshot(query, snapshot => {
         const docs = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }) as T)

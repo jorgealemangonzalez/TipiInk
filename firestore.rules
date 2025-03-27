@@ -16,6 +16,9 @@ service cloud.firestore {
       match /recipes/{recipeId} {
         allow read, write: if isAuthenticated();
       }
+      match /ingredients/{ingredientId} {
+        allow read, write: if isAuthenticated();
+      }
     }
 
     match /organizations/{organizationId} {

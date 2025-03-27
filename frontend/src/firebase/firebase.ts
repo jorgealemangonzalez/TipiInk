@@ -9,7 +9,7 @@ import {
     signInWithPopup,
     signOut,
 } from 'firebase/auth'
-import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore'
+import { connectFirestoreEmulator, initializeFirestore } from 'firebase/firestore'
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions'
 import { connectStorageEmulator, getStorage } from 'firebase/storage'
 
@@ -32,7 +32,9 @@ const firebaseApp = initializeApp(firebaseConfig)
 const auth = getAuth(firebaseApp)
 getAnalytics(firebaseApp)
 const functions = getFunctions(firebaseApp, 'europe-west3')
-const firestore = getFirestore(firebaseApp)
+const firestore = initializeFirestore(firebaseApp, {
+    ignoreUndefinedProperties: true,
+})
 const storage = getStorage(firebaseApp)
 
 // // Connect to the emulator if in development

@@ -41,7 +41,7 @@ export const useCollection = <T extends FSDocument>({
     useEffect(() => {
         let unsubscribe = () => {}
         const fetchResults = async () => {
-            unsubscribe = await listenCollection<T>({ ...params, startAfter, converter }, upToDateDocs => {
+            unsubscribe = await listenCollection<T>({ ...params, where, startAfter, converter }, upToDateDocs => {
                 if (upToDateDocs.length) {
                     setResults(prev => {
                         console.log('where', where)

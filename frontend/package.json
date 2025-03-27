@@ -34,16 +34,16 @@
         "@sentry/react": "^8.26.0",
         "@sentry/vite-plugin": "^2.22.2",
         "@sentry/wizard": "3.26.0",
+        "@tipi/shared": "workspace:*",
         "@types/gapi": "^0.0.47",
         "@types/gapi.client.sheets-v4": "^0.0.4",
         "@vapi-ai/web": "^2.2.2",
-        "@tipi/shared": "workspace:*",
         "axios": "^1.7.2",
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.1",
         "cmdk": "1.0.0",
         "date-fns": "^4.1.0",
-        "firebase": "^10.12.3",
+        "firebase": "^11.5.0",
         "framer-motion": "^12.4.2",
         "i18next": "^23.14.0",
         "i18next-browser-languagedetector": "^8.0.0",
@@ -62,9 +62,14 @@
         "tailwindcss-animate": "^1.0.7"
     },
     "devDependencies": {
+        "@firebase/analytics": "^0.10.12",
+        "@firebase/app": "^0.11.3",
+        "@firebase/auth": "^1.9.1",
+        "@firebase/firestore": "^4.7.10",
+        "@firebase/functions": "^0.12.3",
+        "@firebase/storage": "^0.13.7",
         "@google-cloud/translate": "^8.5.0",
         "@monorepo/functions": "workspace:*",
-        "@types/firebase": "^3.2.1",
         "@types/fs-extra": "^11.0.4",
         "@types/mixpanel-browser": "^2.49.1",
         "@types/react": "^18.3.3",
@@ -82,7 +87,7 @@
         "fs-extra": "^11.2.0",
         "postcss": "^8.4.39",
         "tailwindcss": "^3.4.4",
-        "typescript": "^5.2.2",
+        "typescript": "^5.8.2",
         "vite": "^5.3.1"
     }
 }

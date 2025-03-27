@@ -23,7 +23,7 @@ export const recipeConverter: FirestoreDataConverter<Recipe, RecipeDBModel> = {
             productionCost: recipe.productionCost,
             createdAt: recipe.createdAt,
             updatedAt: recipe.updatedAt,
-            ingredients: recipe.ingredients.map(ingredient => ({
+            ingredients: recipe.ingredients?.map(ingredient => ({
                 id: ingredient.id,
                 type: ingredient.type,
                 pricePerProduction: ingredient.pricePerProduction,

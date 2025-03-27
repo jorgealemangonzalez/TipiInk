@@ -5,11 +5,13 @@ const command = new Command('migrate')
 const availableMigrations = {
     'test-migration': require('./20250325-test-migration'),
     'add-production-cost': require('./20240803-add-production-cost'),
+    'migrate-recipe-ingredients': require('./20240327-migrate-recipe-ingredients'),
 }
 
 const requiredArguments = {
     'test-migration': 'organizationId',
     'add-production-cost': 'organizationId',
+    'migrate-recipe-ingredients': 'organizationId',
 }
 
 command

@@ -22,6 +22,6 @@
         "tsc-watch": "^6.2.1",
         "tsconfig-paths": "^4.2.0",
         "ttypescript": "^1.5.15",
-        "typescript": "^5.0.0"
+        "typescript": "^5.8.2"
     }
 }

@@ -17,4 +17,6 @@ type DeepPartial<T> = {
           : T[P] // Keep primitive types required
 }
 
-export type EntityUpdate<T> = DeepPartial<Omit<T, 'id' | 'createdAt' | 'updatedAt'>>
+export type EntityWithoutDbGeneratedFields<T> = Omit<T, 'id' | 'createdAt' | 'updatedAt'>
+
+export type EntityUpdate<T> = DeepPartial<EntityWithoutDbGeneratedFields<T>>

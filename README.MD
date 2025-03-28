@@ -59,3 +59,8 @@ pnpm run firebase deploy
 
 Stripe webhook secret (Optional): This is your signing secret for a Stripe-registered webhook. This webhook can only be registered after installation. Leave this value untouched during installation, then follow the postinstall instructions for registering your webhook and configuring this value.
 ? Where would you like to store your secrets? If you don't want to set this optional secret, leave both options unselected to skip it 
+
+# Creating tunnel to local functions
+```bash
+  ssh -p 443 -R0:localhost:5008 qr@a.pinggy.io
+```

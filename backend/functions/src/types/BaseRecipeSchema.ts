@@ -20,7 +20,15 @@ export const AllergenEnum = z.enum<Allergen, [Allergen, ...Allergen[]]>([
     'molluscs',
 ])
 
-export const IngredientUnitEnum = z.enum<IngredientUnit, [IngredientUnit, ...IngredientUnit[]]>(['kg', 'l', 'ud'])
+type IngredientUnitEnum = IngredientUnit | 'g' | 'ml'
+
+export const IngredientUnitEnum = z.enum<IngredientUnitEnum, [IngredientUnitEnum, ...IngredientUnitEnum[]]>([
+    'kg',
+    'g',
+    'l',
+    'ml',
+    'ud',
+])
 
 export const RecipeIngredientSchema = z.object({
     id: z.string().describe('ID of the ingredient or "new" if it is a new ingredient'),

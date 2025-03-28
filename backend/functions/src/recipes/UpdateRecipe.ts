@@ -8,6 +8,7 @@ import { UpdateRecipeRequestSchema } from '../types/UpdateRecipeRequestSchema'
 import { UpdateRecipeIngredientInput } from './CreateRecipe'
 import {
     createOrUpdateRecipeIngredient as buildRecipeIngredientCreatingIngredient,
+    mapToFullRecipeIngredient,
     mergeAndUpdateRecipeIngredient,
 } from './RecipeIngredientService'
 import { getRecipeWithIngredientsById, updateRecipe as updateRecipeRepo } from './RecipeRepository'
@@ -26,6 +27,12 @@ const mergeAndCreateRecipeIngredients = async (
     // Filter out ingredients that should be removed
     const ingredientsToKeep = existingIngredients.filter(ingredient => !ingredientsToRemove.includes(ingredient.id))
 
+    // Log all
+    console.log('--------------------------------')
+    console.log('Ingredients to keep', ingredientsToKeep)
+    console.log('Ingredients to remove', ingredientsToRemove)
+    console.log('New ingredients', newIngredients)
+    console.log('--------------------------------')
     for (const newIngredient of newIngredients) {
         const existingIndex = ingredientsToKeep.findIndex(i => i.id === newIngredient.id)
 
@@ -33,13 +40,13 @@ const mergeAndCreateRecipeIngredients = async (
             // Update existing ingredient
             ingredientsToKeep[existingIndex] = await mergeAndUpdateRecipeIngredient(
                 ingredientsToKeep[existingIndex],
-                newIngredient,
+                mapToFullRecipeIngredient(newIngredient),
                 servingsPerProduction,
             )
         } else {
             // Add new ingredient
             const createdIngredient = await buildRecipeIngredientCreatingIngredient(
-                newIngredient,
+                mapToFullRecipeIngredient(newIngredient),
                 servingsPerProduction,
             )
             ingredientsToKeep.push(createdIngredient)

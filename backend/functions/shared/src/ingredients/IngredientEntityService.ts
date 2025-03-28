@@ -1,4 +1,4 @@
-import { EntityUpdate } from '../typing'
+import { EntityWithoutDbGeneratedFields } from '../typing'
 import { Ingredient, IngredientDBModel, IngredientUnits } from './IngredientEntity'
 
 export const mergeIngredient = async (
@@ -11,7 +11,7 @@ export const mergeIngredient = async (
     }
 }
 
-export const defaultIngredient: EntityUpdate<IngredientDBModel> = {
+export const defaultIngredient: EntityWithoutDbGeneratedFields<IngredientDBModel> = {
     name: '',
     unit: IngredientUnits.UD,
     pricePerUnit: 0,

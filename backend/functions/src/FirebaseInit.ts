@@ -16,6 +16,8 @@ export const firestore = admin.firestore()
 
 export const storage = admin.storage()
 
+export { admin }
+
 functions.setGlobalOptions({ region: 'europe-west3' })
 firestore.settings({
     ignoreUndefinedProperties: true,
@@ -81,10 +83,22 @@ function snakeToCamel<T>(value: T): T {
 export const onAIToolRequest = <P, R>(schema: ZodSchema, handler: (request: P) => Promise<R>) => {
     return functions.https.onRequest(async (request, response) => {
         logger.debug({ body: request.body, headers: request.headers })
+        if (request.headers['x-server-secret-key'] !== process.env.SERVER_SECRET_KEY) {
+            logger.error({ headers: request.headers })
+            response.status(401).send('Invalid secret')
+            return
+        }
 
         const results = []
         for (const toolCall of request.body.message.toolCalls) {
-            const parsedBody = schema.parse(snakeToCamel(toolCall.function.arguments))
+            let parsedBody: any
+            try {
+                parsedBody = schema.parse(snakeToCamel(toolCall.function.arguments))
+            } catch (error) {
+                logger.error({ error })
+                response.status(500).send(error instanceof Error ? error.message : 'Unknown error')
+                return
+            }
             logger.debug({ body: toolCall.function.arguments, parsedBody })
             const result = await handler(parsedBody)
             results.push(result)

@@ -7,6 +7,8 @@ import {
     RecipeIngredient,
     RecipeWithIngredients,
     defaultRecipeData,
+    defaultRecipeIngredient,
+    mergeFullRecipeIngredients,
     recipeConverter,
 } from '@tipi/shared'
 
@@ -39,19 +41,32 @@ export const getRecipeWithIngredientsById = async (id: string): Promise<RecipeWi
 
     const recipeWithIngredients: RecipeWithIngredients = {
         ...recipe,
-        ingredients,
+        ingredients: mergeFullRecipeIngredients(recipe.ingredients, ingredients),
+        id,
     }
 
     return recipeWithIngredients
 }
 
 export const createRecipe = async (recipeData: EntityUpdate<RecipeDBModel>): Promise<Recipe> => {
-    const recipeRef = await getRecipesRef().add({
-        ...defaultRecipeData,
+    const newRecipeDetails = {
         ...recipeData,
+        ingredients:
+            recipeData.ingredients?.map(ingredient => ({
+                ...defaultRecipeIngredient,
+                ...ingredient,
+                quantityPerServing: 0, // REMOVED BY THE CONVERTER
+            })) ?? [],
+    }
+    const recipeRef = await getRecipesRef().add({
+        id: 'new', // REMOVED BY THE CONVERTER
+        costPercentage: 0, // REMOVED BY THE CONVERTER
+        costPerServing: 0, // REMOVED BY THE CONVERTER
+        ...defaultRecipeData,
+        ...newRecipeDetails,
         preparation: {
             ...defaultRecipeData.preparation,
-            ...recipeData.preparation,
+            ...newRecipeDetails.preparation,
         },
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),

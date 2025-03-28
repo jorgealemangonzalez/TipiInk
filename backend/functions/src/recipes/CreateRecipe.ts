@@ -7,7 +7,7 @@ import { Request, onAIToolRequest, onCallWithSecretKey } from '../FirebaseInit'
 import { CreateRecipeRequest, CreateRecipeResponse } from '../types/CreateRecipe'
 import { CreateRecipeRequestSchema } from '../types/CreateRecipeRequestSchema'
 import { UpdateRecipeRequestSchema } from '../types/UpdateRecipeRequestSchema'
-import { createOrUpdateRecipeIngredient } from './RecipeIngredientService'
+import { createOrUpdateRecipeIngredient, mapToFullRecipeIngredient } from './RecipeIngredientService'
 import { createRecipe } from './RecipeRepository'
 
 export type UpdateRecipeIngredientInput = NonNullable<z.infer<typeof UpdateRecipeRequestSchema>['ingredients']>[number]
@@ -22,7 +22,10 @@ const createRecipeFunction = async (recipeData: CreateRecipeRequest['recipe']): 
         // Process each ingredient
         for (const recipeIngredientInput of recipeData.ingredients) {
             ingredients.push(
-                await createOrUpdateRecipeIngredient(recipeIngredientInput, recipeData.servingsPerProduction),
+                await createOrUpdateRecipeIngredient(
+                    mapToFullRecipeIngredient(recipeIngredientInput),
+                    recipeData.servingsPerProduction,
+                ),
             )
         }
     }

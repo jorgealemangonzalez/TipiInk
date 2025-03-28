@@ -1,6 +1,6 @@
 import { Timestamp } from '../firebase/Timestamp'
 import { Ingredient } from '../ingredients/IngredientEntity'
-import { EntityUpdate } from '../typing'
+import { EntityWithoutDbGeneratedFields } from '../typing'
 
 export type Allergen =
     | 'gluten'
@@ -71,7 +71,14 @@ export interface RecipeWithIngredients extends Omit<Recipe, 'ingredients'> {
     ingredients: FullRecipeIngredient[]
 }
 
-export const defaultRecipeData: EntityUpdate<RecipeDBModel> = {
+export const defaultRecipeIngredient: RecipeIngredientDBModel = {
+    id: 'new',
+    type: 'ingredient',
+    pricePerProduction: 0,
+    quantityPerProduction: 0,
+}
+
+export const defaultRecipeData: EntityWithoutDbGeneratedFields<RecipeDBModel> = {
     name: '',
     category: '',
     allergens: [],

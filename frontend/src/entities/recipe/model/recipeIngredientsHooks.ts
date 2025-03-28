@@ -3,7 +3,13 @@ import { useMemo } from 'react'
 import { documentId, where as fWhere } from 'firebase/firestore'
 
 import { useCollection } from '@/firebase/hooks/useCollection'
-import { FullRecipeIngredient, Ingredient, RecipeIngredient, ingredientConverter } from '@tipi/shared'
+import {
+    FullRecipeIngredient,
+    Ingredient,
+    RecipeIngredient,
+    ingredientConverter,
+    mergeFullRecipeIngredients,
+} from '@tipi/shared'
 
 interface UseFullRecipeIngredientsResponse {
     ingredients: FullRecipeIngredient[]
@@ -11,15 +17,14 @@ interface UseFullRecipeIngredientsResponse {
 }
 
 export const useFullRecipeIngredients = (ingredients: RecipeIngredient[]): UseFullRecipeIngredientsResponse => {
+    const ingredientsParamsString = ingredients
+        .map(ingredient => ingredient.id)
+        .sort()
+        .join(',')
     const whereClauses = useMemo<Parameters<typeof fWhere>[]>(() => {
         console.log('Ingredients changed', ingredients)
         return [[documentId(), 'in', ingredients.map(ingredient => ingredient.id)]]
-    }, [
-        ingredients
-            .map(ingredient => ingredient.id)
-            .sort()
-            .join(','),
-    ])
+    }, [ingredientsParamsString])
 
     const { results, isLoading } = useCollection<Ingredient>({
         path: 'organizations/demo/ingredients',
@@ -27,10 +32,12 @@ export const useFullRecipeIngredients = (ingredients: RecipeIngredient[]): UseFu
         converter: ingredientConverter,
     })
 
-    const fullRecipeIngredients = results.map(ingredient => ({
-        ...ingredient,
-        ...ingredients.find(i => i.id === ingredient.id)!,
-    }))
+    const fullRecipeIngredients = useMemo(() => {
+        if (isLoading) {
+            return []
+        }
+        return mergeFullRecipeIngredients(ingredients, results)
+    }, [results, ingredientsParamsString])
 
     // Log all
     console.log('--------------------------------')

@@ -3,6 +3,44 @@ const { Command } = require('commander')
 const { TrieveSDK } = require('trieve-ts-sdk')
 const { getFirestoreInstance } = require('../platform/firebase')
 const { getConfig } = require('../config')
+const { program } = require('commander')
+const admin = require('firebase-admin')
+const { getFirestore } = require('firebase-admin/firestore')
+const { getAuth } = require('firebase-admin/auth')
+const readline = require('readline')
+const { initializeApp } = require('firebase-admin/app')
+
+// We can't directly import the TypeScript function, so we'll implement it here
+async function convertToRecipeWithIngredients(recipe) {
+    const firestore = getFirestoreInstance()
+
+    // Get all the ingredients by their IDs
+    const ingredientIds = recipe.ingredients.map(ingredient => ingredient.id)
+    const ingredientsSnapshot = await firestore
+        .collection('organizations/demo/ingredients')
+        .where(admin.firestore.FieldPath.documentId(), 'in', ingredientIds)
+        .get()
+
+    const ingredients = []
+    ingredientsSnapshot.forEach(doc => {
+        const ingredientData = doc.data()
+        // Find the corresponding recipe ingredient to merge data
+        const recipeIngredient = recipe.ingredients.find(i => i.id === doc.id)
+        if (recipeIngredient) {
+            ingredients.push({
+                ...ingredientData,
+                ...recipeIngredient,
+                id: doc.id,
+            })
+        }
+    })
+
+    // Return the recipe with full ingredient data
+    return {
+        ...recipe,
+        ingredients,
+    }
+}
 
 const command = new Command('sync-recipes-to-trieve')
 
@@ -110,8 +148,11 @@ async function syncRecipesToTrieve(options) {
                     }
 
                     // Create chunk in Trieve
+                    // Get the full recipe with ingredients
+                    const recipeWithIngredients = await convertToRecipeWithIngredients(recipeData)
+
                     const response = await trieve.createChunk({
-                        chunk_html: JSON.stringify({ id: recipeId, ...recipeData }),
+                        chunk_html: JSON.stringify(recipeWithIngredients),
                         metadata: {
                             recipeId: recipeId,
                         },

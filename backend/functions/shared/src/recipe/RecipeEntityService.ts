@@ -77,3 +77,16 @@ export const mergeFullRecipeIngredient = async (
         pricePerProduction: getPricePerProduction(mergedRecipeIngredient),
     }
 }
+
+export const mergeFullRecipeIngredients = (recipeIngredients: RecipeIngredient[], ingredients: Ingredient[]) => {
+    return recipeIngredients.map(recipeIngredient => {
+        const ingredient = ingredients.find(ingredient => ingredient.id === recipeIngredient.id)
+        if (!ingredient) {
+            throw new Error(`Ingredient with id ${recipeIngredient.id} not found`)
+        }
+        return {
+            ...recipeIngredient,
+            ...ingredient,
+        }
+    })
+}

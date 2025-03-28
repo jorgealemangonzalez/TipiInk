@@ -82,7 +82,7 @@ async function processRecipe(recipeId, recipeData, organizationId, dryRun) {
             return {
                 id: ingredientId,
                 type: ingredient.type || 'ingredient',
-                pricePerProduction: ingredient.pricePerProduction || 0,
+                pricePerProduction: ingredient.quantityPerProduction * ingredient.pricePerUnit || 0,
                 quantityPerProduction: ingredient.quantityPerProduction || 0,
             }
         })

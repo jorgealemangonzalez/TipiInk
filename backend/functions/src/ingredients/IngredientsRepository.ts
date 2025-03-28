@@ -1,5 +1,6 @@
 import { DocumentSnapshot, Timestamp } from 'firebase-admin/firestore'
 
+import { FieldPath } from '@google-cloud/firestore'
 import { Ingredient, IngredientDBModel, defaultIngredient, ingredientConverter } from '@tipi/shared'
 
 import { firestore } from '../FirebaseInit'
@@ -12,11 +13,11 @@ export const getIngredientsRef = () =>
 export const getIngredientRef = (id: string) => getIngredientsRef().doc(id)
 
 export const getIngredientById = async (id: string): Promise<Ingredient> => {
-    const ingredient = await getIngredientRef(id).get()
-    if (!ingredient.exists) {
+    const ingredient = (await getIngredientRef(id).get()).data()
+    if (!ingredient) {
         throw new Error(`Ingredient with id ${id} not found`)
     }
-    return ingredient.data()
+    return ingredient
 }
 
 export const getIngredientsByIds = async (ids: string[]): Promise<Ingredient[]> => {
@@ -24,8 +25,14 @@ export const getIngredientsByIds = async (ids: string[]): Promise<Ingredient[]> 
         return []
     }
 
-    const ingredients = await getIngredientsRef().where('id', 'in', ids).get()
-    return ingredients.docs.map((doc: DocumentSnapshot<Ingredient, IngredientDBModel>) => doc.data())
+    const ingredients = await getIngredientsRef().where(FieldPath.documentId(), 'in', ids).get()
+    return ingredients.docs.map((doc: DocumentSnapshot<Ingredient, IngredientDBModel>) => {
+        const ingredient = doc.data()
+        if (!ingredient) {
+            throw new Error(`Ingredient with id ${doc.id} not found`)
+        }
+        return ingredient
+    })
 }
 
 export const createOrUpdateIngredient = async (
@@ -39,6 +46,7 @@ export const createOrUpdateIngredient = async (
         return ingredientData.id
     } else {
         const ingredientRef = await getIngredientsRef().add({
+            id: 'new', // REMOVED BY THE CONVERTER
             ...defaultIngredient,
             ...ingredientData,
             createdAt: Timestamp.now(),

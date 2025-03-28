@@ -60,12 +60,12 @@ export const IngredientsSection: FC<IngredientsSectionProps> = ({ ingredients, s
                     <div className='space-y-4'>
                         {ingredients.map((ingredient, index) => {
                             const cantidad = showPerServing
-                                ? `${ingredient.quantityPerServing} ${ingredient.unit}`
+                                ? `${ingredient.quantityPerServing.toFixed(2)} ${ingredient.unit}`
                                 : `${ingredient.quantityPerProduction} ${ingredient.unit}`
 
                             const precioTotal = showPerServing
                                 ? (ingredient.pricePerProduction / servingsPerProduction).toFixed(2)
-                                : ingredient.pricePerProduction.toFixed(2)
+                                : ingredient.pricePerProduction?.toFixed(2)
 
                             return (
                                 <div key={index} className='flex flex-col space-y-2'>

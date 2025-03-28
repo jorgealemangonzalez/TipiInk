@@ -6,6 +6,7 @@ import { RecipeDBModel } from '@tipi/shared'
 
 import { isLocalEnvironment } from '../FirebaseInit'
 import { createRecipeInTrieveById } from '../trieve/TrieveService'
+import { getRecipeWithIngredientsById } from './RecipeRepository'
 
 const trDataset = isLocalEnvironment() ? 'c7b4534b-ed9b-40b7-8b20-268b76bf4217' : 'cd4edb52-2fcb-4e69-bd5a-8275b3a79eaa'
 
@@ -49,9 +50,13 @@ export const onRecipeUpdated = functions.firestore.onDocumentUpdated(
                 logger.error(`No chunkId associated with the recipe to update ${recipeId} : ${recipeData.name}`)
                 await createRecipeInTrieveById(recipeId)
             } else {
+                // Get the full recipe with ingredients
+                const recipeWithIngredients = await getRecipeWithIngredientsById(recipeId)
+
+                // Update Trieve with the complete recipe including ingredients
                 await trieve.updateChunk({
                     chunk_id: recipeData.chunkId,
-                    chunk_html: JSON.stringify({ id: recipeId, ...recipeData }),
+                    chunk_html: JSON.stringify(recipeWithIngredients),
                 })
             }
             logger.info(`Updated Trieve chunk for recipe ${recipeId} : ${recipeData.name}`)

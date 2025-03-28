@@ -29,6 +29,9 @@ importers:
 
   backend/functions:
     dependencies:
+      '@google-cloud/firestore':
+        specifier: ^7.11.0
+        version: 7.11.0(encoding@0.1.13)
       '@tipi/shared':
         specifier: file:shared
         version: link:shared
@@ -8557,7 +8560,6 @@ snapshots:
     transitivePeerDependencies:
       - encoding
       - supports-color
-    optional: true
 
   '@google-cloud/paginator@5.0.2':
     dependencies:
@@ -12296,8 +12298,7 @@ snapshots:
       es-abstract: 1.23.3
       functions-have-names: 1.2.3
 
-  functional-red-black-tree@1.0.1:
-    optional: true
+  functional-red-black-tree@1.0.1: {}
 
   functions-have-names@1.2.3: {}
 

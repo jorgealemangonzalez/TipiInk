@@ -3,6 +3,8 @@ import * as functions from 'firebase-functions'
 import { logger } from 'firebase-functions'
 import { ZodSchema } from 'zod'
 
+import { nullToUndefined } from '@tipi/shared'
+
 admin.initializeApp({
     projectId: 'tipi-ink',
     storageBucket: 'tipi-ink.appspot.com',
@@ -77,28 +79,6 @@ function snakeToCamel<T>(value: T): T {
     }
 
     // If it's neither an array nor an object (primitive), just return it
-    return value
-}
-
-const nullToUndefined = <T>(value: T): T => {
-    if (value === null) {
-        return undefined as unknown as T
-    }
-
-    if (Array.isArray(value)) {
-        return value.map(item => nullToUndefined(item)) as unknown as T
-    }
-
-    if (value !== null && typeof value === 'object') {
-        const newObj: Record<string, unknown> = {}
-        for (const key in value) {
-            if (Object.prototype.hasOwnProperty.call(value, key)) {
-                newObj[key] = nullToUndefined((value as Record<string, unknown>)[key])
-            }
-        }
-        return newObj as T
-    }
-
     return value
 }
 

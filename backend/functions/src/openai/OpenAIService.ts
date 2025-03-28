@@ -2,7 +2,7 @@ import { logger } from 'firebase-functions'
 import OpenAI from 'openai'
 import { zodResponseFormat } from 'openai/helpers/zod'
 
-import { nullToUndefined, RecipeWithIngredients } from '@tipi/shared'
+import { RecipeWithIngredients, nullToUndefined } from '@tipi/shared'
 
 import { onFunctionsInit } from '../firebase/OnFunctionsInit'
 import { UpdateRecipeRequest } from '../types/UpdateRecipe'

@@ -1,7 +1,6 @@
 import { z } from 'zod'
 
-import { RecipeDBModel } from '@tipi/shared'
-import { NullToUndefined } from '@tipi/shared'
+import { NullToUndefined, RecipeDBModel } from '@tipi/shared'
 
 import { UpdateRecipeRequestSchema } from './UpdateRecipeRequestSchema'
 

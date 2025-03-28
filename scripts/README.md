@@ -215,5 +215,54 @@ pnpm sync-recipes --dry-run --batch-size 10
 ```
 
 Options:
+
 - `--dry-run`: Run without making changes to Firestore (preview mode)
 - `--batch-size <size>`: Number of recipes to process in each batch (default: 25)
+
+## Cloud Functions
+
+### Call Local Cloud Function
+
+This command allows you to call a local cloud function using data from a JSON file. This is useful for testing cloud functions locally before deploying them.
+
+```bash
+# Call a local cloud function with the default toolCall.json file
+pnpm script call-local-function --endpoint ActualizarReceta
+
+# Call a local cloud function with a custom JSON file
+pnpm script call-local-function --endpoint ActualizarReceta --file path/to/custom-data.json
+
+# Call a local cloud function with a server secret key for authentication
+pnpm script call-local-function --endpoint ActualizarReceta --secret your-secret-key
+```
+
+Options:
+
+- `--endpoint <name>`: (Required) The name of the cloud function endpoint to call
+- `--file <path>`: Path to the JSON file containing the tool call data (default: toolCall.json)
+- `--secret <key>`: The server secret key to use in the x-server-secret-key header for authentication
+
+You can also set the SERVER_SECRET_KEY environment variable in your .env or .env.local file instead of using the --secret option.
+
+The JSON file should have the following structure:
+
+```json
+{
+    "message": {
+        "timestamp": 1742319250497,
+        "type": "tool-calls",
+        "toolCalls": [
+            {
+                "id": "call_7R4GfJGM9o2zoiVZwYv7ivNo",
+                "type": "function",
+                "function": {
+                    "name": "FunctionName",
+                    "arguments": {
+                        // Function-specific arguments
+                    }
+                }
+            }
+        ]
+    }
+}
+```

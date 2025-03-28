@@ -10,6 +10,7 @@ const runMigration = require('./platform/migrations/runMigration')
 const writeVersion = require('./platform/writeVersion')
 const syncRecipesToTrieve = require('./recipeSync/syncRecipesToTrieve')
 const syncSuppliersToTrieve = require('./supplierSync/syncSuppliersToTrieve')
+const callLocalFunction = require('./cloudFunctions/callLocalFunction')
 const vapiTools = require('./vapi/tools')
 
 program.option('--prod', 'Run in production mode', false)
@@ -23,6 +24,7 @@ program.addCommand(runMigration)
 program.addCommand(writeVersion)
 program.addCommand(syncRecipesToTrieve)
 program.addCommand(syncSuppliersToTrieve)
+program.addCommand(callLocalFunction)
 program.addCommand(vapiTools)
 
 program.hook('preAction', command => {

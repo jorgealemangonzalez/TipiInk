@@ -102,7 +102,6 @@ const nullToUndefined = <T>(value: T): T => {
     return value
 }
 
-
 export const onAIToolRequest = <P, R>(schema: ZodSchema, handler: (request: P) => Promise<R>) => {
     return functions.https.onRequest(async (request, response) => {
         logger.debug({ body: request.body, headers: request.headers })

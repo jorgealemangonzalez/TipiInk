@@ -40,7 +40,9 @@ export const createOrUpdateRecipeIngredient = async (
     return {
         ...updatedRecipeIngredient,
         type: 'ingredient',
-        pricePerProduction: updatedRecipeIngredient?.pricePerUnit ?? 0,
+        pricePerProduction: updatedRecipeIngredient
+            ? updatedRecipeIngredient.pricePerUnit * (updatedRecipeIngredient.quantityPerProduction ?? 1)
+            : 0,
         quantityPerProduction: getQuantityPerProduction(updatedRecipeIngredient),
         quantityPerServing: getQuantityPerServing(updatedRecipeIngredient, servingsPerProduction),
     }

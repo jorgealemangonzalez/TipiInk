@@ -13,7 +13,8 @@
         "migrate": "node index.js migrate",
         "write-version": "node index.js write-version",
         "sync-recipes": "node index.js sync-recipes-to-trieve",
-        "sync-suppliers": "node index.js sync-suppliers-to-trieve"
+        "sync-suppliers": "node index.js sync-suppliers-to-trieve",
+        "call-function": "node index.js call-local-function"
     },
     "keywords": [],
     "author": "",

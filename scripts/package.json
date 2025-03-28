@@ -6,6 +6,7 @@
     "scripts": {
         "upload": "node index.js upload",
         "download": "node index.js download",
+        "script": "node index.js",
         "admin:set": "node index.js designate-as-admin",
         "admin:list": "node index.js list-admin-users",
         "revoke-user-token": "node index.js revoke-user-token",
@@ -29,5 +30,8 @@
         "trieve-ts-sdk": "^0.0.68",
         "xlsx": "^0.18.5",
         "zod": "^3.23.8"
+    },
+    "dependencies": {
+        "@vapi-ai/server-sdk": "^0.5.1"
     }
 }

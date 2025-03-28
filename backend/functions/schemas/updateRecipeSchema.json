@@ -1,129 +1,183 @@
 {
-    "type": "object",
-    "properties": {
-        "id": {
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "ID of the recipe to update"
+    },
+    "ingredientsToRemove": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of ingredients IDs to remove from the recipe, exactly extracted from the knowledge base"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the recipe, first letter uppercase"
+    },
+    "category": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Category of the recipe"
+    },
+    "allergens": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "gluten",
+          "crustaceans",
+          "eggs",
+          "fish",
+          "peanuts",
+          "soy",
+          "dairy",
+          "nuts",
+          "celery",
+          "mustard",
+          "sesame",
+          "sulphites",
+          "lupin",
+          "molluscs"
+        ]
+      },
+      "description": "Allergens of the recipe"
+    },
+    "productionTime": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Production time of the recipe"
+    },
+    "pvp": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Sell price per unit of the recipe"
+    },
+    "servingsPerProduction": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Number of servings per production"
+    },
+    "priceVariation": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Price variation of the recipe"
+    },
+    "inMenu": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "If the recipe is in the menu"
+    },
+    "ingredients": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
             "type": "string",
-            "description": "ID of the recipe to update"
-        },
-        "ingredientsToRemove": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            },
-            "description": "List of ingredients IDs to remove from the recipe, exactly extracted from the knowledge base"
-        },
-        "name": {
+            "description": "ID of the ingredient or \"new\" if it is a new ingredient"
+          },
+          "name": {
             "type": "string",
-            "description": "Name of the recipe, first letter uppercase"
-        },
-        "category": {
+            "description": "Name of the ingredient"
+          },
+          "quantityPerProduction": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Quantity per production"
+          },
+          "unit": {
             "type": "string",
-            "description": "Category of the recipe"
+            "enum": [
+              "kg",
+              "g",
+              "l",
+              "ml",
+              "ud"
+            ],
+            "description": "Unit of the ingredient"
+          },
+          "pricePerUnit": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Price per unit"
+          }
         },
-        "allergens": {
-            "type": "array",
-            "items": {
-                "type": "string",
-                "enum": [
-                    "gluten",
-                    "crustaceans",
-                    "eggs",
-                    "fish",
-                    "peanuts",
-                    "soy",
-                    "dairy",
-                    "nuts",
-                    "celery",
-                    "mustard",
-                    "sesame",
-                    "sulphites",
-                    "lupin",
-                    "molluscs"
-                ]
-            },
-            "description": "Allergens of the recipe"
-        },
-        "productionTime": {
-            "type": "string",
-            "description": "Production time of the recipe"
-        },
-        "pvp": {
-            "type": "number",
-            "description": "Sell price per unit of the recipe"
-        },
-        "servingsPerProduction": {
-            "type": "number",
-            "description": "Number of servings per production"
-        },
-        "priceVariation": {
-            "type": "number",
-            "description": "Price variation of the recipe"
-        },
-        "inMenu": {
-            "type": "boolean",
-            "description": "If the recipe is in the menu"
-        },
-        "ingredients": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "description": "ID of the ingredient or \"new\" if it is a new ingredient"
-                    },
-                    "name": {
-                        "type": "string",
-                        "description": "Name of the ingredient"
-                    },
-                    "quantityPerProduction": {
-                        "type": "number",
-                        "description": "Quantity per production"
-                    },
-                    "unit": {
-                        "type": "string",
-                        "enum": ["kg", "l", "ud"],
-                        "description": "Unit of the ingredient"
-                    },
-                    "pricePerUnit": {
-                        "type": "number",
-                        "description": "Price per unit"
-                    }
-                },
-                "required": ["id", "name"],
-                "additionalProperties": false
-            },
-            "description": "Ingredients of the recipe"
+        "required": [
+          "id",
+          "name",
+          "quantityPerProduction",
+          "unit",
+          "pricePerUnit"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Ingredients of the recipe"
+    },
+    "preparation": {
+      "type": "object",
+      "properties": {
+        "prePreparation": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Pre-preparation steps those cuts and elaborations that need to be done before the preparation"
         },
         "preparation": {
-            "type": "object",
-            "properties": {
-                "prePreparation": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "description": "Pre-preparation steps those cuts and elaborations that need to be done before the preparation"
-                },
-                "preparation": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "description": "Steps to prepare the recipe"
-                },
-                "conservation": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "description": "Steps to conserve the recipe"
-                }
-            },
-            "additionalProperties": false,
-            "description": "Preparation steps of the recipe"
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Steps to prepare the recipe"
+        },
+        "conservation": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Steps to conserve the recipe"
         }
-    },
-    "required": ["id"],
-    "additionalProperties": false
+      },
+      "required": [
+        "prePreparation",
+        "preparation",
+        "conservation"
+      ],
+      "additionalProperties": false,
+      "description": "Preparation steps of the recipe"
+    }
+  },
+  "required": [
+    "id",
+    "ingredientsToRemove",
+    "name",
+    "category",
+    "allergens",
+    "productionTime",
+    "pvp",
+    "servingsPerProduction",
+    "priceVariation",
+    "inMenu",
+    "ingredients",
+    "preparation"
+  ],
+  "additionalProperties": false
 }

@@ -1,7 +1,7 @@
 import { logger } from 'firebase-functions'
 import { z } from 'zod'
 
-import { Recipe, RecipeIngredient, getProductionCost } from '@tipi/shared'
+import { NullToUndefined, Recipe, RecipeIngredient, getProductionCost } from '@tipi/shared'
 
 import { Request, onAIToolRequest, onCallWithSecretKey } from '../FirebaseInit'
 import { CreateRecipeRequest, CreateRecipeResponse } from '../types/CreateRecipe'
@@ -10,7 +10,9 @@ import { UpdateRecipeRequestSchema } from '../types/UpdateRecipeRequestSchema'
 import { createOrUpdateRecipeIngredient, mapToFullRecipeIngredient } from './RecipeIngredientService'
 import { createRecipe } from './RecipeRepository'
 
-export type UpdateRecipeIngredientInput = NonNullable<z.infer<typeof UpdateRecipeRequestSchema>['ingredients']>[number]
+export type UpdateRecipeIngredientInput = NonNullable<
+    NullToUndefined<z.infer<typeof UpdateRecipeRequestSchema>['ingredients']>[number]
+>
 
 const createRecipeFunction = async (recipeData: CreateRecipeRequest['recipe']): Promise<Recipe> => {
     logger.info('Creating recipe', { recipeData })

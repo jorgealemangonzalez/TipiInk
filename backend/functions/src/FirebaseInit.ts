@@ -80,6 +80,29 @@ function snakeToCamel<T>(value: T): T {
     return value
 }
 
+const nullToUndefined = <T>(value: T): T => {
+    if (value === null) {
+        return undefined as unknown as T
+    }
+
+    if (Array.isArray(value)) {
+        return value.map(item => nullToUndefined(item)) as unknown as T
+    }
+
+    if (value !== null && typeof value === 'object') {
+        const newObj: Record<string, unknown> = {}
+        for (const key in value) {
+            if (Object.prototype.hasOwnProperty.call(value, key)) {
+                newObj[key] = nullToUndefined((value as Record<string, unknown>)[key])
+            }
+        }
+        return newObj as T
+    }
+
+    return value
+}
+
+
 export const onAIToolRequest = <P, R>(schema: ZodSchema, handler: (request: P) => Promise<R>) => {
     return functions.https.onRequest(async (request, response) => {
         logger.debug({ body: request.body, headers: request.headers })
@@ -93,7 +116,7 @@ export const onAIToolRequest = <P, R>(schema: ZodSchema, handler: (request: P) =
         for (const toolCall of request.body.message.toolCalls) {
             let parsedBody: any
             try {
-                parsedBody = schema.parse(snakeToCamel(toolCall.function.arguments))
+                parsedBody = nullToUndefined(schema.parse(snakeToCamel(toolCall.function.arguments)))
             } catch (error) {
                 logger.error({ error })
                 response.status(500).send(error instanceof Error ? error.message : 'Unknown error')

@@ -17,6 +17,17 @@ type DeepPartial<T> = {
           : T[P] // Keep primitive types required
 }
 
+/**
+ * This type recursively converts null values to undefined
+ */
+export type NullToUndefined<T> = T extends null
+    ? undefined
+    : T extends (infer U)[]
+      ? NullToUndefined<U>[]
+      : T extends Record<string, unknown>
+        ? { [K in keyof T]: NullToUndefined<T[K]> }
+        : T
+
 export type EntityWithoutDbGeneratedFields<T> = Omit<T, 'id' | 'createdAt' | 'updatedAt'>
 
 export type EntityUpdate<T> = DeepPartial<EntityWithoutDbGeneratedFields<T>>

@@ -111,10 +111,12 @@ export const deleteRecipeChunk = async (chunkId: string): Promise<void> => {
  * @return {Promise<Recipe[]>} The similar recipes
  */
 export const getSimilarRecipes = async (searchQuery: string): Promise<RecipeWithIngredients[]> => {
-    const response = await trieve.search({
+    const recipesGroupId = await getTrieveGroupId('recipes')
+    const response = await trieve.searchInGroup({
         query: searchQuery,
         search_type: 'bm25',
         page_size: 3,
+        group_id: recipesGroupId,
     })
     logger.info('Trieve response', { response })
 

@@ -44,8 +44,10 @@ Debe incluir:
 - "id" (string): ID de la receta a actualizar
 - "ingredientsToRemove" (array de strings): IDs de los ingredientes a eliminar
 - Y cualquier otro campo que deba actualizarse como name, category, allergens, etc.
+No debe incluir:
+- Campos que no sean necesarios actualizar
         `
-
+        // TODO Fine tune the prompt so only the modified fields are generated
         const completion = await openai.beta.chat.completions.parse({
             model: 'gpt-4o-mini',
             messages: [
@@ -58,7 +60,7 @@ Debe incluir:
                     content: `[Recetas]: ${JSON.stringify(recipes)}\n\n[Cambios]: ${changes}`,
                 },
             ],
-            temperature: 0,
+            temperature: 0.2,
             response_format: zodResponseFormat(UpdateRecipeRequestSchema, 'updateRecipe'),
         })
 

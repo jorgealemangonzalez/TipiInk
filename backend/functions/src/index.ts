@@ -7,3 +7,4 @@ export { createRecipeHandler as createRecipe, createRecipeTool } from './recipes
 export { updateRecipeTool, updateRecipeByTextTool } from './recipes/UpdateRecipe'
 export { createLead } from './leads/CreateLead'
 export { onRecipeUpdated, onRecipeCreated, onRecipeDeleted } from './recipes/RecipeListener'
+export { onIngredientCreated, onIngredientUpdated, onIngredientDeleted } from './ingredients/IngredientListener'

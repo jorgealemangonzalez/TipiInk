@@ -1,9 +1,10 @@
 import { logger } from 'firebase-functions'
 import { ChunkGroup, ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk'
 
-import { ChunkGroups, RecipeWithIngredients, groupNameToDescription } from '@tipi/shared'
+import { ChunkGroups, Ingredient, RecipeWithIngredients, groupNameToDescription } from '@tipi/shared'
 
 import { isLocalEnvironment } from '../FirebaseInit'
+import { getIngredientById, getIngredientRef } from '../ingredients/IngredientsRepository'
 import { getTrieveGroupId, updateTrieveGroupId } from '../organizations/OrganizationsRepository'
 import { getRecipeRefById, getRecipeWithIngredientsById } from '../recipes/RecipeRepository'
 
@@ -132,4 +133,74 @@ export const getSimilarRecipes = async (searchQuery: string): Promise<RecipeWith
             }
         })
         .filter(Boolean) // Remove any null entries from parsing errors
+}
+
+/**
+ * Creates a new ingredient in Trieve
+ * @param {Ingredient} ingredient - The ingredient to create
+ * @return {Promise<any>} The Trieve response
+ */
+export const createIngredientInTrieve = async (ingredient: Ingredient): Promise<any> => {
+    // Get or create the ingredients group
+    const groupId = await getOrCreateChunkGroup('ingredients')
+
+    const response = await trieve.createChunk({
+        chunk_html: JSON.stringify(ingredient),
+        metadata: {
+            ingredientId: ingredient.id,
+        },
+        group_ids: [groupId],
+        tag_set: [ingredient.name],
+    })
+
+    await getIngredientRef(ingredient.id).update({
+        chunkId: (response.chunk_metadata as ChunkMetadata).id,
+    })
+
+    return response
+}
+
+/**
+ * Creates a new ingredient in Trieve by ID
+ * @param {string} ingredientId - The ID of the ingredient to create
+ * @return {Promise<any>} The Trieve response
+ */
+export const createIngredientInTrieveById = async (ingredientId: string): Promise<any> => {
+    const ingredient = await getIngredientById(ingredientId)
+    return createIngredientInTrieve(ingredient)
+}
+
+/**
+ * Updates an existing ingredient in Trieve
+ * @param {string} ingredientId - The ID of the ingredient to update
+ * @param {string} chunkId - The Trieve chunk ID
+ * @return {Promise<void>}
+ */
+export const updateIngredientInTrieve = async (ingredientId: string, chunkId: string): Promise<void> => {
+    const ingredient = await getIngredientById(ingredientId)
+
+    const groupId = await getOrCreateChunkGroup('ingredients')
+
+    await trieve.updateChunk({
+        chunk_id: chunkId,
+        chunk_html: JSON.stringify(ingredient),
+        group_ids: [groupId],
+        tag_set: [ingredient.name],
+    })
+
+    logger.info(`Updated Trieve chunk for ingredient ${ingredientId}`)
+}
+
+/**
+ * Deletes an ingredient chunk from Trieve
+ * @param {string} chunkId - The Trieve chunk ID to delete
+ * @return {Promise<void>}
+ */
+export const deleteIngredientChunk = async (chunkId: string): Promise<void> => {
+    await trieve.deleteChunkById({
+        chunkId: chunkId,
+        trDataset,
+    })
+
+    logger.info(`Successfully deleted Trieve chunk ${chunkId}`)
 }

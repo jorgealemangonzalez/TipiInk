@@ -12,6 +12,7 @@ export interface IngredientDBModel {
     name: string
     unit: IngredientUnit
     pricePerUnit: number
+    chunkId?: string // Trieve Chunk ID
     createdAt: Timestamp
     updatedAt: Timestamp
 }

@@ -1,7 +1,8 @@
 import { logger } from 'firebase-functions'
+import { getSupplierRefById } from 'src/suppliers/supplierRepository'
 import { ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk'
 
-import { RecipeWithIngredients } from '@tipi/shared'
+import { RecipeWithIngredients, Supplier } from '@tipi/shared'
 
 import { isLocalEnvironment } from '../FirebaseInit'
 import { getRecipeRefById, getRecipeWithIngredientsById } from '../recipes/RecipeRepository'
@@ -28,11 +29,25 @@ export const createRecipeInTrieve = async (recipe: RecipeWithIngredients) => {
     return response
 }
 
+export const createSupplierInTrieve = async (supplier: Supplier) => {
+    const response = await trieve.createChunk({
+        chunk_html: JSON.stringify({ ...supplier }),
+        metadata: {
+            supplierId: supplier.id,
+        },
+    })
+
+    await getSupplierRefById(supplier.id).update({
+        chunkId: (response.chunk_metadata as ChunkMetadata).id,
+    })
+
+    return response
+}
+
 export const createRecipeInTrieveById = async (recipeId: string) => {
     const recipe = await getRecipeWithIngredientsById(recipeId)
     return createRecipeInTrieve(recipe)
 }
-
 /**
  * Gets similar recipes from Trieve based on text query
  * @param {string} searchQuery - The text query to search for

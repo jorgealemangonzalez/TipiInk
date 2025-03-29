@@ -17,6 +17,8 @@ const SupplierIcon = ({ type }: { type: Supplier['type'] }) => {
             return <Truck className='h-6 w-6 text-green-400' />
         case 'carniceria':
             return <Beef className='h-6 w-6 text-red-400' />
+        default:
+            return <Package className='h-6 w-6 text-blue-400' />
     }
 }
 

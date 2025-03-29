@@ -1,3 +1,6 @@
+import { Timestamp } from '../firebase/Timestamp'
+import { EntityWithoutDbGeneratedFields } from '../typing'
+
 export type SupplierType = 'pescaderia' | 'fruteria' | 'carniceria'
 
 export type IncidentStatus = 'pending' | 'resolved'
@@ -45,7 +48,7 @@ export interface Invoice {
 
 export interface SupplierDBModel {
     name: string
-    type: SupplierType
+    type?: SupplierType
     totalOrders: number
     lastMonthInvoiced: number
     pendingIncidents: number
@@ -58,10 +61,27 @@ export interface SupplierDBModel {
     incidents?: Incident[]
     phone?: string
     chunkId?: string // Trive Chunk ID
+    createdAt: Timestamp
+    updatedAt: Timestamp
 }
 
 export interface Supplier extends SupplierDBModel {
     id: string
-    createdAt: Date
-    updatedAt: Date
+}
+
+//TODO: explore diferent options for type field
+export const defaultSupplierData: EntityWithoutDbGeneratedFields<SupplierDBModel> = {
+    name: '',
+    totalOrders: 0,
+    lastMonthInvoiced: 0,
+    pendingIncidents: 0,
+    deliveryDays: [],
+    orderAdvanceHours: 0,
+    invoices: [],
+    deliveryNotes: [],
+    incidents: [],
+    phone: '',
+    commercialPhone: '',
+    deliveryPhone: '',
+    chunkId: '',
 }

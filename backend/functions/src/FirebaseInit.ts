@@ -6,11 +6,12 @@ import { ZodSchema } from 'zod'
 import { nullToUndefined } from '@tipi/shared'
 
 if (process.env.IS_SCRIPTS_RUNTIME) {
+    // When running in the scripts runtime we need to rely into the environment configuration set up by the scripts
     if (!process.env.IS_SCRIPTS_LOCAL_ENV && !process.env.IS_SCRIPTS_PROD_ENV) {
         throw new Error(
             `
             You are in scripts runtime but the backend code was imported before initializeApp() under the scripts project has been called. 
-            Please import the backend utitlities inside your scrip command instead of importing it at the begining of the script.
+            Please import the backend utitlities inside your scrip command function instead of importing it at the begining of the script.
             `,
         )
     }

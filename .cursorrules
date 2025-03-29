@@ -12,6 +12,8 @@ When creating a basic component first search in shadcn/ui if it exists, if it do
 The page must be sufixed with the word "page" in the name.
 Follow the design of the pages in the frontend/src/pages folder.
 Be careful with the colors and the typography.
+Do not add comments in the code by default, do not remove comments that are already in the code.
+Use well defined names for the variables and methods so they are easy to understand.
 Check the tailwind.config.js file to see the colors and the typography.
 
 

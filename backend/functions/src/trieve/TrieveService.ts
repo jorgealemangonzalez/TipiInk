@@ -1,9 +1,10 @@
 import { logger } from 'firebase-functions'
-import { ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk'
+import { ChunkGroup, ChunkMetadata, TrieveSDK } from 'trieve-ts-sdk'
 
-import { RecipeWithIngredients } from '@tipi/shared'
+import { ChunkGroups, RecipeWithIngredients, groupNameToDescription } from '@tipi/shared'
 
 import { isLocalEnvironment } from '../FirebaseInit'
+import { getTrieveGroupId, updateTrieveGroupId } from '../organizations/OrganizationsRepository'
 import { getRecipeRefById, getRecipeWithIngredientsById } from '../recipes/RecipeRepository'
 
 const trDataset = isLocalEnvironment() ? 'c7b4534b-ed9b-40b7-8b20-268b76bf4217' : 'cd4edb52-2fcb-4e69-bd5a-8275b3a79eaa'
@@ -14,11 +15,16 @@ export const trieve = new TrieveSDK({
 })
 
 export const createRecipeInTrieve = async (recipe: RecipeWithIngredients) => {
+    // Get or create the recipes group
+    const groupId = await getOrCreateChunkGroup('recipes')
+
     const response = await trieve.createChunk({
         chunk_html: JSON.stringify({ ...recipe }),
         metadata: {
             recipeId: recipe.id,
         },
+        group_ids: [groupId],
+        tag_set: buildTagSetForRecipe(recipe),
     })
 
     await getRecipeRefById(recipe.id).update({
@@ -33,34 +39,95 @@ export const createRecipeInTrieveById = async (recipeId: string) => {
     return createRecipeInTrieve(recipe)
 }
 
+export const getOrCreateChunkGroup = async (groupName: ChunkGroups) => {
+    // Try to get the groupId from the organization
+    const existingGroupId = await getTrieveGroupId(groupName)
+
+    // If group ID exists, return it
+    if (existingGroupId) {
+        logger.info(`Found existing Trieve group for ${groupName}: ${existingGroupId}`)
+        return existingGroupId
+    }
+
+    // If not, create a new group
+    logger.info(`Creating new Trieve group for ${groupName}`)
+    const response = (await trieve.createChunkGroup({
+        name: groupName,
+        description: groupNameToDescription[groupName],
+    })) as ChunkGroup
+
+    // Extract the group ID from the response
+    const newGroupId = response.id
+
+    // Store the new group ID in the organization
+    await updateTrieveGroupId(groupName, newGroupId)
+
+    logger.info(`Created new Trieve group for ${groupName}: ${newGroupId}`)
+    return newGroupId
+}
+
+const buildTagSetForRecipe = (recipe: RecipeWithIngredients): string[] => {
+    return [recipe.name, ...recipe.ingredients.map(ingredient => ingredient.name)]
+}
+
+/**
+ * Updates an existing recipe in Trieve
+ * @param {string} recipeId - The ID of the recipe to update
+ * @param {string} chunkId - The Trieve chunk ID
+ * @return {Promise<void>}
+ */
+export const updateRecipeInTrieve = async (recipeId: string, chunkId: string): Promise<void> => {
+    const recipeWithIngredients = await getRecipeWithIngredientsById(recipeId)
+
+    const groupId = await getOrCreateChunkGroup('recipes')
+
+    await trieve.updateChunk({
+        chunk_id: chunkId,
+        chunk_html: JSON.stringify(recipeWithIngredients),
+        group_ids: [groupId],
+        tag_set: buildTagSetForRecipe(recipeWithIngredients),
+    })
+
+    logger.info(`Updated Trieve chunk for recipe ${recipeId}`)
+}
+
+/**
+ * Deletes a recipe chunk from Trieve
+ * @param {string} chunkId - The Trieve chunk ID to delete
+ * @return {Promise<void>}
+ */
+export const deleteRecipeChunk = async (chunkId: string): Promise<void> => {
+    await trieve.deleteChunkById({
+        chunkId: chunkId,
+        trDataset,
+    })
+
+    logger.info(`Successfully deleted Trieve chunk ${chunkId}`)
+}
+
 /**
  * Gets similar recipes from Trieve based on text query
  * @param {string} searchQuery - The text query to search for
  * @return {Promise<Recipe[]>} The similar recipes
  */
 export const getSimilarRecipes = async (searchQuery: string): Promise<RecipeWithIngredients[]> => {
-    try {
-        const response = await trieve.search({
-            query: searchQuery,
-            search_type: 'bm25',
-            page_size: 3,
-        })
-        logger.info('Trieve response', { response })
+    const response = await trieve.search({
+        query: searchQuery,
+        search_type: 'bm25',
+        page_size: 3,
+    })
+    logger.info('Trieve response', { response })
 
-        // Return recipes as array of objects
-        return response.chunks
-            .map(c => {
-                try {
-                    // Trieve stores recipes as JSON in the chunk_html field
-                    return JSON.parse((c.chunk as any).chunk_html)
-                } catch (error) {
-                    logger.error(`Error parsing recipe from chunk: ${error}`)
-                    return null
-                }
-            })
-            .filter(Boolean) // Remove any null entries from parsing errors
-    } catch (error) {
-        logger.error(`Error searching Trieve: ${error}`)
-        throw new Error(`Error finding similar recipes: ${error}`)
-    }
+    // Return recipes as array of objects
+    return response.chunks
+        .map(c => {
+            // Trieve stores recipes as JSON in the chunk_html field
+            try {
+                return JSON.parse((c.chunk as any).chunk_html)
+            } catch (error) {
+                logger.error(`Error parsing recipe from chunk: ${error}`)
+                return null
+            }
+        })
+        .filter(Boolean) // Remove any null entries from parsing errors
 }

@@ -69,7 +69,6 @@
         "@firebase/functions": "^0.12.3",
         "@firebase/storage": "^0.13.7",
         "@google-cloud/translate": "^8.5.0",
-        "@monorepo/functions": "workspace:*",
         "@types/fs-extra": "^11.0.4",
         "@types/mixpanel-browser": "^2.49.1",
         "@types/react": "^18.3.3",

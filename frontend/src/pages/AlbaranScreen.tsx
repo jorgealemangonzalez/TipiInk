@@ -6,8 +6,7 @@ import { Input } from '@/components/ui/input.tsx'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table.tsx'
 import { useDocument } from '@/firebase/hooks/useDocument.tsx'
-
-import { Invoice as InvoiceData, Item } from '../../../backend/functions/src/types/ExtractInvoice'
+import { OldInvoice as InvoiceData, Item } from '@tipi/shared'
 
 export function AlbaranScreen({
     setActiveScreen,

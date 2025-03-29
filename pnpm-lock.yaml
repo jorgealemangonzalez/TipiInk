@@ -316,9 +316,6 @@ importers:
       '@google-cloud/translate':
         specifier: ^8.5.0
         version: 8.5.0(encoding@0.1.13)
-      '@monorepo/functions':
-        specifier: workspace:*
-        version: link:../backend/functions
       '@types/fs-extra':
         specifier: ^11.0.4
         version: 11.0.4
@@ -482,6 +479,12 @@ importers:
 
   scripts:
     dependencies:
+      '@tipi/functions':
+        specifier: file:../backend/functions
+        version: link:../backend/functions
+      '@tipi/shared':
+        specifier: file:../backend/functions/shared
+        version: link:../backend/functions/shared
       '@vapi-ai/server-sdk':
         specifier: ^0.5.1
         version: 0.5.1(encoding@0.1.13)

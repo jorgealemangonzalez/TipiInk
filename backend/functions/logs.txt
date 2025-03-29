@@ -1,4 +1,0 @@
-
-> @monorepo/functions@ build /Users/jorge/projects/TipiInk/backend/functions
-> tsc
-

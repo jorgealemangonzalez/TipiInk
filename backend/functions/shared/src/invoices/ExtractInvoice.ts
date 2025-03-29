@@ -1,4 +1,4 @@
-import { Timestamp } from 'firebase-admin/lib/firestore'
+import { Timestamp } from '../firebase/Timestamp'
 
 export type ExtractInvoiceRequest = {
     imagePath: string // inside cloud storage
@@ -14,7 +14,7 @@ export interface Item {
 }
 
 // Raw TypeScript definitions for invoiceSchema
-export interface Invoice {
+export interface OldInvoice {
     id: string
     provider?: string | null
     serial_number?: string | null

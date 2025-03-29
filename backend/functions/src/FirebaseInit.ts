@@ -5,13 +5,34 @@ import { ZodSchema } from 'zod'
 
 import { nullToUndefined } from '@tipi/shared'
 
-admin.initializeApp({
+if (process.env.IS_SCRIPTS_RUNTIME) {
+    // When running in the scripts runtime we need to rely into the environment configuration set up by the scripts
+    if (!process.env.IS_SCRIPTS_LOCAL_ENV && !process.env.IS_SCRIPTS_PROD_ENV) {
+        throw new Error(
+            `
+            You are in scripts runtime but the backend code was imported before initializeApp() under the scripts project has been called. 
+            Please import the backend utitlities inside your scrip command function instead of importing it at the begining of the script.
+            `,
+        )
+    }
+}
+
+const config: admin.AppOptions = {
     projectId: 'tipi-ink',
     storageBucket: 'tipi-ink.appspot.com',
-})
+}
+if (process.env.IS_SCRIPTS_LOCAL_ENV) {
+    process.env.FIRESTORE_EMULATOR_HOST = 'localhost:5003'
+    process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:5004'
+    config.credential = admin.credential.applicationDefault() // To make it work: gcloud auth application-default login
+}
+admin.initializeApp(config)
 
 export const isLocalEnvironment = () => {
-    return process.env.FUNCTIONS_EMULATOR === 'true'
+    return (
+        process.env.FUNCTIONS_EMULATOR === 'true' ||
+        (process.env.IS_SCRIPTS_RUNTIME && process.env.IS_SCRIPTS_LOCAL_ENV)
+    )
 }
 
 export const firestore = admin.firestore()

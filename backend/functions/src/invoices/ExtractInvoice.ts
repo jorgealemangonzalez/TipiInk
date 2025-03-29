@@ -6,11 +6,12 @@ import OpenAI from 'openai'
 import { zodResponseFormat } from 'openai/helpers/zod'
 import { z } from 'zod'
 
+import { ExtractInvoiceRequest, ExtractInvoiceResponse, OldInvoice as Invoice } from '@tipi/shared'
+
+import { User } from '../../shared/src/users/User'
 import { firestore, isLocalEnvironment, storage } from '../FirebaseInit'
 import { throwIfUnauthenticated } from '../auth/ThrowIfUnauthenticated'
 import { onFunctionsInit } from '../firebase/OnFunctionsInit'
-import { ExtractInvoiceRequest, ExtractInvoiceResponse, Invoice } from '../types/ExtractInvoice'
-import { User } from '../types/User'
 import { extractInvoicePrompt } from './ExtractInvoicePrompt'
 
 let openai: OpenAI

@@ -25,8 +25,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { uploadFileToStorage } from '@/firebase/fileStorage.ts'
 import { useCollection } from '@/firebase/hooks/useCollection.ts'
 import { AlbaranScreen } from '@/pages/AlbaranScreen.tsx'
-
-import { Invoice } from '../../../backend/functions/src/types/ExtractInvoice'
+import { OldInvoice as Invoice } from '@tipi/shared'
 
 interface DeliveryNote {
     number: string

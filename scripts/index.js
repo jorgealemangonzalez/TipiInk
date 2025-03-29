@@ -1,3 +1,5 @@
+process.env.IS_SCRIPTS_RUNTIME = true
+
 const { Command } = require('commander')
 const program = new Command()
 const { setConfig } = require('./config')
@@ -10,8 +12,10 @@ const runMigration = require('./platform/migrations/runMigration')
 const writeVersion = require('./platform/writeVersion')
 const syncRecipesToTrieve = require('./recipeSync/syncRecipesToTrieve')
 const syncSuppliersToTrieve = require('./supplierSync/syncSuppliersToTrieve')
+const syncIngredientsToTrieve = require('./ingredientSync/syncIngredientsToTrieve')
 const callLocalFunction = require('./cloudFunctions/callLocalFunction')
 const vapiTools = require('./vapi/tools')
+const { initializeApp } = require('./platform/firebase')
 
 program.option('--prod', 'Run in production mode', false)
 
@@ -24,12 +28,14 @@ program.addCommand(runMigration)
 program.addCommand(writeVersion)
 program.addCommand(syncRecipesToTrieve)
 program.addCommand(syncSuppliersToTrieve)
+program.addCommand(syncIngredientsToTrieve)
 program.addCommand(callLocalFunction)
 program.addCommand(vapiTools)
 
 program.hook('preAction', command => {
     console.log(`Running in ${command.opts().prod ? 'PROD' : 'LOCAL'} env`)
     setConfig('prod', command.opts().prod)
+    initializeApp()
 })
 
 program.parse(process.argv)

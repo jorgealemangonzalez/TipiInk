@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react'
 
 import { User as FUser } from 'firebase/auth'
 
-import { User as UserDbModel } from '@monorepo/functions/src/types/User'
+import { User as UserDbModel } from '@tipi/shared'
 
 export type User = FUser & { isAdmin: boolean } & UserDbModel
 

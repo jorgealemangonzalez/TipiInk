@@ -14,6 +14,7 @@
         "write-version": "node index.js write-version",
         "sync-recipes": "node index.js sync-recipes-to-trieve",
         "sync-suppliers": "node index.js sync-suppliers-to-trieve",
+        "sync-ingredients": "node index.js sync-ingredients-to-trieve",
         "call-function": "node index.js call-local-function"
     },
     "keywords": [],
@@ -33,6 +34,8 @@
         "zod": "^3.23.8"
     },
     "dependencies": {
-        "@vapi-ai/server-sdk": "^0.5.1"
+        "@vapi-ai/server-sdk": "^0.5.1",
+        "@tipi/functions": "file:../backend/functions",
+        "@tipi/shared": "file:../backend/functions/shared"
     }
 }
